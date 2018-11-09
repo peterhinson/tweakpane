@@ -1,149 +1,389 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0">
-	<title>Misc | Tweakpane</title>
-	<link rel="stylesheet" href="assets/css/style.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css">
-	<link rel="stylesheet" href="assets/css/tweakpane.min.css">
+	<title>Tweakpane</title>
+	<meta name="viewport" content="initial-scale=1,minimum-scale=1,maximum-scale=1">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	<link rel="stylesheet" href="assets/bundle.css">
 </head>
 <body>
-	<div class="hero">
-		<canvas id="heroSketch" class="hero_sketch"></canvas>
-		<div class="hero_body">
-			<div class="hero_title">Tweakpane</div>
-			<div class="hero_paneContainer"></div>
+	<div class="common-main">
+		<div class="common-main_mainLayout">
+			<div class="common-main_globalHeaderLayout">
+				<div class="common-globalHeader">
+	<div class="common-globalHeader_innerLayout">
+		<div class="common-globalHeader_logoLayout">
+			<a class="common-logo" href="/">
+				<div class="common-logo_symbol"></div>
+				Tweakpane
+			</a>
+		</div>
+		<div class="common-globalHeader_menuLayout">
+			<ul class="common-globalHeaderMenu">
+				
+
+				
+				
+				
+				
+				<li class="common-globalHeaderMenu_item "><a href="input.html">Input</a></li>
+				
+				
+				
+				
+				
+				<li class="common-globalHeaderMenu_item "><a href="monitor.html">Monitor</a></li>
+				
+				
+				
+				
+				
+				<li class="common-globalHeaderMenu_item common-globalHeaderMenu_item-active"><a href="misc.html">Misc</a></li>
+				
+			</ul>
+		</div>
+		<div class="common-globalHeader_buttonLayout">
+			<a class="common-button" href="https://github.com/cocopon/tweakpane">
+				GitHub<span class="common-button_icon common-button_icon-after fas fa-external-link-square-alt"></span>
+			</a>
 		</div>
 	</div>
+</div>
 
-	<div class="content">
-		<h1>Misc</h1>
-		
-<h2>Changing a label of a property</h2>
-<p>Property name will be used as a label by default. Use <code>label</code> option to change it.</p>
-
-<div class="codeBlock">
-	<div class="codeBlock_section">
-		<pre><code class="js">var pane = new Tweakpane();
-pane.addSlider(target, 'initSpeed', {
-  label: 'Initial speed',
-  min: 0.0,
-  max: 1.0
-});</code></pre>
-	</div>
-	<div class="codeBlock_section codeBlock_section-example">
-		<div id="labelExample" class="codeBlock_paneContainer"></div>
+			</div>
+			<div class="common-main_pageHeaderLayout">
+				
+<div class="common-pageHeader">
+	<div class="common-pageHeader_innerLayout">
+		<div class="common-pageHeader_titleLayout">
+			<h1 class="common-pageHeader_title">Misc</h1>
+			<p>In addition, Tweakpane has various useful features: Grouping components, buttons, event handling, importing/exporting a preset, etc.</p>
+		</div>
+		<div class="common-pageHeader_paneLayout">
+			<div class="common-paneContainer common-paneContainer-misc"></div>
+		</div>
 	</div>
 </div>
 
+			</div>
+			<div class="common-main_innerLayout">
+				
+<h2 id="othercomponents">Other components</h2>
 
-<h2>Placing a pane in a specified element</h2>
-<p>You can specify a container element by <code>container</code> option.</p>
 
-<div class="codeBlock">
-	<div class="codeBlock_section">
-		<pre><code class="js">var pane = new Tweakpane({
-  container: document.getElementById('someElementId')
+<h3 id="folder">Folder</h3>
+<p>Use <code>addFolder()</code> to add folders. You can add all types of components (except folders) to returned folder just like adding them to the pane.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">const pane = new Tweakpane({
+  container,
 });
-</code></pre>
+
+const f1 = pane.<strong>addFolder</strong>({
+  title: 'Basic',
+});
+f1.addInput(PARAMS, 'speed');
+
+const f2 = pane.<strong>addFolder</strong>({
+  expanded: false,
+  title: 'Advanced',
+});
+f2.addInput(PARAMS, 'acceleration');
+f2.addInput(PARAMS, 'randomness');</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout">
+			<div class="common-paneContainer common-paneContainer-folder"></div>
+		</div>
 	</div>
 </div>
 
 
-<h2>Disabling fold</h2>
-<p>Set <code>foldable</code> option to false.</p>
+<h3 id="button">Button</h3>
+<p><code>addButton()</code> adds a button component. Use <code>on()</code> to handle click events.</p>
 
-<div class="codeBlock">
-	<div class="codeBlock_section">
-		<pre><code class="js">var pane = new Tweakpane({
-  foldable: false
-});</code></pre>
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+
+const btn = pane.<strong>addButton</strong>({
+  title: 'Increment',
+}).<strong>on</strong>('click', function(value) {
+  console.log(value);
+});
+</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout">
+			<div class="common-paneContainer common-paneContainer-button"></div>
+		</div>
 	</div>
 </div>
 
 
-<h2>Refreshing property views manually</h2>
-<p>Tweakpane doesn't watch a property change automatically, so you need to refresh it manually if a property is changed without Tweakpane. Call <code>refresh()</code> to refresh all property views.</p>
+<h3 id="separator">Separator</h3>
+<p><code>addSeparator()</code> is for adding a separator between components.</p>
 
-<div class="codeBlock">
-	<div class="codeBlock_section">
-		<pre><code class="js">var pane = new Tweakpane();
-
-// (changed a property without Tweakpane...)
-
-pane.refresh();</code></pre>
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+pane.addButton({title: 'Previous'});
+pane.addButton({title: 'Next'});
+pane<strong>.addSeparator</strong>();
+pane.addButton({title: 'Reset'});</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout">
+			<div class="common-paneContainer common-paneContainer-separator"></div>
+		</div>
 	</div>
 </div>
 
 
-<h2>Changing width of a pane</h2>
-<p>Add a CSS style for the default container, or specify another container.</p>
+<h2 id="events">Events</h2>
+<p>Use <code>on()</code> of specific components to listen its changes. Input components will emit <code>change</code> events. The first argument of the event handler is the input value.</p>
 
-<div class="codeBlock">
-	<div class="codeBlock_section">
-		<pre><code class="js">// Add a CSS style for the default container
-var pane1 = new Tweakpane();
-var styleElem = document.createElement('style');
-styleElem.textContent = '.tpDefaultContainer {width: 320px;}';
-document.appendChild(styleElem);
-
-// Or, specify another container
-var pane2 = new Tweakpane({
-  container: document.getElementById('yourContainer')
-});</code></pre>
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+pane.addInput(PARAMS, 'value')
+  .<strong>on</strong>('change', function(value) {
+    console.log(value.toFixed(2));
+  });</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout">
+			<div class="common-paneContainer common-paneContainer-event"></div>
+		</div>
 	</div>
 </div>
 
-	</div>
+<p>If you want to handle global events (for all of components), <code>on()</code> of the pane is for it.</p>
 
-	<div class="menu">
-		<div class="menu_body">
-			<ul>
-				<li><a href="./"><span class="menu_title">Overview</span></a></li>
-				<li><a href="./getting_started.html"><span class="menu_title">Getting Started</span></a></li>
-				<li>
-					<span class="menu_title">Property</span>
-					<div class="menu_submenu">
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+pane.addInput(PARAMS, 'number');
+pane.addInput(PARAMS, 'string');
+
+pane.<strong>on</strong>('change', function(value) {
+  console.log('changed: ' + String(value));
+});
+</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout">
+			<div class="common-paneContainer common-paneContainer-globalEvent"></div>
+		</div>
+	</div>
+</div>
+
+
+<h2 id="imex">Import/Export</h2>
+<p>Tweakpane has a feature for importing/exporting the current state in JSON object. Use <code>exportPreset()</code> to export it.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+// pane.addInput(PARAMS, ...);
+// pane.addInput(PARAMS, ...);
+
+var preset = pane.<strong>exportPreset</strong>();
+console.log(preset);
+</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout common-demo_resultLayout-withJson">
+			<div class="common-paneContainer common-paneContainer-export"></div>
+			<pre class="common-demo_resultJson" data-imex></pre>
+		</div>
+	</div>
+</div>
+
+<p>To import an exported JSON object, pass it to <code>importPreset()</code>.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+// pane.addInput(PARAMS, ...);
+// pane.addInput(PARAMS, ...);
+
+pane.<strong>importPreset</strong>(preset);
+</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout common-demo_resultLayout-withJson">
+			<pre class="common-demo_resultJson" data-imex></pre>
+			<div class="common-paneContainer common-paneContainer-import"></div>
+		</div>
+	</div>
+</div>
+
+<p>If your pane contains parameters with the same name, specify <code>presetKey</code> to avoid the confliction.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+pane.addInput(PARAMS1, 'speed');
+pane.addInput(PARAMS2, 'speed', {
+  <strong>presetKey</strong>: 'speed2',
+});
+</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout common-demo_resultLayout-withJson">
+			<div class="common-paneContainer common-paneContainer-presetKey"></div>
+			<pre class="common-demo_resultJson" data-presetKey></pre>
+		</div>
+	</div>
+</div>
+
+
+<h2 id="tips">Tips</h2>
+
+
+<h3>Root title</h3>
+<p><code>title</code> option of the pane creates a pane title. It can expand/collapse overall components including folders.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane({
+  title: 'Parameters',
+});
+</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout">
+			<div class="common-paneContainer common-paneContainer-rootTitle"></div>
+		</div>
+	</div>
+</div>
+
+
+<h3>Custom container</h3>
+<p>If you want to put a pane into the specific element, pass it as <code>container</code> option of the pane.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane({
+  container: document.getElementById('someContainer'),
+});
+</code></pre></div>
+		</div>
+	</div>
+</div>
+
+
+<h3>Custom label</h3>
+<p>You can set a label of compoents by <code>label</code> option.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+pane.addInput(PARAMS, 'initSpd', {
+  label: 'Initial speed',
+});
+</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout">
+			<div class="common-paneContainer common-paneContainer-label"></div>
+		</div>
+	</div>
+</div>
+
+
+<h3>Refresh manually</h3>
+<p>By default, Tweakpane doesn't detect changes of binded parameters. Use <code>refresh()</code> to force-update all input/monitor components.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">var pane = new Tweakpane();
+// pane.addInput(PARAMS, ...);
+// pane.addInput(PARAMS, ...);
+
+pane.refresh();
+</code></pre></div>
+		</div>
+	</div>
+</div>
+
+			</div>
+			<div class="common-main_globalFooterLayout">
+				<div class="common-globalFooter">
+	<div class="common-globalFooter_innerLayout">
+		<div class="common-globalFooter_titleLayout">
+			<div class="common-globalFooter_logoLayout">
+				<a class="common-logo common-logo-light" href="/">
+					<div class="common-logo_symbol"></div>
+					Tweakpane
+				</a>
+			</div>
+
+			<div class="common-globalFooterMenuItem_submenuLayout">
+				<ul>
+					<li><a href="index.html#getstarted">Getting started</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="common-globalFooter_menuLayout">
+			<ul class="common-globalFooterMenu">
+				<li class="common-globalFooterMenuItem">
+					<a href="input.html">Input</a>
+
+					<div class="common-globalFooterMenuItem_submenuLayout">
 						<ul>
-							<li><a href="number.html"><span class="menu_title">Number</span></a></li>
-							<li><a href="string.html"><span class="menu_title">String</span></a></li>
-							<li><a href="boolean.html"><span class="menu_title">Boolean</span></a></li>
-							<li><a href="color.html"><span class="menu_title">Color</span></a></li>
+							<li><a href="input.html#number">Number</a></li>
+							<li><a href="input.html#string">String</a></li>
+							<li><a href="input.html#boolean">Boolean</a></li>
+							<li><a href="input.html#color">Color</a></li>
 						</ul>
 					</div>
 				</li>
-				<li><a href="monitor.html"><span class="menu_title">Monitor</span></a></li>
-				<li><a href="component.html"><span class="menu_title">UI Components</span></a></li>
-				<li><a href="event.html"><span class="menu_title">Events</span></a></li>
-				<li><a href="io.html"><span class="menu_title">Import/Export</span></a></li>
-				<li><a href="misc.html"><span class="menu_title">Misc</span></a></li>
-				<li><a href="https://github.com/cocopon/tweakpane" target="_blank"><span class="menu_title">GitHub</span></a></li>
+				<li class="common-globalFooterMenuItem">
+					<a href="monitor.html">Monitor</a>
+
+					<div class="common-globalFooterMenuItem_submenuLayout">
+						<ul>
+							<li><a href="monitor.html#multiline">Multiline</a></li>
+							<li><a href="monitor.html#count">Count</a></li>
+							<li><a href="monitor.html#interval">Interval</a></li>
+							<li><a href="monitor.html#graph">Graph</a></li>
+						</ul>
+					</div>
+				</li>
+				<li class="common-globalFooterMenuItem">
+					<a href="misc.html">Misc</a>
+
+					<div class="common-globalFooterMenuItem_submenuLayout">
+						<ul>
+							<li><a href="misc.html#othercomponents">Other components</a></li>
+							<li><a href="misc.html#events">Events</a></li>
+							<li><a href="misc.html#imex">Import / Export</a></li>
+							<li><a href="misc.html#tips">Tips</a></li>
+							<li><a href="https://github.com/cocopon/tweakpane">GitHub<span class="fas fa-external-link-square-alt"></span></a></li>
+						</ul>
+					</div>
+				</li>
 			</ul>
 		</div>
-		<button class="menu_button"><span class="fa fa-bars" aria-hidden="true"></span></button>
+		<div class="common-globalFooter_copyLayout">
+			&copy; 2018 <a href="https://github.com/cocopon">cocopon</a>.
+		</div>
 	</div>
+</div>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
-	<script src="assets/js/tweakpane.min.js"></script>
-	<script src="assets/js/physics_sketch.js"></script>
-	<script src="assets/js/common.js"></script>
-	
-	<script src="assets/js/misc.js"></script>
-	<script>
-		hljs.initHighlightingOnLoad();
-	</script>
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-		ga('create', 'UA-79921421-1', 'auto');
-		ga('send', 'pageview');
-	</script>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.2/pixi.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
+	<script src="assets/tweakpane.js"></script>
+	<script src="assets/bundle.js"></script>
 </body>
 </html>

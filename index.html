@@ -1,142 +1,200 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0">
-	<title>Overview | Tweakpane</title>
-	<link rel="stylesheet" href="assets/css/style.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css">
-	<link rel="stylesheet" href="assets/css/tweakpane.min.css">
+	<title>Tweakpane</title>
+	<meta name="viewport" content="initial-scale=1,minimum-scale=1,maximum-scale=1">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	<link rel="stylesheet" href="assets/bundle.css">
 </head>
 <body>
-	<div class="hero">
-		<canvas id="heroSketch" class="hero_sketch"></canvas>
-		<div class="hero_body">
-			<div class="hero_title">Tweakpane</div>
-			<div class="hero_paneContainer"></div>
+	<div class="common-main">
+		<div class="common-main_mainLayout">
+			<div class="common-main_globalHeaderLayout">
+				<div class="common-globalHeader">
+	<div class="common-globalHeader_innerLayout">
+		<div class="common-globalHeader_logoLayout">
+			<a class="common-logo" href="/">
+				<div class="common-logo_symbol"></div>
+				Tweakpane
+			</a>
+		</div>
+		<div class="common-globalHeader_menuLayout">
+			<ul class="common-globalHeaderMenu">
+				
+
+				
+				
+				
+				
+				<li class="common-globalHeaderMenu_item "><a href="input.html">Input</a></li>
+				
+				
+				
+				
+				
+				<li class="common-globalHeaderMenu_item "><a href="monitor.html">Monitor</a></li>
+				
+				
+				
+				
+				
+				<li class="common-globalHeaderMenu_item "><a href="misc.html">Misc</a></li>
+				
+			</ul>
+		</div>
+		<div class="common-globalHeader_buttonLayout">
+			<a class="common-button" href="https://github.com/cocopon/tweakpane">
+				GitHub<span class="common-button_icon common-button_icon-after fas fa-external-link-square-alt"></span>
+			</a>
 		</div>
 	</div>
+</div>
 
-	<div class="content">
-		<h1>Overview</h1>
-		
-<p>Tweakpane is a JavaScript library that provides a compact user interface for fine-tuning/monitoring values. It's originally inspired by the popular library <a href="http://workshop.chromeexperiments.com/examples/gui/" target="_blank">dat.GUI</a>.</p>
+			</div>
+			<div class="common-main_pageHeaderLayout">
+				
+<div class="common-pageHeader">
+	<div class="common-pageHeader_sketchContainer"></div>
+	<div class="common-pageHeader_innerLayout">
+		<div class="common-pageHeader_titleLayout">
+			<h1 class="common-pageHeader_title">Tweakpane</h1>
+			<p>Compact pane library for fine-tuning parameters and monitoring value changes.</p>
+		</div>
+		<div class="common-pageHeader_paneLayout">
+			<div class="common-paneContainer common-paneContainer-index"></div>
+		</div>
+	</div>
+</div>
 
-
+			</div>
+			<div class="common-main_innerLayout">
+				
 <h2>Features</h2>
 <ul>
-	<li>Easy to use</li>
+	<li>Easy to use, user-friendly document</li>
 	<li>Clean and simple interface</li>
-	<li>Mobile-friendly</li>
-	<li>Well-documented</li>
+	<li>Mobile support</li>
 </ul>
 
 
-<h2>Demo</h2>
-<div class="sketchBlock">
-	<div class="sketchBlock_sketchLayout">
-		<canvas id="sushiSketch" class="sketchBlock_sketch"></canvas>
-		<div class="sketchBlock_ad"><a href="http://sushipi.co" target="_blank">Sushipico — tiny cubic sushi &copy; 2015 cocopon</a></div>
-	</div>
-	<div id="tp" class="sketchBlock_paneLayout"></div>
-</div>
-<div class="codeBlock">
-	<div class="codeBlock_section">
-		<pre><code class="html">&lt;!-- In the head tag --&gt;
-&lt;link rel=&quot;stylesheet&quot; href=&quot;tweakpane-0.1.3.min.css&quot;&gt;
+<h2 id="getstarted">Getting started</h2>
 
-...
 
-&lt;!-- In the body tag --&gt;
-&lt;script src=&quot;tweakpane-0.1.3.min.js&quot;&gt;&lt;/script&gt;
-&lt;script&gt;
-var sketch = new Sketch();
+<h3>1. Add Tweakpane to your project</h3>
+<p>First, <a href="https://github.com/cocopon/tweakpane/releases">download the latest Tweakpane</a> and import it to your web page.</p>
 
-var pane = new Tweakpane();
-
-var f1 = pane.addFolder('Appearance');
-f1.addSelector(sketch, 'neta', {
-  values: ['hotate', 'maguro', 'salmon']
-});
-
-var f2 = pane.addFolder('Physics');
-f2.addSlider(sketch, 'gravity', {min: 0.1, max: 1.0});
-f2.addSlider(sketch, 'airResistance', {min: 0.01, max: 0.1});
-f2.addSlider(sketch, 'restitution', {min: 0.0, max: 0.9});
-f2.addSeparator();
-f2.addGraph(sketch.getNeta(), 'z', {
-  label: 'netaAlt',
-  count: 140,
-  min: 0,
-  max: 100
-});
-f2.addSeparator();
-f2.addButton('Pop!').on('click', function() {
-  sketch.pop();
-});
-&lt;/script&gt;
-
-...</code></pre>
+<div class="common-main_mediaLayout">
+	<div class="common-codeBlock">
+		<pre><code class="html">&lt;script src=&quot;path/to/tweakpane-1.0.0.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+		<div class="common-codeBlock_title">
+			.html
+		</div>
 	</div>
 </div>
 
-<div class="banners">
-	<a class="github-button" href="https://github.com/cocopon" aria-label="Follow @cocopon on GitHub">Follow @cocopon</a>
-	<a class="github-button" href="https://github.com/cocopon/tweakpane" data-icon="octicon-star" data-count-href="/cocopon/tweakpane/stargazers" data-count-api="/repos/cocopon/tweakpane#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star cocopon/tweakpane on GitHub">Star</a>
+<div class="common-main_mediaLayout">
+	<div class="common-support">
+		<p><strong>TODO: CDN</strong></p>
+		<p>Using CDN is the easiest way to add the library. I'd like to register Tweakpane on them to make installation easier, but they require more popularity to do so.</p>
+		<p>For example, the most popular CDN <a href="https://cdnjs.com/" target="_blank">cdnjs.com</a> says <a href="https://github.com/cdnjs/cdnjs/blob/master/CONTRIBUTING.md#b-request-a-new-library" target="_blank">at least 200 stars</a> are needed to go.</p>
+		<p>Please help Tweakpane to star the repository, if you use Tweakpane and like it. Thanks!</p>
+
+		<div class="common-support_buttonLayout">
+			<a class="common-support_button github-button" href="https://github.com/cocopon/tweakpane" data-icon="octicon-star" data-show-count="true" data-size="large" aria-label="Star cocopon/tweakpane on GitHub">Star</a>
+		</div>
+	</div>
 </div>
 
-	</div>
 
-	<div class="menu">
-		<div class="menu_body">
-			<ul>
-				<li><a href="./"><span class="menu_title">Overview</span></a></li>
-				<li><a href="./getting_started.html"><span class="menu_title">Getting Started</span></a></li>
-				<li>
-					<span class="menu_title">Property</span>
-					<div class="menu_submenu">
+<h3>2. Create a pane</h3>
+<p>Create an instance of Tweakpane by <code>new Tweakpane()</code>.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-codeBlock">
+		<pre><code class="html">var pane = new Tweakpane();</code></pre>
+		<div class="common-codeBlock_title">
+			.js
+		</div>
+	</div>
+</div>
+
+
+<h3>3. Ready to go!</h3>
+<p>You can add various components to pane. <a href="input.html">Inputs</a> for fine-tuning parameters, <a href="monitor.html">Monitors</a> to checking values, and <a href="misc.html#othercomponents">more</a>!</p>
+
+			</div>
+			<div class="common-main_globalFooterLayout">
+				<div class="common-globalFooter">
+	<div class="common-globalFooter_innerLayout">
+		<div class="common-globalFooter_titleLayout">
+			<div class="common-globalFooter_logoLayout">
+				<a class="common-logo common-logo-light" href="/">
+					<div class="common-logo_symbol"></div>
+					Tweakpane
+				</a>
+			</div>
+
+			<div class="common-globalFooterMenuItem_submenuLayout">
+				<ul>
+					<li><a href="index.html#getstarted">Getting started</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="common-globalFooter_menuLayout">
+			<ul class="common-globalFooterMenu">
+				<li class="common-globalFooterMenuItem">
+					<a href="input.html">Input</a>
+
+					<div class="common-globalFooterMenuItem_submenuLayout">
 						<ul>
-							<li><a href="number.html"><span class="menu_title">Number</span></a></li>
-							<li><a href="string.html"><span class="menu_title">String</span></a></li>
-							<li><a href="boolean.html"><span class="menu_title">Boolean</span></a></li>
-							<li><a href="color.html"><span class="menu_title">Color</span></a></li>
+							<li><a href="input.html#number">Number</a></li>
+							<li><a href="input.html#string">String</a></li>
+							<li><a href="input.html#boolean">Boolean</a></li>
+							<li><a href="input.html#color">Color</a></li>
 						</ul>
 					</div>
 				</li>
-				<li><a href="monitor.html"><span class="menu_title">Monitor</span></a></li>
-				<li><a href="component.html"><span class="menu_title">UI Components</span></a></li>
-				<li><a href="event.html"><span class="menu_title">Events</span></a></li>
-				<li><a href="io.html"><span class="menu_title">Import/Export</span></a></li>
-				<li><a href="misc.html"><span class="menu_title">Misc</span></a></li>
-				<li><a href="https://github.com/cocopon/tweakpane" target="_blank"><span class="menu_title">GitHub</span></a></li>
+				<li class="common-globalFooterMenuItem">
+					<a href="monitor.html">Monitor</a>
+
+					<div class="common-globalFooterMenuItem_submenuLayout">
+						<ul>
+							<li><a href="monitor.html#multiline">Multiline</a></li>
+							<li><a href="monitor.html#count">Count</a></li>
+							<li><a href="monitor.html#interval">Interval</a></li>
+							<li><a href="monitor.html#graph">Graph</a></li>
+						</ul>
+					</div>
+				</li>
+				<li class="common-globalFooterMenuItem">
+					<a href="misc.html">Misc</a>
+
+					<div class="common-globalFooterMenuItem_submenuLayout">
+						<ul>
+							<li><a href="misc.html#othercomponents">Other components</a></li>
+							<li><a href="misc.html#events">Events</a></li>
+							<li><a href="misc.html#imex">Import / Export</a></li>
+							<li><a href="misc.html#tips">Tips</a></li>
+							<li><a href="https://github.com/cocopon/tweakpane">GitHub<span class="fas fa-external-link-square-alt"></span></a></li>
+						</ul>
+					</div>
+				</li>
 			</ul>
 		</div>
-		<button class="menu_button"><span class="fa fa-bars" aria-hidden="true"></span></button>
+		<div class="common-globalFooter_copyLayout">
+			&copy; 2018 <a href="https://github.com/cocopon">cocopon</a>.
+		</div>
 	</div>
+</div>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.11/pixi.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
-	<script src="assets/js/tweakpane.min.js"></script>
-	<script src="assets/js/physics_sketch.js"></script>
-	<script src="assets/js/common.js"></script>
-	
-<script src="assets/js/sushi_sketch.js"></script>
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-
-	<script src="assets/js/index.js"></script>
-	<script>
-		hljs.initHighlightingOnLoad();
-	</script>
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-		ga('create', 'UA-79921421-1', 'auto');
-		ga('send', 'pageview');
-	</script>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.2/pixi.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
+	<script src="assets/tweakpane.js"></script>
+	<script src="assets/bundle.js"></script>
 </body>
 </html>
