@@ -141,7 +141,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  pathname: '/',
+  pathname: /^(\/tweakpane)?\/$/,
   init: function init() {
     var ENV = {
       color: '#e4e4e7',
@@ -314,7 +314,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util */ "./src/doc/js/util.js");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  pathname: '/input.html',
+  pathname: /^(\/tweakpane)?\/input.html$/,
   init: function init() {
     var markerToFnMap = {
       input: function input(container) {
@@ -510,7 +510,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util */ "./src/doc/js/util.js");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  pathname: '/misc.html',
+  pathname: /^(\/tweakpane)?\/misc.html$/,
   init: function init() {
     var IMEX_PARAMS = {
       color: '#ff8000',
@@ -780,7 +780,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util */ "./src/doc/js/util.js");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  pathname: '/monitor.html',
+  pathname: /^(\/tweakpane)?\/monitor.html$/,
   init: function init() {
     var SHARED_PARAMS = {
       time: '',
@@ -905,7 +905,7 @@ function () {
     key: "route",
     value: function route(pathname) {
       this.routes_.forEach(function (route) {
-        if (route.pathname === pathname) {
+        if (route.pathname.test(pathname)) {
           route.init();
         }
       });
