@@ -289,6 +289,26 @@ __webpack_require__.r(__webpack_exports__);
             sketch.resize();
           }, 200);
         });
+      },
+      first: function first(container) {
+        var PARAMS = {
+          speed: 0.5
+        };
+        var pane = new Tweakpane({
+          container: container
+        });
+
+        var updatePreset = function updatePreset() {
+          var elem = document.querySelector('*[data-first]');
+
+          if (elem) {
+            var preset = pane.exportPreset();
+            elem.textContent = 'PARAMS = ' + JSON.stringify(preset, null, 2) + ';';
+          }
+        };
+
+        pane.addInput(PARAMS, 'speed').on('change', updatePreset);
+        updatePreset();
       }
     };
     Object.keys(markerToFnMap).forEach(function (marker) {

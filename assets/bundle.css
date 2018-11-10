@@ -82,15 +82,20 @@ pre {
         padding: 16px; } }
     .common-demo_resultLayout.common-demo_resultLayout-withJson > * + * {
       margin-top: 16px; }
-  .common-demo_resultJson {
+  .common-demo_resultJsonLayout {
     box-sizing: border-box;
+    padding-left: 8px;
+    padding-right: 8px; }
+    @media screen and (min-width: 961px) {
+      .common-demo_resultJsonLayout {
+        display: inline-block;
+        min-width: 256px;
+        vertical-align: middle; } }
+  .common-demo_resultJson {
     display: inline-block;
     font-size: 0.8rem;
-    min-width: 256px;
     opacity: 0.7;
     overflow: hidden;
-    padding-left: 8px;
-    padding-right: 8px;
     text-align: left; }
 
 .common-globalFooter {
@@ -344,7 +349,8 @@ pre {
   display: inline-block;
   flex-grow: 0;
   flex-shrink: 0;
-  min-width: 256px; }
+  min-width: 256px;
+  vertical-align: middle; }
 
 .common-codeBlock {
   background-color: #e4e4e7;
