@@ -2389,6 +2389,8 @@ function () {
   }, {
     key: "onSliderMouseDown_",
     value: function onSliderMouseDown_(e) {
+      // Prevent native text selection
+      e.preventDefault();
       this.pressed_ = true;
       this.value_.rawValue = this.computeRawValueFromX_(e.offsetX);
       this.view_.update();
@@ -2421,7 +2423,7 @@ function () {
   }, {
     key: "onSliderTouchStart_",
     value: function onSliderTouchStart_(e) {
-      // Prevent default event to prevent native scroll
+      // Prevent native page scroll
       e.preventDefault();
       var touch = e.targetTouches[0];
       var offsetX = touch.clientX - this.view.outerElement.getBoundingClientRect().left;
