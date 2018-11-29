@@ -3522,6 +3522,7 @@ var PaneError = function PaneError(config) {
   this.message = createMessage(config);
   this.name = this.constructor.name;
   this.stack = new Error(this.message).stack;
+  this.type = config.type;
 };
 
 
@@ -3771,16 +3772,11 @@ function () {
   function GraphCursor() {
     _classCallCheck(this, GraphCursor);
 
-    this.emitter_ = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.emitter = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
     this.index_ = -1;
   }
 
   _createClass(GraphCursor, [{
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
-    }
-  }, {
     key: "index",
     get: function get() {
       return this.index_;
@@ -3790,7 +3786,7 @@ function () {
 
       if (changed) {
         this.index_ = index;
-        this.emitter_.emit('change', [index]);
+        this.emitter.emit('change', [index]);
       }
     }
   }]);
