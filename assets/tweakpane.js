@@ -208,19 +208,14 @@ function () {
   function ButtonApi(buttonController) {
     _classCallCheck(this, ButtonApi);
 
-    this.controller_ = buttonController;
+    this.controller = buttonController;
   }
 
   _createClass(ButtonApi, [{
     key: "on",
     value: function on(eventName, handler) {
-      var emitter = this.controller_.button.emitter;
+      var emitter = this.controller.button.emitter;
       emitter.on(eventName, handler);
-    }
-  }, {
-    key: "controller",
-    get: function get() {
-      return this.controller_;
     }
   }]);
 
@@ -277,37 +272,37 @@ function () {
   function FolderApi(folderController) {
     _classCallCheck(this, FolderApi);
 
-    this.controller_ = folderController;
+    this.controller = folderController;
   }
 
   _createClass(FolderApi, [{
     key: "addInput",
     value: function addInput(object, key, opt_params) {
       var params = opt_params || {};
-      var uc = _controller_binding_creators_input__WEBPACK_IMPORTED_MODULE_0__["create"](this.controller_.document, new _model_target__WEBPACK_IMPORTED_MODULE_5__["default"](object, key, params.presetKey), params);
-      this.controller_.uiControllerList.append(uc);
+      var uc = _controller_binding_creators_input__WEBPACK_IMPORTED_MODULE_0__["create"](this.controller.document, new _model_target__WEBPACK_IMPORTED_MODULE_5__["default"](object, key, params.presetKey), params);
+      this.controller.uiControllerList.append(uc);
       return new _input_binding__WEBPACK_IMPORTED_MODULE_7__["default"](uc);
     }
   }, {
     key: "addMonitor",
     value: function addMonitor(object, key, opt_params) {
       var params = opt_params || {};
-      var uc = _controller_binding_creators_monitor__WEBPACK_IMPORTED_MODULE_1__["create"](this.controller_.document, new _model_target__WEBPACK_IMPORTED_MODULE_5__["default"](object, key), params);
-      this.controller_.uiControllerList.append(uc);
+      var uc = _controller_binding_creators_monitor__WEBPACK_IMPORTED_MODULE_1__["create"](this.controller.document, new _model_target__WEBPACK_IMPORTED_MODULE_5__["default"](object, key), params);
+      this.controller.uiControllerList.append(uc);
       return new _monitor_binding__WEBPACK_IMPORTED_MODULE_8__["default"](uc);
     }
   }, {
     key: "addButton",
     value: function addButton(params) {
-      var uc = new _controller_button__WEBPACK_IMPORTED_MODULE_2__["default"](this.controller_.document, params);
-      this.controller_.uiControllerList.append(uc);
+      var uc = new _controller_button__WEBPACK_IMPORTED_MODULE_2__["default"](this.controller.document, params);
+      this.controller.uiControllerList.append(uc);
       return new _button__WEBPACK_IMPORTED_MODULE_6__["default"](uc);
     }
   }, {
     key: "addSeparator",
     value: function addSeparator() {
-      var uc = new _controller_separator__WEBPACK_IMPORTED_MODULE_4__["default"](this.controller_.document);
-      this.controller_.uiControllerList.append(uc);
+      var uc = new _controller_separator__WEBPACK_IMPORTED_MODULE_4__["default"](this.controller.document);
+      this.controller.uiControllerList.append(uc);
     }
   }, {
     key: "on",
@@ -315,24 +310,19 @@ function () {
       var internalEventName = TO_INTERNAL_EVENT_NAME_MAP[eventName];
 
       if (internalEventName) {
-        var emitter = this.controller_.emitter;
+        var emitter = this.controller.emitter;
         emitter.on(internalEventName, handler);
       }
 
       return this;
     }
   }, {
-    key: "controller",
-    get: function get() {
-      return this.controller_;
-    }
-  }, {
     key: "expanded",
     get: function get() {
-      return this.controller_.folder.expanded;
+      return this.controller.folder.expanded;
     },
     set: function set(expanded) {
-      this.controller_.folder.expanded = expanded;
+      this.controller.folder.expanded = expanded;
     }
   }]);
 
@@ -368,25 +358,20 @@ function () {
   function InputBindingApi(bindingController) {
     _classCallCheck(this, InputBindingApi);
 
-    this.controller_ = bindingController;
+    this.controller = bindingController;
   }
 
   _createClass(InputBindingApi, [{
     key: "on",
     value: function on(eventName, handler) {
-      var emitter = this.controller_.binding.value.emitter;
+      var emitter = this.controller.binding.value.emitter;
       emitter.on(eventName, handler);
       return this;
     }
   }, {
     key: "refresh",
     value: function refresh() {
-      this.controller_.binding.read();
-    }
-  }, {
-    key: "controller",
-    get: function get() {
-      return this.controller_;
+      this.controller.binding.read();
     }
   }]);
 
@@ -422,25 +407,20 @@ function () {
   function MonitorBindingApi(bindingController) {
     _classCallCheck(this, MonitorBindingApi);
 
-    this.controller_ = bindingController;
+    this.controller = bindingController;
   }
 
   _createClass(MonitorBindingApi, [{
     key: "on",
     value: function on(eventName, handler) {
-      var emitter = this.controller_.binding.value.emitter;
+      var emitter = this.controller.binding.value.emitter;
       emitter.on(eventName, handler);
       return this;
     }
   }, {
     key: "refresh",
     value: function refresh() {
-      this.controller_.binding.read();
-    }
-  }, {
-    key: "controller",
-    get: function get() {
-      return this.controller_;
+      this.controller.binding.read();
     }
   }]);
 
@@ -541,49 +521,49 @@ function () {
   function RootApi(rootController) {
     _classCallCheck(this, RootApi);
 
-    this.controller_ = rootController;
+    this.controller = rootController;
   }
 
   _createClass(RootApi, [{
     key: "addInput",
     value: function addInput(object, key, opt_params) {
       var params = opt_params || {};
-      var uc = _controller_binding_creators_input__WEBPACK_IMPORTED_MODULE_0__["create"](this.controller_.document, new _model_target__WEBPACK_IMPORTED_MODULE_9__["default"](object, key, params.presetKey), params);
-      this.controller_.uiControllerList.append(uc);
+      var uc = _controller_binding_creators_input__WEBPACK_IMPORTED_MODULE_0__["create"](this.controller.document, new _model_target__WEBPACK_IMPORTED_MODULE_9__["default"](object, key, params.presetKey), params);
+      this.controller.uiControllerList.append(uc);
       return new _input_binding__WEBPACK_IMPORTED_MODULE_12__["default"](uc);
     }
   }, {
     key: "addMonitor",
     value: function addMonitor(object, key, opt_params) {
       var params = opt_params || {};
-      var uc = _controller_binding_creators_monitor__WEBPACK_IMPORTED_MODULE_1__["create"](this.controller_.document, new _model_target__WEBPACK_IMPORTED_MODULE_9__["default"](object, key), params);
-      this.controller_.uiControllerList.append(uc);
+      var uc = _controller_binding_creators_monitor__WEBPACK_IMPORTED_MODULE_1__["create"](this.controller.document, new _model_target__WEBPACK_IMPORTED_MODULE_9__["default"](object, key), params);
+      this.controller.uiControllerList.append(uc);
       return new _monitor_binding__WEBPACK_IMPORTED_MODULE_13__["default"](uc);
     }
   }, {
     key: "addButton",
     value: function addButton(params) {
-      var uc = new _controller_button__WEBPACK_IMPORTED_MODULE_2__["default"](this.controller_.document, params);
-      this.controller_.uiControllerList.append(uc);
+      var uc = new _controller_button__WEBPACK_IMPORTED_MODULE_2__["default"](this.controller.document, params);
+      this.controller.uiControllerList.append(uc);
       return new _button__WEBPACK_IMPORTED_MODULE_10__["default"](uc);
     }
   }, {
     key: "addFolder",
     value: function addFolder(params) {
-      var uc = new _controller_folder__WEBPACK_IMPORTED_MODULE_3__["default"](this.controller_.document, params);
-      this.controller_.uiControllerList.append(uc);
+      var uc = new _controller_folder__WEBPACK_IMPORTED_MODULE_3__["default"](this.controller.document, params);
+      this.controller.uiControllerList.append(uc);
       return new _folder__WEBPACK_IMPORTED_MODULE_11__["default"](uc);
     }
   }, {
     key: "addSeparator",
     value: function addSeparator() {
-      var uc = new _controller_separator__WEBPACK_IMPORTED_MODULE_7__["default"](this.controller_.document);
-      this.controller_.uiControllerList.append(uc);
+      var uc = new _controller_separator__WEBPACK_IMPORTED_MODULE_7__["default"](this.controller.document);
+      this.controller.uiControllerList.append(uc);
     }
   }, {
     key: "importPreset",
     value: function importPreset(preset) {
-      var targets = _controller_ui_util__WEBPACK_IMPORTED_MODULE_8__["findControllers"](this.controller_.uiControllerList.items, _controller_input_binding__WEBPACK_IMPORTED_MODULE_4__["default"]).map(function (ibc) {
+      var targets = _controller_ui_util__WEBPACK_IMPORTED_MODULE_8__["findControllers"](this.controller.uiControllerList.items, _controller_input_binding__WEBPACK_IMPORTED_MODULE_4__["default"]).map(function (ibc) {
         return ibc.binding.target;
       });
       _preset__WEBPACK_IMPORTED_MODULE_14__["importJson"](targets, preset);
@@ -592,7 +572,7 @@ function () {
   }, {
     key: "exportPreset",
     value: function exportPreset() {
-      var targets = _controller_ui_util__WEBPACK_IMPORTED_MODULE_8__["findControllers"](this.controller_.uiControllerList.items, _controller_input_binding__WEBPACK_IMPORTED_MODULE_4__["default"]).map(function (ibc) {
+      var targets = _controller_ui_util__WEBPACK_IMPORTED_MODULE_8__["findControllers"](this.controller.uiControllerList.items, _controller_input_binding__WEBPACK_IMPORTED_MODULE_4__["default"]).map(function (ibc) {
         return ibc.binding.target;
       });
       return _preset__WEBPACK_IMPORTED_MODULE_14__["exportJson"](targets);
@@ -603,7 +583,7 @@ function () {
       var internalEventName = TO_INTERNAL_EVENT_NAME_MAP[eventName];
 
       if (internalEventName) {
-        var emitter = this.controller_.emitter;
+        var emitter = this.controller.emitter;
         emitter.on(internalEventName, handler);
       }
 
@@ -613,32 +593,27 @@ function () {
     key: "refresh",
     value: function refresh() {
       // Force-read all input bindings
-      _controller_ui_util__WEBPACK_IMPORTED_MODULE_8__["findControllers"](this.controller_.uiControllerList.items, _controller_input_binding__WEBPACK_IMPORTED_MODULE_4__["default"]).forEach(function (ibc) {
+      _controller_ui_util__WEBPACK_IMPORTED_MODULE_8__["findControllers"](this.controller.uiControllerList.items, _controller_input_binding__WEBPACK_IMPORTED_MODULE_4__["default"]).forEach(function (ibc) {
         ibc.binding.read();
       }); // Force-read all monitor bindings
 
-      _controller_ui_util__WEBPACK_IMPORTED_MODULE_8__["findControllers"](this.controller_.uiControllerList.items, _controller_monitor_binding__WEBPACK_IMPORTED_MODULE_5__["default"]).forEach(function (mbc) {
+      _controller_ui_util__WEBPACK_IMPORTED_MODULE_8__["findControllers"](this.controller.uiControllerList.items, _controller_monitor_binding__WEBPACK_IMPORTED_MODULE_5__["default"]).forEach(function (mbc) {
         mbc.binding.read();
       });
     }
   }, {
-    key: "controller",
-    get: function get() {
-      return this.controller_;
-    }
-  }, {
     key: "element",
     get: function get() {
-      return this.controller_.view.element;
+      return this.controller.view.element;
     }
   }, {
     key: "expanded",
     get: function get() {
-      var folder = this.controller_.folder;
+      var folder = this.controller.folder;
       return folder ? folder.expanded : true;
     },
     set: function set(expanded) {
-      var folder = this.controller_.folder;
+      var folder = this.controller.folder;
 
       if (folder) {
         folder.expanded = expanded;
@@ -1667,27 +1642,17 @@ function () {
     _classCallCheck(this, ButtonController);
 
     this.onButtonClick_ = this.onButtonClick_.bind(this);
-    this.button_ = new _model_button__WEBPACK_IMPORTED_MODULE_0__["default"](config.title);
-    this.view_ = new _view_button__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
-      button: this.button_
+    this.button = new _model_button__WEBPACK_IMPORTED_MODULE_0__["default"](config.title);
+    this.view = new _view_button__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
+      button: this.button
     });
-    this.view_.buttonElement.addEventListener('click', this.onButtonClick_);
+    this.view.buttonElement.addEventListener('click', this.onButtonClick_);
   }
 
   _createClass(ButtonController, [{
     key: "onButtonClick_",
     value: function onButtonClick_() {
-      this.button_.click();
-    }
-  }, {
-    key: "button",
-    get: function get() {
-      return this.button_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
+      this.button.click();
     }
   }]);
 
@@ -1742,16 +1707,16 @@ function () {
     this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
     this.onTitleClick_ = this.onTitleClick_.bind(this);
     this.onUiControllerListAppend_ = this.onUiControllerListAppend_.bind(this);
-    this.emitter_ = new _misc_emitter__WEBPACK_IMPORTED_MODULE_1__["default"]();
-    this.folder_ = new _model_folder__WEBPACK_IMPORTED_MODULE_3__["default"](config.title, _misc_flow_util__WEBPACK_IMPORTED_MODULE_2__["default"].getOrDefault(config.expanded, true));
-    this.folder_.emitter.on('change', this.onFolderChange_);
+    this.emitter = new _misc_emitter__WEBPACK_IMPORTED_MODULE_1__["default"]();
+    this.folder = new _model_folder__WEBPACK_IMPORTED_MODULE_3__["default"](config.title, _misc_flow_util__WEBPACK_IMPORTED_MODULE_2__["default"].getOrDefault(config.expanded, true));
+    this.folder.emitter.on('change', this.onFolderChange_);
     this.ucList_ = new _model_list__WEBPACK_IMPORTED_MODULE_4__["default"]();
     this.ucList_.emitter.on('append', this.onUiControllerListAppend_);
     this.doc_ = document;
-    this.view_ = new _view_folder__WEBPACK_IMPORTED_MODULE_5__["default"](this.doc_, {
-      folder: this.folder_
+    this.view = new _view_folder__WEBPACK_IMPORTED_MODULE_5__["default"](this.doc_, {
+      folder: this.folder
     });
-    this.view_.titleElement.addEventListener('click', this.onTitleClick_);
+    this.view.titleElement.addEventListener('click', this.onTitleClick_);
   }
 
   _createClass(FolderController, [{
@@ -1759,18 +1724,18 @@ function () {
     value: function computeExpandedHeight_() {
       var _this = this;
 
-      var elem = this.view_.containerElement;
+      var elem = this.view.containerElement;
       var height = 0;
       _misc_dom_util__WEBPACK_IMPORTED_MODULE_0__["disableTransitionTemporarily"](elem, function () {
         // Expand folder
-        var expanded = _this.folder_.expanded;
-        _this.folder_.expandedHeight = null;
-        _this.folder_.expanded = true;
+        var expanded = _this.folder.expanded;
+        _this.folder.expandedHeight = null;
+        _this.folder.expanded = true;
         _misc_dom_util__WEBPACK_IMPORTED_MODULE_0__["forceReflow"](elem); // Compute height
 
         height = elem.getBoundingClientRect().height; // Restore expanded
 
-        _this.folder_.expanded = expanded;
+        _this.folder.expanded = expanded;
         _misc_dom_util__WEBPACK_IMPORTED_MODULE_0__["forceReflow"](elem);
       });
       return height;
@@ -1778,7 +1743,7 @@ function () {
   }, {
     key: "onTitleClick_",
     value: function onTitleClick_() {
-      this.folder_.expanded = !this.folder_.expanded;
+      this.folder.expanded = !this.folder.expanded;
     }
   }, {
     key: "onUiControllerListAppend_",
@@ -1792,43 +1757,28 @@ function () {
         _emitter.on('update', this.onMonitorUpdate_);
       }
 
-      this.view_.containerElement.appendChild(uc.view.element);
-      this.folder_.expandedHeight = this.computeExpandedHeight_();
+      this.view.containerElement.appendChild(uc.view.element);
+      this.folder.expandedHeight = this.computeExpandedHeight_();
     }
   }, {
     key: "onInputChange_",
     value: function onInputChange_(value) {
-      this.emitter_.emit('inputchange', [value]);
+      this.emitter.emit('inputchange', [value]);
     }
   }, {
     key: "onMonitorUpdate_",
     value: function onMonitorUpdate_(value) {
-      this.emitter_.emit('monitorupdate', [value]);
+      this.emitter.emit('monitorupdate', [value]);
     }
   }, {
     key: "onFolderChange_",
     value: function onFolderChange_() {
-      this.emitter_.emit('fold');
+      this.emitter.emit('fold');
     }
   }, {
     key: "document",
     get: function get() {
       return this.doc_;
-    }
-  }, {
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
-    }
-  }, {
-    key: "folder",
-    get: function get() {
-      return this.folder_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
     }
   }, {
     key: "uiControllerList",
@@ -1858,46 +1808,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_labeled__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../view/labeled */ "./src/main/js/view/labeled.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
 
+var InputBindingController = function InputBindingController(document, config) {
+  _classCallCheck(this, InputBindingController);
 
-var InputBindingController =
-/*#__PURE__*/
-function () {
-  function InputBindingController(document, config) {
-    _classCallCheck(this, InputBindingController);
-
-    this.binding_ = config.binding;
-    this.controller_ = config.controller;
-    this.labeledView_ = new _view_labeled__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
-      label: config.label,
-      view: this.controller_.view
-    });
-  }
-
-  _createClass(InputBindingController, [{
-    key: "binding",
-    get: function get() {
-      return this.binding_;
-    }
-  }, {
-    key: "controller",
-    get: function get() {
-      return this.controller_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.labeledView_;
-    }
-  }]);
-
-  return InputBindingController;
-}();
+  this.binding = config.binding;
+  this.controller = config.controller;
+  this.view = new _view_labeled__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
+    label: config.label,
+    view: this.controller.view
+  });
+};
 
 
 
@@ -2541,46 +2464,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_labeled__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../view/labeled */ "./src/main/js/view/labeled.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
 
+var MonitorBindingController = function MonitorBindingController(document, config) {
+  _classCallCheck(this, MonitorBindingController);
 
-var MonitorBindingController =
-/*#__PURE__*/
-function () {
-  function MonitorBindingController(document, config) {
-    _classCallCheck(this, MonitorBindingController);
-
-    this.binding_ = config.binding;
-    this.controller_ = config.controller;
-    this.labeledView_ = new _view_labeled__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
-      label: config.label,
-      view: this.controller_.view
-    });
-  }
-
-  _createClass(MonitorBindingController, [{
-    key: "binding",
-    get: function get() {
-      return this.binding_;
-    }
-  }, {
-    key: "controller",
-    get: function get() {
-      return this.controller_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.labeledView_;
-    }
-  }]);
-
-  return MonitorBindingController;
-}();
+  this.binding = config.binding;
+  this.controller = config.controller;
+  this.view = new _view_labeled__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
+    label: config.label,
+    view: this.controller.view
+  });
+};
 
 
 
@@ -2874,21 +2770,21 @@ function () {
     this.onUiControllerListAppend_ = this.onUiControllerListAppend_.bind(this);
     this.onInputChange_ = this.onInputChange_.bind(this);
     this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
-    this.emitter_ = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
-    this.folder_ = createFolder(config);
+    this.emitter = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.folder = createFolder(config);
     this.ucList_ = new _model_list__WEBPACK_IMPORTED_MODULE_3__["default"]();
     this.ucList_.emitter.on('append', this.onUiControllerListAppend_);
     this.doc_ = document;
-    this.view_ = new _view_root__WEBPACK_IMPORTED_MODULE_4__["default"](this.doc_, {
-      folder: this.folder_
+    this.view = new _view_root__WEBPACK_IMPORTED_MODULE_4__["default"](this.doc_, {
+      folder: this.folder
     });
 
-    if (this.view_.titleElement) {
-      this.view_.titleElement.addEventListener('click', this.onTitleClick_);
+    if (this.view.titleElement) {
+      this.view.titleElement.addEventListener('click', this.onTitleClick_);
     }
 
-    if (this.folder_) {
-      this.folder_.emitter.on('change', this.onRootFolderChange_);
+    if (this.folder) {
+      this.folder.emitter.on('change', this.onRootFolderChange_);
     }
   }
 
@@ -2912,34 +2808,34 @@ function () {
         _emitter2.on('monitorupdate', this.onMonitorUpdate_);
       }
 
-      this.view_.containerElement.appendChild(uc.view.element);
+      this.view.containerElement.appendChild(uc.view.element);
     }
   }, {
     key: "onTitleClick_",
     value: function onTitleClick_() {
-      if (this.folder_) {
-        this.folder_.expanded = !this.folder_.expanded;
+      if (this.folder) {
+        this.folder.expanded = !this.folder.expanded;
       }
     }
   }, {
     key: "onInputChange_",
     value: function onInputChange_(value) {
-      this.emitter_.emit('inputchange', [value]);
+      this.emitter.emit('inputchange', [value]);
     }
   }, {
     key: "onMonitorUpdate_",
     value: function onMonitorUpdate_(value) {
-      this.emitter_.emit('monitorupdate', [value]);
+      this.emitter.emit('monitorupdate', [value]);
     }
   }, {
     key: "onFolderChange_",
     value: function onFolderChange_() {
-      this.emitter_.emit('fold');
+      this.emitter.emit('fold');
     }
   }, {
     key: "onRootFolderChange_",
     value: function onRootFolderChange_() {
-      this.emitter_.emit('fold');
+      this.emitter.emit('fold');
     }
   }, {
     key: "document",
@@ -2947,24 +2843,9 @@ function () {
       return this.doc_;
     }
   }, {
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
-    }
-  }, {
     key: "uiControllerList",
     get: function get() {
       return this.ucList_;
-    }
-  }, {
-    key: "folder",
-    get: function get() {
-      return this.folder_;
     }
   }]);
 
@@ -2988,30 +2869,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_separator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../view/separator */ "./src/main/js/view/separator.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
+var SeparatorController = function SeparatorController(document) {
+  _classCallCheck(this, SeparatorController);
 
-var SeparatorController =
-/*#__PURE__*/
-function () {
-  function SeparatorController(document) {
-    _classCallCheck(this, SeparatorController);
-
-    this.view_ = new _view_separator__WEBPACK_IMPORTED_MODULE_0__["default"](document);
-  }
-
-  _createClass(SeparatorController, [{
-    key: "view",
-    get: function get() {
-      return this.view_;
-    }
-  }]);
-
-  return SeparatorController;
-}();
+  this.view = new _view_separator__WEBPACK_IMPORTED_MODULE_0__["default"](document);
+};
 
 
 
@@ -3562,7 +3426,7 @@ function () {
     this.onWindowBlur_ = this.onWindowBlur_.bind(this);
     this.onWindowFocus_ = this.onWindowFocus_.bind(this);
     this.active_ = true;
-    this.emitter_ = new _emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.emitter = new _emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
 
     if (interval > 0) {
       this.id_ = setInterval(function () {
@@ -3592,7 +3456,7 @@ function () {
   }, {
     key: "onTick_",
     value: function onTick_() {
-      this.emitter_.emit('tick');
+      this.emitter.emit('tick');
     }
   }, {
     key: "onWindowBlur_",
@@ -3603,11 +3467,6 @@ function () {
     key: "onWindowFocus_",
     value: function onWindowFocus_() {
       this.active_ = true;
-    }
-  }, {
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
     }
   }]);
 
@@ -3643,24 +3502,14 @@ function () {
   function Button(title) {
     _classCallCheck(this, Button);
 
-    this.emitter_ = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
-    this.title_ = title;
+    this.emitter = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.title = title;
   }
 
   _createClass(Button, [{
     key: "click",
     value: function click() {
-      this.emitter_.emit('click');
-    }
-  }, {
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
-    }
-  }, {
-    key: "title",
-    get: function get() {
-      return this.title_;
+      this.emitter.emit('click');
     }
   }]);
 
@@ -3696,23 +3545,13 @@ function () {
   function Folder(title, expanded) {
     _classCallCheck(this, Folder);
 
-    this.emitter_ = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.emitter = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
     this.expanded_ = expanded;
     this.expandedHeight_ = null;
-    this.title_ = title;
+    this.title = title;
   }
 
   _createClass(Folder, [{
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
-    }
-  }, {
-    key: "title",
-    get: function get() {
-      return this.title_;
-    }
-  }, {
     key: "expanded",
     get: function get() {
       return this.expanded_;
@@ -3722,7 +3561,7 @@ function () {
 
       if (changed) {
         this.expanded_ = expanded;
-        this.emitter_.emit('change');
+        this.emitter.emit('change');
       }
     }
   }, {
@@ -3735,7 +3574,7 @@ function () {
 
       if (changed) {
         this.expandedHeight_ = expandedHeight;
-        this.emitter_.emit('change');
+        this.emitter.emit('change');
       }
     }
   }]);
@@ -3824,7 +3663,7 @@ function () {
     _classCallCheck(this, InputValue);
 
     this.constraint_ = constraint;
-    this.emitter_ = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.emitter = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
     this.rawValue_ = initialValue;
   }
 
@@ -3832,11 +3671,6 @@ function () {
     key: "constraint",
     get: function get() {
       return this.constraint_;
-    }
-  }, {
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
     }
   }, {
     key: "rawValue",
@@ -3849,7 +3683,7 @@ function () {
 
       if (changed) {
         this.rawValue_ = constrainedValue;
-        this.emitter_.emit('change', [constrainedValue]);
+        this.emitter.emit('change', [constrainedValue]);
       }
     }
   }], [{
@@ -3891,7 +3725,7 @@ function () {
   function List() {
     _classCallCheck(this, List);
 
-    this.emitter_ = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.emitter = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
     this.items_ = [];
   }
 
@@ -3899,12 +3733,7 @@ function () {
     key: "append",
     value: function append(item) {
       this.items_.push(item);
-      this.emitter_.emit('append', [item]);
-    }
-  }, {
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
+      this.emitter.emit('append', [item]);
     }
   }, {
     key: "items",
@@ -3945,7 +3774,7 @@ function () {
   function MonitorValue(totalCount) {
     _classCallCheck(this, MonitorValue);
 
-    this.emitter_ = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.emitter = new _misc_emitter__WEBPACK_IMPORTED_MODULE_0__["default"]();
     this.rawValues_ = [];
     this.totalCount_ = totalCount;
   }
@@ -3959,12 +3788,7 @@ function () {
         this.rawValues_.splice(0, this.rawValues_.length - this.totalCount_);
       }
 
-      this.emitter_.emit('update', [rawValue]);
-    }
-  }, {
-    key: "emitter",
-    get: function get() {
-      return this.emitter_;
+      this.emitter.emit('update', [rawValue]);
     }
   }, {
     key: "rawValues",
@@ -4255,13 +4079,13 @@ function (_View) {
     _classCallCheck(this, ButtonView);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(ButtonView).call(this, document));
-    _this.button_ = config.button;
+    _this.button = config.button;
 
     _this.element.classList.add(className());
 
     var buttonElem = document.createElement('button');
     buttonElem.classList.add(className('b'));
-    buttonElem.textContent = _this.button_.title;
+    buttonElem.textContent = _this.button.title;
 
     _this.element.appendChild(buttonElem);
 
@@ -4473,7 +4297,7 @@ function (_View) {
     markElem.classList.add(className('m'));
     labelElem.appendChild(markElem);
     config.value.emitter.on('change', _this.onValueChange_);
-    _this.value_ = config.value;
+    _this.value = config.value;
 
     _this.update();
 
@@ -4483,7 +4307,7 @@ function (_View) {
   _createClass(CheckboxInputView, [{
     key: "update",
     value: function update() {
-      this.inputElem_.checked = this.value_.rawValue;
+      this.inputElem_.checked = this.value.rawValue;
     }
   }, {
     key: "onValueChange_",
@@ -4494,11 +4318,6 @@ function (_View) {
     key: "inputElement",
     get: function get() {
       return this.inputElem_;
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
@@ -4671,7 +4490,7 @@ function (_View) {
     _this.element.appendChild(markElem);
 
     config.value.emitter.on('change', _this.onValueChange_);
-    _this.value_ = config.value;
+    _this.value = config.value;
 
     _this.update();
 
@@ -4681,7 +4500,7 @@ function (_View) {
   _createClass(ListInputView, [{
     key: "update",
     value: function update() {
-      this.selectElem_.value = this.stringifyValue_(this.value_.rawValue);
+      this.selectElem_.value = this.stringifyValue_(this.value.rawValue);
     }
   }, {
     key: "onValueChange_",
@@ -4692,11 +4511,6 @@ function (_View) {
     key: "selectElement",
     get: function get() {
       return this.selectElem_;
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
@@ -4866,7 +4680,7 @@ function (_View) {
 
     _this.innerElem_ = innerElem;
     config.value.emitter.on('change', _this.onValueChange_);
-    _this.value_ = config.value;
+    _this.value = config.value;
 
     _this.update();
 
@@ -4876,18 +4690,13 @@ function (_View) {
   _createClass(SliderInputView, [{
     key: "update",
     value: function update() {
-      var p = _misc_number_util__WEBPACK_IMPORTED_MODULE_1__["default"].map(this.value_.rawValue, this.minValue_, this.maxValue_, 0, 100);
+      var p = _misc_number_util__WEBPACK_IMPORTED_MODULE_1__["default"].map(this.value.rawValue, this.minValue_, this.maxValue_, 0, 100);
       this.innerElem_.style.width = "".concat(p, "%");
     }
   }, {
     key: "onValueChange_",
     value: function onValueChange_() {
       this.update();
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }, {
     key: "outerElement",
@@ -4968,7 +4777,7 @@ function (_View) {
 
     _this.inputElem_ = inputElem;
     config.value.emitter.on('change', _this.onValueChange_);
-    _this.value_ = config.value;
+    _this.value = config.value;
 
     _this.update();
 
@@ -4978,7 +4787,7 @@ function (_View) {
   _createClass(TextInputView, [{
     key: "update",
     value: function update() {
-      this.inputElem_.value = this.formatter_.format(this.value_.rawValue);
+      this.inputElem_.value = this.formatter_.format(this.value.rawValue);
     }
   }, {
     key: "onValueChange_",
@@ -4989,11 +4798,6 @@ function (_View) {
     key: "inputElement",
     get: function get() {
       return this.inputElem_;
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
@@ -5020,10 +4824,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
@@ -5049,13 +4849,13 @@ function (_View) {
     _classCallCheck(this, LabeledView);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(LabeledView).call(this, document));
-    _this.label_ = config.label;
+    _this.label = config.label;
 
     _this.element.classList.add(className());
 
     var labelElem = document.createElement('div');
     labelElem.classList.add(className('l'));
-    labelElem.textContent = _this.label_;
+    labelElem.textContent = _this.label;
 
     _this.element.appendChild(labelElem);
 
@@ -5067,13 +4867,6 @@ function (_View) {
 
     return _this;
   }
-
-  _createClass(LabeledView, [{
-    key: "label",
-    get: function get() {
-      return this.label_;
-    }
-  }]);
 
   return LabeledView;
 }(_view__WEBPACK_IMPORTED_MODULE_1__["default"]);
@@ -5142,7 +4935,7 @@ function (_View) {
 
     _this.swatchElem_ = swatchElem;
     config.value.emitter.on('update', _this.onValueUpdate_);
-    _this.value_ = config.value;
+    _this.value = config.value;
 
     _this.update();
 
@@ -5152,18 +4945,13 @@ function (_View) {
   _createClass(ColorSwatchMonitorView, [{
     key: "update",
     value: function update() {
-      var values = this.value_.rawValues;
+      var values = this.value.rawValues;
       this.swatchElem_.style.backgroundColor = values.length > 0 ? _converter_color__WEBPACK_IMPORTED_MODULE_0__["toString"](values[values.length - 1]) : '';
     }
   }, {
     key: "onValueUpdate_",
     value: function onValueUpdate_() {
       this.update();
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
@@ -5256,7 +5044,7 @@ function (_View) {
 
     _this.tooltipElem_ = tooltipElem;
     config.value.emitter.on('update', _this.onValueUpdate_);
-    _this.value_ = config.value;
+    _this.value = config.value;
 
     _this.update();
 
@@ -5268,10 +5056,10 @@ function (_View) {
     value: function update() {
       var bounds = this.svgElem_.getBoundingClientRect(); // Graph
 
-      var maxIndex = this.value_.totalCount - 1;
+      var maxIndex = this.value.totalCount - 1;
       var min = this.minValue_;
       var max = this.maxValue_;
-      this.lineElem_.setAttributeNS(null, 'points', this.value_.rawValues.map(function (value, index) {
+      this.lineElem_.setAttributeNS(null, 'points', this.value.rawValues.map(function (value, index) {
         var x = _misc_number_util__WEBPACK_IMPORTED_MODULE_1__["default"].map(index, 0, maxIndex, 0, bounds.width);
         var y = _misc_number_util__WEBPACK_IMPORTED_MODULE_1__["default"].map(value, min, max, bounds.height, 0);
         return [x, y].join(',');
@@ -5286,7 +5074,6 @@ function (_View) {
       }
 
       tooltipElem.classList.add(className('t', 'valid'));
-      ;
       var tx = _misc_number_util__WEBPACK_IMPORTED_MODULE_1__["default"].map(this.cursor_.index, 0, maxIndex, 0, bounds.width);
       var ty = _misc_number_util__WEBPACK_IMPORTED_MODULE_1__["default"].map(value, min, max, bounds.height, 0);
       tooltipElem.style.left = "".concat(tx, "px");
@@ -5307,11 +5094,6 @@ function (_View) {
     key: "graphElement",
     get: function get() {
       return this.svgElem_;
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
@@ -5382,7 +5164,7 @@ function (_View) {
 
     _this.textareaElem_ = textareaElem;
     config.value.emitter.on('update', _this.onValueUpdate_);
-    _this.value_ = config.value;
+    _this.value = config.value;
 
     _this.update();
 
@@ -5396,7 +5178,7 @@ function (_View) {
 
       var elem = this.textareaElem_;
       var shouldScroll = elem.scrollTop === elem.scrollHeight - elem.clientHeight;
-      elem.textContent = this.value_.rawValues.map(function (value) {
+      elem.textContent = this.value.rawValues.map(function (value) {
         return _this2.formatter_.format(value);
       }).join('\n');
 
@@ -5408,11 +5190,6 @@ function (_View) {
     key: "onValueUpdate_",
     value: function onValueUpdate_() {
       this.update();
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
@@ -5484,7 +5261,7 @@ function (_View) {
 
     _this.inputElem_ = inputElem;
     config.value.emitter.on('update', _this.onValueUpdate_);
-    _this.value_ = config.value;
+    _this.value = config.value;
 
     _this.update();
 
@@ -5494,18 +5271,13 @@ function (_View) {
   _createClass(SingleLogMonitorView, [{
     key: "update",
     value: function update() {
-      var values = this.value_.rawValues;
+      var values = this.value.rawValues;
       this.inputElem_.value = values.length > 0 ? this.formatter_.format(values[values.length - 1]) : '';
     }
   }, {
     key: "onValueUpdate_",
     value: function onValueUpdate_() {
       this.update();
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
