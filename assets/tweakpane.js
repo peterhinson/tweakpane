@@ -658,41 +658,31 @@ function () {
     this.onValueChange_ = this.onValueChange_.bind(this);
     this.reader_ = config.reader;
     this.writer_ = config.writer;
-    this.value_ = config.value;
-    this.value_.emitter.on('change', this.onValueChange_);
-    this.target_ = config.target;
+    this.value = config.value;
+    this.value.emitter.on('change', this.onValueChange_);
+    this.target = config.target;
     this.read();
   }
 
   _createClass(InputBinding, [{
     key: "read",
     value: function read() {
-      var targetValue = this.target_.read();
+      var targetValue = this.target.read();
 
       if (targetValue !== undefined) {
-        this.value_.rawValue = this.reader_(targetValue);
+        this.value.rawValue = this.reader_(targetValue);
       }
     }
   }, {
     key: "write_",
     value: function write_(rawValue) {
       var value = this.writer_ ? this.writer_(rawValue) : rawValue;
-      this.target_.write(value);
+      this.target.write(value);
     }
   }, {
     key: "onValueChange_",
     value: function onValueChange_(rawValue) {
       this.write_(rawValue);
-    }
-  }, {
-    key: "target",
-    get: function get() {
-      return this.target_;
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
@@ -733,10 +723,10 @@ function () {
     _classCallCheck(this, MonitorBinding);
 
     this.reader_ = config.reader;
-    this.target_ = config.target;
-    this.value_ = config.value;
-    this.ticker_ = config.ticker;
-    this.ticker_.emitter.on('tick', function () {
+    this.target = config.target;
+    this.value = config.value;
+    this.ticker = config.ticker;
+    this.ticker.emitter.on('tick', function () {
       _this.read();
     });
     this.read();
@@ -745,26 +735,16 @@ function () {
   _createClass(MonitorBinding, [{
     key: "read",
     value: function read() {
-      var targetValue = this.target_.read();
+      var targetValue = this.target.read();
 
       if (targetValue !== undefined) {
-        this.value_.append(this.reader_(targetValue));
+        this.value.append(this.reader_(targetValue));
       }
     }
   }, {
     key: "onTick_",
     value: function onTick_() {
       this.read();
-    }
-  }, {
-    key: "ticker",
-    get: function get() {
-      return this.ticker_;
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
     }
   }]);
 
