@@ -718,17 +718,14 @@ var MonitorBinding =
 /*#__PURE__*/
 function () {
   function MonitorBinding(config) {
-    var _this = this;
-
     _classCallCheck(this, MonitorBinding);
 
+    this.onTick_ = this.onTick_.bind(this);
     this.reader_ = config.reader;
     this.target = config.target;
     this.value = config.value;
     this.ticker = config.ticker;
-    this.ticker.emitter.on('tick', function () {
-      _this.read();
-    });
+    this.ticker.emitter.on('tick', this.onTick_);
     this.read();
   }
 
