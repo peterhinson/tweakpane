@@ -1833,29 +1833,19 @@ function () {
     _classCallCheck(this, CheckboxInputController);
 
     this.onInputChange_ = this.onInputChange_.bind(this);
-    this.value_ = config.value;
-    this.view_ = new _view_input_checkbox__WEBPACK_IMPORTED_MODULE_2__["default"](document, {
-      value: this.value_
+    this.value = config.value;
+    this.view = new _view_input_checkbox__WEBPACK_IMPORTED_MODULE_2__["default"](document, {
+      value: this.value
     });
-    this.view_.inputElement.addEventListener('change', this.onInputChange_);
+    this.view.inputElement.addEventListener('change', this.onInputChange_);
   }
 
   _createClass(CheckboxInputController, [{
     key: "onInputChange_",
     value: function onInputChange_(e) {
       var inputElem = _misc_flow_util__WEBPACK_IMPORTED_MODULE_0__["default"].forceCast(e.currentTarget);
-      this.value_.rawValue = inputElem.checked;
-      this.view_.update();
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
+      this.value.rawValue = inputElem.checked;
+      this.view.update();
     }
   }]);
 
@@ -2091,9 +2081,9 @@ function (_TextInputController) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(NumberTextInputController).call(this, document, config));
     _assertThisInitialized(_assertThisInitialized(_this)).onInputKeyDown_ = _this.onInputKeyDown_.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-    _this.step_ = estimateSuitableStep(_this.value_);
+    _this.step_ = estimateSuitableStep(_this.value);
 
-    _this.view_.inputElement.addEventListener('keydown', _this.onInputKeyDown_);
+    _this.view.inputElement.addEventListener('keydown', _this.onInputKeyDown_);
 
     return _this;
   }
@@ -2104,11 +2094,11 @@ function (_TextInputController) {
       var step = this.step_ * (e.altKey ? 0.1 : 1) * (e.shiftKey ? 10 : 1);
 
       if (e.keyCode === 38) {
-        this.value_.rawValue += step;
-        this.view_.update();
+        this.value.rawValue += step;
+        this.view.update();
       } else if (e.keyCode === 40) {
-        this.value_.rawValue -= step;
-        this.view_.update();
+        this.value.rawValue -= step;
+        this.view.update();
       }
     }
   }]);
@@ -2255,26 +2245,26 @@ function () {
     this.onDocumentMouseMove_ = this.onDocumentMouseMove_.bind(this);
     this.onDocumentMouseUp_ = this.onDocumentMouseUp_.bind(this);
     this.pressed_ = false;
-    this.value_ = config.value;
+    this.value = config.value;
 
-    var _estimateSuitableRang = estimateSuitableRange(this.value_),
+    var _estimateSuitableRang = estimateSuitableRange(this.value),
         _estimateSuitableRang2 = _slicedToArray(_estimateSuitableRang, 2),
         min = _estimateSuitableRang2[0],
         max = _estimateSuitableRang2[1];
 
     this.minValue_ = min;
     this.maxValue_ = max;
-    this.view_ = new _view_input_slider__WEBPACK_IMPORTED_MODULE_6__["default"](document, {
+    this.view = new _view_input_slider__WEBPACK_IMPORTED_MODULE_6__["default"](document, {
       maxValue: this.maxValue_,
       minValue: this.minValue_,
-      value: this.value_
+      value: this.value
     });
 
     if (_misc_dom_util__WEBPACK_IMPORTED_MODULE_2__["supportsTouch"](document)) {
-      this.view_.outerElement.addEventListener('touchstart', this.onSliderTouchStart_);
-      this.view_.outerElement.addEventListener('touchmove', this.onSliderTouchMove_);
+      this.view.outerElement.addEventListener('touchstart', this.onSliderTouchStart_);
+      this.view.outerElement.addEventListener('touchmove', this.onSliderTouchMove_);
     } else {
-      this.view_.outerElement.addEventListener('mousedown', this.onSliderMouseDown_);
+      this.view.outerElement.addEventListener('mousedown', this.onSliderMouseDown_);
       document.addEventListener('mousemove', this.onDocumentMouseMove_);
       document.addEventListener('mouseup', this.onDocumentMouseUp_);
     }
@@ -2283,7 +2273,7 @@ function () {
   _createClass(SliderInputController, [{
     key: "computeRawValueFromX_",
     value: function computeRawValueFromX_(clientX) {
-      var w = this.view_.outerElement.getBoundingClientRect().width;
+      var w = this.view.outerElement.getBoundingClientRect().width;
       return _misc_number_util__WEBPACK_IMPORTED_MODULE_3__["default"].map(clientX, 0, w, this.minValue_, this.maxValue_);
     }
   }, {
@@ -2292,8 +2282,8 @@ function () {
       // Prevent native text selection
       e.preventDefault();
       this.pressed_ = true;
-      this.value_.rawValue = this.computeRawValueFromX_(e.offsetX);
-      this.view_.update();
+      this.value.rawValue = this.computeRawValueFromX_(e.offsetX);
+      this.view.update();
     }
   }, {
     key: "onDocumentMouseMove_",
@@ -2302,10 +2292,10 @@ function () {
         return;
       }
 
-      var elemLeft = this.view_.document.defaultView.scrollX + this.view.outerElement.getBoundingClientRect().left;
+      var elemLeft = this.view.document.defaultView.scrollX + this.view.outerElement.getBoundingClientRect().left;
       var offsetX = e.pageX - elemLeft;
-      this.value_.rawValue = this.computeRawValueFromX_(offsetX);
-      this.view_.update();
+      this.value.rawValue = this.computeRawValueFromX_(offsetX);
+      this.view.update();
     }
   }, {
     key: "onDocumentMouseUp_",
@@ -2315,10 +2305,10 @@ function () {
       }
 
       this.pressed_ = false;
-      var elemLeft = this.view_.document.defaultView.scrollX + this.view.outerElement.getBoundingClientRect().left;
+      var elemLeft = this.view.document.defaultView.scrollX + this.view.outerElement.getBoundingClientRect().left;
       var offsetX = e.pageX - elemLeft;
-      this.value_.rawValue = this.computeRawValueFromX_(offsetX);
-      this.view_.update();
+      this.value.rawValue = this.computeRawValueFromX_(offsetX);
+      this.view.update();
     }
   }, {
     key: "onSliderTouchStart_",
@@ -2327,26 +2317,16 @@ function () {
       e.preventDefault();
       var touch = e.targetTouches[0];
       var offsetX = touch.clientX - this.view.outerElement.getBoundingClientRect().left;
-      this.value_.rawValue = this.computeRawValueFromX_(offsetX);
-      this.view_.update();
+      this.value.rawValue = this.computeRawValueFromX_(offsetX);
+      this.view.update();
     }
   }, {
     key: "onSliderTouchMove_",
     value: function onSliderTouchMove_(e) {
       var touch = e.targetTouches[0];
       var offsetX = touch.clientX - this.view.outerElement.getBoundingClientRect().left;
-      this.value_.rawValue = this.computeRawValueFromX_(offsetX);
-      this.view_.update();
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
+      this.value.rawValue = this.computeRawValueFromX_(offsetX);
+      this.view.update();
     }
   }]);
 
@@ -2388,12 +2368,12 @@ function () {
 
     this.onInputChange_ = this.onInputChange_.bind(this);
     this.parser_ = config.parser;
-    this.value_ = config.value;
-    this.view_ = new _view_input_text__WEBPACK_IMPORTED_MODULE_2__["default"](document, {
+    this.value = config.value;
+    this.view = new _view_input_text__WEBPACK_IMPORTED_MODULE_2__["default"](document, {
       formatter: config.formatter,
-      value: this.value_
+      value: this.value
     });
-    this.view_.inputElement.addEventListener('change', this.onInputChange_);
+    this.view.inputElement.addEventListener('change', this.onInputChange_);
   }
 
   _createClass(TextInputController, [{
@@ -2404,19 +2384,9 @@ function () {
       var inputElem = _misc_flow_util__WEBPACK_IMPORTED_MODULE_0__["default"].forceCast(e.currentTarget);
       var value = inputElem.value;
       _misc_flow_util__WEBPACK_IMPORTED_MODULE_0__["default"].ifNotEmpty(this.parser_(value), function (parsedValue) {
-        _this.value_.rawValue = parsedValue;
+        _this.value.rawValue = parsedValue;
       });
-      this.view_.update();
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
+      this.view.update();
     }
   }]);
 
@@ -2473,39 +2443,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_monitor_color_swatch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../view/monitor/color-swatch */ "./src/main/js/view/monitor/color-swatch.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
 
+var ColorSwatchMonitorController = function ColorSwatchMonitorController(document, config) {
+  _classCallCheck(this, ColorSwatchMonitorController);
 
-var ColorSwatchMonitorController =
-/*#__PURE__*/
-function () {
-  function ColorSwatchMonitorController(document, config) {
-    _classCallCheck(this, ColorSwatchMonitorController);
-
-    this.value_ = config.value;
-    this.view_ = new _view_monitor_color_swatch__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
-      value: this.value_
-    });
-  }
-
-  _createClass(ColorSwatchMonitorController, [{
-    key: "value",
-    get: function get() {
-      return this.value_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
-    }
-  }]);
-
-  return ColorSwatchMonitorController;
-}();
+  this.value = config.value;
+  this.view = new _view_monitor_color_swatch__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
+    value: this.value
+  });
+};
 
 
 
@@ -2544,17 +2492,17 @@ function () {
 
     this.onGraphMouseLeave_ = this.onGraphMouseLeave_.bind(this);
     this.onGraphMouseMove_ = this.onGraphMouseMove_.bind(this);
-    this.value_ = config.value;
+    this.value = config.value;
     this.cursor_ = new _model_graph_cursor__WEBPACK_IMPORTED_MODULE_1__["default"]();
-    this.view_ = new _view_monitor_graph__WEBPACK_IMPORTED_MODULE_3__["default"](document, {
+    this.view = new _view_monitor_graph__WEBPACK_IMPORTED_MODULE_3__["default"](document, {
       cursor: this.cursor_,
       formatter: config.formatter,
       maxValue: config.maxValue,
       minValue: config.minValue,
-      value: this.value_
+      value: this.value
     });
-    this.view_.graphElement.addEventListener('mouseleave', this.onGraphMouseLeave_);
-    this.view_.graphElement.addEventListener('mousemove', this.onGraphMouseMove_);
+    this.view.graphElement.addEventListener('mouseleave', this.onGraphMouseLeave_);
+    this.view.graphElement.addEventListener('mousemove', this.onGraphMouseMove_);
   }
 
   _createClass(GraphMonitorController, [{
@@ -2565,19 +2513,9 @@ function () {
   }, {
     key: "onGraphMouseMove_",
     value: function onGraphMouseMove_(e) {
-      var bounds = this.view_.graphElement.getBoundingClientRect();
+      var bounds = this.view.graphElement.getBoundingClientRect();
       var x = e.offsetX;
-      this.cursor_.index = Math.floor(_misc_number_util__WEBPACK_IMPORTED_MODULE_0__["default"].map(x, 0, bounds.width, 0, this.value_.totalCount));
-    }
-  }, {
-    key: "value",
-    get: function get() {
-      return this.value_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
+      this.cursor_.index = Math.floor(_misc_number_util__WEBPACK_IMPORTED_MODULE_0__["default"].map(x, 0, bounds.width, 0, this.value.totalCount));
     }
   }]);
 
@@ -2602,40 +2540,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_monitor_multi_log__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../view/monitor/multi-log */ "./src/main/js/view/monitor/multi-log.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
 
+var MultiLogMonitorController = function MultiLogMonitorController(document, config) {
+  _classCallCheck(this, MultiLogMonitorController);
 
-var MultiLogMonitorController =
-/*#__PURE__*/
-function () {
-  function MultiLogMonitorController(document, config) {
-    _classCallCheck(this, MultiLogMonitorController);
-
-    this.value_ = config.value;
-    this.view_ = new _view_monitor_multi_log__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
-      formatter: config.formatter,
-      value: this.value_
-    });
-  }
-
-  _createClass(MultiLogMonitorController, [{
-    key: "value",
-    get: function get() {
-      return this.value_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
-    }
-  }]);
-
-  return MultiLogMonitorController;
-}();
+  this.value = config.value;
+  this.view = new _view_monitor_multi_log__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
+    formatter: config.formatter,
+    value: this.value
+  });
+};
 
 
 
@@ -2655,40 +2571,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _view_monitor_single_log__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../view/monitor/single-log */ "./src/main/js/view/monitor/single-log.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 
 
+var SingleLogMonitorController = function SingleLogMonitorController(document, config) {
+  _classCallCheck(this, SingleLogMonitorController);
 
-var SingleLogMonitorController =
-/*#__PURE__*/
-function () {
-  function SingleLogMonitorController(document, config) {
-    _classCallCheck(this, SingleLogMonitorController);
-
-    this.value_ = config.value;
-    this.view_ = new _view_monitor_single_log__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
-      formatter: config.formatter,
-      value: this.value_
-    });
-  }
-
-  _createClass(SingleLogMonitorController, [{
-    key: "value",
-    get: function get() {
-      return this.value_;
-    }
-  }, {
-    key: "view",
-    get: function get() {
-      return this.view_;
-    }
-  }]);
-
-  return SingleLogMonitorController;
-}();
+  this.value = config.value;
+  this.view = new _view_monitor_single_log__WEBPACK_IMPORTED_MODULE_1__["default"](document, {
+    formatter: config.formatter,
+    value: this.value
+  });
+};
 
 
 
