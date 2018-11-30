@@ -1,11 +1,18 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700");
 @import url("https://fonts.googleapis.com/css?family=Rubik:400,700");
 @import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,700");
-html, body, pre {
+html,
+body,
+pre {
   margin: 0;
   padding: 0; }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-size: 1rem;
   margin: 0;
   padding: 0; }
@@ -17,7 +24,9 @@ p {
 pre {
   display: block; }
 
-dl, ol, ul {
+dl,
+ol,
+ul {
   list-style-type: none;
   margin: 0;
   padding: 0; }
@@ -299,15 +308,47 @@ pre {
     @media screen and (max-width: 960px) {
       .common-main_pageHeaderLayout h2, .common-main_innerLayout h2 {
         font-size: 1.25rem; } }
-  .common-main_pageHeaderLayout h3, .common-main_pageHeaderLayout h4, .common-main_pageHeaderLayout h5, .common-main_pageHeaderLayout h6, .common-main_innerLayout h3, .common-main_innerLayout h4, .common-main_innerLayout h5, .common-main_innerLayout h6 {
+  .common-main_pageHeaderLayout h3,
+  .common-main_pageHeaderLayout h4,
+  .common-main_pageHeaderLayout h5,
+  .common-main_pageHeaderLayout h6, .common-main_innerLayout h3,
+  .common-main_innerLayout h4,
+  .common-main_innerLayout h5,
+  .common-main_innerLayout h6 {
     font-size: 1.25rem;
     margin-top: 2em; }
     @media screen and (max-width: 960px) {
-      .common-main_pageHeaderLayout h3, .common-main_pageHeaderLayout h4, .common-main_pageHeaderLayout h5, .common-main_pageHeaderLayout h6, .common-main_innerLayout h3, .common-main_innerLayout h4, .common-main_innerLayout h5, .common-main_innerLayout h6 {
+      .common-main_pageHeaderLayout h3,
+      .common-main_pageHeaderLayout h4,
+      .common-main_pageHeaderLayout h5,
+      .common-main_pageHeaderLayout h6, .common-main_innerLayout h3,
+      .common-main_innerLayout h4,
+      .common-main_innerLayout h5,
+      .common-main_innerLayout h6 {
         font-size: 1rem; } }
-  .common-main_pageHeaderLayout h1:first-child, .common-main_pageHeaderLayout h2:first-child, .common-main_pageHeaderLayout h3:first-child, .common-main_pageHeaderLayout h4:first-child, .common-main_pageHeaderLayout h5:first-child, .common-main_pageHeaderLayout h6:first-child, .common-main_innerLayout h1:first-child, .common-main_innerLayout h2:first-child, .common-main_innerLayout h3:first-child, .common-main_innerLayout h4:first-child, .common-main_innerLayout h5:first-child, .common-main_innerLayout h6:first-child {
+  .common-main_pageHeaderLayout h1:first-child,
+  .common-main_pageHeaderLayout h2:first-child,
+  .common-main_pageHeaderLayout h3:first-child,
+  .common-main_pageHeaderLayout h4:first-child,
+  .common-main_pageHeaderLayout h5:first-child,
+  .common-main_pageHeaderLayout h6:first-child, .common-main_innerLayout h1:first-child,
+  .common-main_innerLayout h2:first-child,
+  .common-main_innerLayout h3:first-child,
+  .common-main_innerLayout h4:first-child,
+  .common-main_innerLayout h5:first-child,
+  .common-main_innerLayout h6:first-child {
     margin-top: 0; }
-  .common-main_pageHeaderLayout h1 + p, .common-main_pageHeaderLayout h2 + p, .common-main_pageHeaderLayout h3 + p, .common-main_pageHeaderLayout h4 + p, .common-main_pageHeaderLayout h5 + p, .common-main_pageHeaderLayout h6 + p, .common-main_innerLayout h1 + p, .common-main_innerLayout h2 + p, .common-main_innerLayout h3 + p, .common-main_innerLayout h4 + p, .common-main_innerLayout h5 + p, .common-main_innerLayout h6 + p {
+  .common-main_pageHeaderLayout h1 + p,
+  .common-main_pageHeaderLayout h2 + p,
+  .common-main_pageHeaderLayout h3 + p,
+  .common-main_pageHeaderLayout h4 + p,
+  .common-main_pageHeaderLayout h5 + p,
+  .common-main_pageHeaderLayout h6 + p, .common-main_innerLayout h1 + p,
+  .common-main_innerLayout h2 + p,
+  .common-main_innerLayout h3 + p,
+  .common-main_innerLayout h4 + p,
+  .common-main_innerLayout h5 + p,
+  .common-main_innerLayout h6 + p {
     margin-top: 0.5em; }
   .common-main_pageHeaderLayout ul, .common-main_innerLayout ul {
     list-style-type: disc;
