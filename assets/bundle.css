@@ -73,39 +73,41 @@ pre {
       margin-left: 0.5em;
       margin-right: 0; }
 
-.common-demo {
-  overflow: hidden; }
+@media screen and (min-width: 961px) {
+  .common-demo {
+    display: flex; } }
+
+.common-demo_codeLayout {
+  background-color: #e4e4e7;
+  flex: 3; }
+
+.common-demo_resultLayout {
+  background-color: #f1f2f3;
+  flex: 2;
+  padding: 32px;
+  text-align: center; }
+  @media screen and (max-width: 960px) {
+    .common-demo_resultLayout {
+      padding: 16px; } }
+  .common-demo_resultLayout.common-demo_resultLayout-withJson > * + * {
+    margin-top: 16px; }
+
+.common-demo_resultJsonLayout {
+  box-sizing: border-box;
+  padding-left: 8px;
+  padding-right: 8px; }
   @media screen and (min-width: 961px) {
-    .common-demo {
-      display: flex; } }
-  .common-demo_codeLayout {
-    background-color: #e4e4e7;
-    flex: 3; }
-  .common-demo_resultLayout {
-    background-color: #f1f2f3;
-    flex: 2;
-    padding: 32px;
-    text-align: center; }
-    @media screen and (max-width: 960px) {
-      .common-demo_resultLayout {
-        padding: 16px; } }
-    .common-demo_resultLayout.common-demo_resultLayout-withJson > * + * {
-      margin-top: 16px; }
-  .common-demo_resultJsonLayout {
-    box-sizing: border-box;
-    padding-left: 8px;
-    padding-right: 8px; }
-    @media screen and (min-width: 961px) {
-      .common-demo_resultJsonLayout {
-        display: inline-block;
-        min-width: 256px;
-        vertical-align: middle; } }
-  .common-demo_resultJson {
-    display: inline-block;
-    font-size: 0.8rem;
-    opacity: 0.7;
-    overflow: hidden;
-    text-align: left; }
+    .common-demo_resultJsonLayout {
+      display: inline-block;
+      min-width: 256px;
+      vertical-align: middle; } }
+
+.common-demo_resultJson {
+  display: inline-block;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  overflow: hidden;
+  text-align: left; }
 
 .common-globalFooter {
   background-color: #2f3137;
@@ -383,8 +385,7 @@ pre {
 .common-main_mediaLayout {
   border-radius: 6px;
   margin-bottom: 1em;
-  margin-top: 1em;
-  overflow: hidden; }
+  margin-top: 1em; }
 
 .common-paneContainer {
   display: inline-block;
