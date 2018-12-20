@@ -6709,34 +6709,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return View; });
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+var View = function View(document) {
+  _classCallCheck(this, View);
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var View =
-/*#__PURE__*/
-function () {
-  function View(document) {
-    _classCallCheck(this, View);
-
-    this.doc_ = document;
-    this.elem_ = this.doc_.createElement('div');
-  }
-
-  _createClass(View, [{
-    key: "document",
-    get: function get() {
-      return this.doc_;
-    }
-  }, {
-    key: "element",
-    get: function get() {
-      return this.elem_;
-    }
-  }]);
-
-  return View;
-}();
+  this.document = document;
+  this.element = this.document.createElement('div');
+};
 
 
 
