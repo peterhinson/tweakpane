@@ -768,6 +768,7 @@ exports.default = {
     pathname: /^(\/tweakpane)?\/monitor.html$/,
     init: function () {
         var SHARED_PARAMS = {
+            positive: false,
             time: '',
             wave: 0,
         };
@@ -785,6 +786,7 @@ exports.default = {
                         Math.sin(wavep * 3 * Math.PI) / 3 +
                         Math.sin(wavep * 5 * Math.PI) / 5) *
                     0.25;
+            SHARED_PARAMS.positive = SHARED_PARAMS.wave >= 0;
             wavep += 0.02;
         }, 50);
         var markerToFnMap = {
@@ -807,6 +809,9 @@ exports.default = {
                     max: +1,
                     min: -1,
                     type: 'graph',
+                });
+                nf.addMonitor(SHARED_PARAMS, 'positive', {
+                    label: 'positive',
                 });
             },
             multiline: function (container) {

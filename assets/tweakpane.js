@@ -1000,6 +1000,53 @@ exports.create = create;
 
 /***/ }),
 
+/***/ "./src/main/js/controller/binding-creators/boolean-monitor.ts":
+/*!********************************************************************!*\
+  !*** ./src/main/js/controller/binding-creators/boolean-monitor.ts ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var monitor_1 = __webpack_require__(/*! ../../binding/monitor */ "./src/main/js/binding/monitor.ts");
+var BooleanConverter = __webpack_require__(/*! ../../converter/boolean */ "./src/main/js/converter/boolean.ts");
+var boolean_1 = __webpack_require__(/*! ../../formatter/boolean */ "./src/main/js/formatter/boolean.ts");
+var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
+var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
+var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js/controller/monitor/multi-log.ts");
+var single_log_1 = __webpack_require__(/*! ../monitor/single-log */ "./src/main/js/controller/monitor/single-log.ts");
+function createTextMonitor(document, target, params) {
+    var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
+    var controller = value.totalCount === 1
+        ? new single_log_1.default(document, {
+            formatter: new boolean_1.default(),
+            value: value,
+        })
+        : new multi_log_1.default(document, {
+            formatter: new boolean_1.default(),
+            value: value,
+        });
+    var ticker = new interval_1.default(document, type_util_1.default.getOrDefault(params.interval, 200));
+    return new monitor_binding_1.default(document, {
+        binding: new monitor_1.default({
+            reader: BooleanConverter.fromMixed,
+            target: target,
+            ticker: ticker,
+            value: value,
+        }),
+        controller: controller,
+        label: params.label || target.key,
+    });
+}
+exports.createTextMonitor = createTextMonitor;
+
+
+/***/ }),
+
 /***/ "./src/main/js/controller/binding-creators/color-input.ts":
 /*!****************************************************************!*\
   !*** ./src/main/js/controller/binding-creators/color-input.ts ***!
@@ -1089,6 +1136,14 @@ function normalizeParams(p1, convert) {
 }
 function create(document, target, params) {
     var initialValue = target.read();
+    if (initialValue === null || initialValue === undefined) {
+        throw new pane_error_1.default({
+            context: {
+                key: target.key,
+            },
+            type: 'emptyvalue',
+        });
+    }
     if (typeof initialValue === 'boolean') {
         return BooleanInputBindingControllerCreators.create(document, target, normalizeParams(params, BooleanConverter.fromMixed));
     }
@@ -1125,10 +1180,19 @@ exports.create = create;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var BooleanMonitorBindingControllerCreators = __webpack_require__(/*! ./boolean-monitor */ "./src/main/js/controller/binding-creators/boolean-monitor.ts");
 var NumberMonitorBindingControllerCreators = __webpack_require__(/*! ./number-monitor */ "./src/main/js/controller/binding-creators/number-monitor.ts");
 var StringMonitorBindingControllerCreators = __webpack_require__(/*! ./string-monitor */ "./src/main/js/controller/binding-creators/string-monitor.ts");
 function create(document, target, params) {
     var initialValue = target.read();
+    if (initialValue === null || initialValue === undefined) {
+        throw new pane_error_1.default({
+            context: {
+                key: target.key,
+            },
+            type: 'emptyvalue',
+        });
+    }
     if (typeof initialValue === 'number') {
         if (params.type === 'graph') {
             return NumberMonitorBindingControllerCreators.createGraphMonitor(document, target, params);
@@ -1137,6 +1201,9 @@ function create(document, target, params) {
     }
     if (typeof initialValue === 'string') {
         return StringMonitorBindingControllerCreators.createTextMonitor(document, target, params);
+    }
+    if (typeof initialValue === 'boolean') {
+        return BooleanMonitorBindingControllerCreators.createTextMonitor(document, target, params);
     }
     throw new pane_error_1.default({
         context: {
@@ -2591,6 +2658,30 @@ exports.toString = toString;
 
 /***/ }),
 
+/***/ "./src/main/js/formatter/boolean.ts":
+/*!******************************************!*\
+  !*** ./src/main/js/formatter/boolean.ts ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var BooleanConverter = __webpack_require__(/*! ../converter/boolean */ "./src/main/js/converter/boolean.ts");
+var BooleanFormatter = /** @class */ (function () {
+    function BooleanFormatter() {
+    }
+    BooleanFormatter.prototype.format = function (value) {
+        return BooleanConverter.toString(value);
+    };
+    return BooleanFormatter;
+}());
+exports.default = BooleanFormatter;
+
+
+/***/ }),
+
 /***/ "./src/main/js/formatter/color.ts":
 /*!****************************************!*\
   !*** ./src/main/js/formatter/color.ts ***!
@@ -3057,6 +3148,9 @@ exports.default = NumberUtil;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 function createMessage(config) {
+    if (config.type === 'emptyvalue') {
+        return "Value is empty for " + config.context.key;
+    }
     if (config.type === 'invalidparams') {
         return "Invalid parameters for " + config.context.name;
     }
