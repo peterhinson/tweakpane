@@ -4029,7 +4029,6 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('clp', 'input');
@@ -4039,7 +4038,6 @@ var ColorPickerInputView = /** @class */ (function (_super) {
         var _this = _super.call(this, document) || this;
         _this.onFoldableChange_ = _this.onFoldableChange_.bind(_this);
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
-        _this.compFormatter_ = new number_1.default(0);
         _this.value = config.value;
         _this.value.emitter.on('change', _this.onValueChange_);
         _this.foldable = config.foldable;
