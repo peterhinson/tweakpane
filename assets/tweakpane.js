@@ -389,6 +389,9 @@ process.umask = function() { return 0; };
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ButtonApi = /** @class */ (function () {
+    /**
+     * @hidden
+     */
     function ButtonApi(buttonController) {
         this.controller = buttonController;
     }
@@ -427,6 +430,9 @@ var TO_INTERNAL_EVENT_NAME_MAP = {
     update: 'monitorupdate',
 };
 var FolderApi = /** @class */ (function () {
+    /**
+     * @hidden
+     */
     function FolderApi(folderController) {
         this.controller = folderController;
     }
@@ -486,7 +492,15 @@ exports.default = FolderApi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * The API for the input binding between the parameter and the pane.
+ * @param In The type inner Tweakpane.
+ * @param Out The type outer Tweakpane (= parameter object).
+ */
 var InputBindingApi = /** @class */ (function () {
+    /**
+     * @hidden
+     */
     function InputBindingApi(bindingController) {
         this.controller = bindingController;
     }
@@ -515,7 +529,13 @@ exports.default = InputBindingApi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * The API for the monitor binding between the parameter and the pane.
+ */
 var MonitorBindingApi = /** @class */ (function () {
+    /**
+     * @hidden
+     */
     function MonitorBindingApi(bindingController) {
         this.controller = bindingController;
     }
@@ -544,6 +564,9 @@ exports.default = MonitorBindingApi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 function exportJson(targets) {
     return targets.reduce(function (result, target) {
         var _a;
@@ -553,6 +576,9 @@ function exportJson(targets) {
     }, {});
 }
 exports.exportJson = exportJson;
+/**
+ * @hidden
+ */
 function importJson(targets, preset) {
     targets.forEach(function (target) {
         var value = preset[target.presetKey];
@@ -595,7 +621,19 @@ var TO_INTERNAL_EVENT_NAME_MAP = {
     fold: 'fold',
     update: 'monitorupdate',
 };
+/**
+ * The Tweakpane interface.
+ *
+ * ```
+ * new Tweakpane(options: TweakpaneConfig): RootApi
+ * ```
+ *
+ * See [[TweakpaneConfig]] interface for available options.
+ */
 var RootApi = /** @class */ (function () {
+    /**
+     * @hidden
+     */
     function RootApi(rootController) {
         this.controller = rootController;
     }
@@ -646,6 +684,10 @@ var RootApi = /** @class */ (function () {
         var uc = new separator_1.default(this.controller.document);
         this.controller.uiControllerList.append(uc);
     };
+    /**
+     * Import a preset of all inputs.
+     * @param preset The preset object to import.
+     */
     RootApi.prototype.importPreset = function (preset) {
         var targets = UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.default).map(function (ibc) {
             return ibc.binding.target;
@@ -653,12 +695,21 @@ var RootApi = /** @class */ (function () {
         Preset.importJson(targets, preset);
         this.refresh();
     };
+    /**
+     * Export a preset of all inputs.
+     * @return The exported preset object.
+     */
     RootApi.prototype.exportPreset = function () {
         var targets = UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.default).map(function (ibc) {
             return ibc.binding.target;
         });
         return Preset.exportJson(targets);
     };
+    /**
+     * Adds a global event listener. It handles all events of child inputs/monitors.
+     * @param eventName The event name to listen.
+     * @return The API object itself.
+     */
     RootApi.prototype.on = function (eventName, handler) {
         var internalEventName = TO_INTERNAL_EVENT_NAME_MAP[eventName];
         if (internalEventName) {
@@ -667,6 +718,9 @@ var RootApi = /** @class */ (function () {
         }
         return this;
     };
+    /**
+     * Refreshes all bindings of the pane.
+     */
     RootApi.prototype.refresh = function () {
         // Force-read all input bindings
         UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.default).forEach(function (ibc) {
@@ -694,6 +748,9 @@ exports.default = RootApi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var InputBinding = /** @class */ (function () {
     function InputBinding(config) {
         this.onValueChange_ = this.onValueChange_.bind(this);
@@ -734,6 +791,9 @@ exports.default = InputBinding;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var MonitorBinding = /** @class */ (function () {
     function MonitorBinding(config) {
         this.onTick_ = this.onTick_.bind(this);
@@ -770,6 +830,9 @@ exports.default = MonitorBinding;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var CompositeConstraint = /** @class */ (function () {
     function CompositeConstraint(config) {
         this.constraints_ = config.constraints;
@@ -803,6 +866,9 @@ exports.default = CompositeConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var ListConstraint = /** @class */ (function () {
     function ListConstraint(config) {
         this.opts_ = config.options;
@@ -841,6 +907,9 @@ exports.default = ListConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var RangeConstraint = /** @class */ (function () {
     function RangeConstraint(config) {
         this.max_ = config.max;
@@ -887,6 +956,9 @@ exports.default = RangeConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var StepConstraint = /** @class */ (function () {
     function StepConstraint(config) {
         this.step = config.step;
@@ -915,6 +987,9 @@ exports.default = StepConstraint;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var composite_1 = __webpack_require__(/*! ./composite */ "./src/main/js/constraint/composite.ts");
+/**
+ * @hidden
+ */
 var ConstraintUtil = {
     findConstraint: function (c, constraintClass) {
         if (c instanceof constraintClass) {
@@ -981,6 +1056,9 @@ function createController(document, value) {
         value: value,
     });
 }
+/**
+ * @hidden
+ */
 function create(document, target, params) {
     var value = new input_value_1.default(false, createConstraint(params));
     var binding = new input_1.default({
@@ -1019,6 +1097,9 @@ var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./sr
 var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js/controller/monitor/multi-log.ts");
 var single_log_1 = __webpack_require__(/*! ../monitor/single-log */ "./src/main/js/controller/monitor/single-log.ts");
+/**
+ * @hidden
+ */
 function createTextMonitor(document, target, params) {
     var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
@@ -1064,6 +1145,9 @@ var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/ma
 var color_2 = __webpack_require__(/*! ../../parser/color */ "./src/main/js/parser/color.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var color_swatch_text_1 = __webpack_require__(/*! ../input/color-swatch-text */ "./src/main/js/controller/input/color-swatch-text.ts");
+/**
+ * @hidden
+ */
 function create(document, target, initialValue, params) {
     var value = new input_value_1.default(initialValue);
     return new input_binding_1.default(document, {
@@ -1134,6 +1218,9 @@ function normalizeParams(p1, convert) {
     }
     return p2;
 }
+/**
+ * @hidden
+ */
 function create(document, target, params) {
     var initialValue = target.read();
     if (initialValue === null || initialValue === undefined) {
@@ -1183,6 +1270,9 @@ var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/
 var BooleanMonitorBindingControllerCreators = __webpack_require__(/*! ./boolean-monitor */ "./src/main/js/controller/binding-creators/boolean-monitor.ts");
 var NumberMonitorBindingControllerCreators = __webpack_require__(/*! ./number-monitor */ "./src/main/js/controller/binding-creators/number-monitor.ts");
 var StringMonitorBindingControllerCreators = __webpack_require__(/*! ./string-monitor */ "./src/main/js/controller/binding-creators/string-monitor.ts");
+/**
+ * @hidden
+ */
 function create(document, target, params) {
     var initialValue = target.read();
     if (initialValue === null || initialValue === undefined) {
@@ -1337,6 +1427,9 @@ function createFormatter() {
     // TODO: formatter precision
     return new number_1.default(2);
 }
+/**
+ * @hidden
+ */
 function createTextMonitor(document, target, params) {
     var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
@@ -1361,6 +1454,9 @@ function createTextMonitor(document, target, params) {
     });
 }
 exports.createTextMonitor = createTextMonitor;
+/**
+ * @hidden
+ */
 function createGraphMonitor(document, target, params) {
     var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 64));
     var ticker = new interval_1.default(document, type_util_1.default.getOrDefault(params.interval, 200));
@@ -1430,6 +1526,9 @@ function createController(document, value) {
         value: value,
     });
 }
+/**
+ * @hidden
+ */
 function create(document, target, params) {
     var value = new input_value_1.default('', createConstraint(params));
     var binding = new input_1.default({
@@ -1468,6 +1567,9 @@ var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./sr
 var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js/controller/monitor/multi-log.ts");
 var single_log_1 = __webpack_require__(/*! ../monitor/single-log */ "./src/main/js/controller/monitor/single-log.ts");
+/**
+ * @hidden
+ */
 function createTextMonitor(document, target, params) {
     var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
     var multiline = value.totalCount > 1 || params.multiline;
@@ -1509,6 +1611,9 @@ exports.createTextMonitor = createTextMonitor;
 Object.defineProperty(exports, "__esModule", { value: true });
 var button_1 = __webpack_require__(/*! ../model/button */ "./src/main/js/model/button.ts");
 var button_2 = __webpack_require__(/*! ../view/button */ "./src/main/js/view/button.ts");
+/**
+ * @hidden
+ */
 var ButtonController = /** @class */ (function () {
     function ButtonController(document, config) {
         this.onButtonClick_ = this.onButtonClick_.bind(this);
@@ -1546,6 +1651,9 @@ var list_1 = __webpack_require__(/*! ../model/list */ "./src/main/js/model/list.
 var folder_2 = __webpack_require__(/*! ../view/folder */ "./src/main/js/view/folder.ts");
 var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/controller/input-binding.ts");
 var monitor_binding_1 = __webpack_require__(/*! ./monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
+/**
+ * @hidden
+ */
 var FolderController = /** @class */ (function () {
     function FolderController(document, config) {
         this.onFolderChange_ = this.onFolderChange_.bind(this);
@@ -1638,6 +1746,9 @@ exports.default = FolderController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var labeled_1 = __webpack_require__(/*! ../view/labeled */ "./src/main/js/view/labeled.ts");
+/**
+ * @hidden
+ */
 var InputBindingController = /** @class */ (function () {
     function InputBindingController(document, config) {
         this.binding = config.binding;
@@ -1666,6 +1777,9 @@ exports.default = InputBindingController;
 Object.defineProperty(exports, "__esModule", { value: true });
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var checkbox_1 = __webpack_require__(/*! ../../view/input/checkbox */ "./src/main/js/view/input/checkbox.ts");
+/**
+ * @hidden
+ */
 var CheckboxInputController = /** @class */ (function () {
     function CheckboxInputController(document, config) {
         this.onInputChange_ = this.onInputChange_.bind(this);
@@ -1721,6 +1835,9 @@ var COMPONENT_CONSTRAINT = new composite_1.default({
         }),
     ],
 });
+/**
+ * @hidden
+ */
 var ColorPickerInputController = /** @class */ (function () {
     function ColorPickerInputController(document, config) {
         var _this = this;
@@ -1801,6 +1918,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var color_swatch_text_1 = __webpack_require__(/*! ../../view/input/color-swatch-text */ "./src/main/js/view/input/color-swatch-text.ts");
 var color_swatch_1 = __webpack_require__(/*! ../input/color-swatch */ "./src/main/js/controller/input/color-swatch.ts");
 var text_1 = __webpack_require__(/*! ./text */ "./src/main/js/controller/input/text.ts");
+/**
+ * @hidden
+ */
 var ColorSwatchTextInputController = /** @class */ (function () {
     function ColorSwatchTextInputController(document, config) {
         this.value = config.value;
@@ -1837,6 +1957,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var color_swatch_1 = __webpack_require__(/*! ../../view/input/color-swatch */ "./src/main/js/view/input/color-swatch.ts");
 var color_picker_1 = __webpack_require__(/*! ./color-picker */ "./src/main/js/controller/input/color-picker.ts");
+/**
+ * @hidden
+ */
 var ColorSwatchInputController = /** @class */ (function () {
     function ColorSwatchInputController(document, config) {
         this.onButtonBlur_ = this.onButtonBlur_.bind(this);
@@ -1884,6 +2007,9 @@ var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/mai
 var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
 var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
 var h_palette_1 = __webpack_require__(/*! ../../view/input/h-palette */ "./src/main/js/view/input/h-palette.ts");
+/**
+ * @hidden
+ */
 var HPaletteInputController = /** @class */ (function () {
     function HPaletteInputController(document, config) {
         this.onPointerDown_ = this.onPointerDown_.bind(this);
@@ -1944,6 +2070,9 @@ function findListItems(value) {
     }
     return c.options;
 }
+/**
+ * @hidden
+ */
 var ListInputController = /** @class */ (function () {
     function ListInputController(document, config) {
         this.onSelectChange_ = this.onSelectChange_.bind(this);
@@ -2027,6 +2156,9 @@ function estimateSuitableStep(value) {
     var step = findStep(value);
     return type_util_1.default.getOrDefault(step, 1);
 }
+/**
+ * @hidden
+ */
 var NumberTextInputController = /** @class */ (function (_super) {
     __extends(NumberTextInputController, _super);
     function NumberTextInputController(document, config) {
@@ -2067,6 +2199,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var slider_text_1 = __webpack_require__(/*! ../../view/input/slider-text */ "./src/main/js/view/input/slider-text.ts");
 var number_text_1 = __webpack_require__(/*! ./number-text */ "./src/main/js/controller/input/number-text.ts");
 var slider_1 = __webpack_require__(/*! ./slider */ "./src/main/js/controller/input/slider.ts");
+/**
+ * @hidden
+ */
 var SliderTextInputController = /** @class */ (function () {
     function SliderTextInputController(document, config) {
         this.value_ = config.value;
@@ -2136,6 +2271,9 @@ function estimateSuitableRange(value) {
         type_util_1.default.getOrDefault(max, 100),
     ];
 }
+/**
+ * @hidden
+ */
 var SliderInputController = /** @class */ (function () {
     function SliderInputController(document, config) {
         this.onPointerDown_ = this.onPointerDown_.bind(this);
@@ -2189,6 +2327,9 @@ var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/mai
 var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
 var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
 var sv_palette_1 = __webpack_require__(/*! ../../view/input/sv-palette */ "./src/main/js/view/input/sv-palette.ts");
+/**
+ * @hidden
+ */
 var SvPaletteInputController = /** @class */ (function () {
     function SvPaletteInputController(document, config) {
         this.onPointerDown_ = this.onPointerDown_.bind(this);
@@ -2239,6 +2380,9 @@ exports.default = SvPaletteInputController;
 Object.defineProperty(exports, "__esModule", { value: true });
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var text_1 = __webpack_require__(/*! ../../view/input/text */ "./src/main/js/view/input/text.ts");
+/**
+ * @hidden
+ */
 var TextInputController = /** @class */ (function () {
     function TextInputController(document, config) {
         this.onInputChange_ = this.onInputChange_.bind(this);
@@ -2277,6 +2421,9 @@ exports.default = TextInputController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var labeled_1 = __webpack_require__(/*! ../view/labeled */ "./src/main/js/view/labeled.ts");
+/**
+ * @hidden
+ */
 var MonitorBindingController = /** @class */ (function () {
     function MonitorBindingController(document, config) {
         this.binding = config.binding;
@@ -2306,6 +2453,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var graph_cursor_1 = __webpack_require__(/*! ../../model/graph-cursor */ "./src/main/js/model/graph-cursor.ts");
 var graph_1 = __webpack_require__(/*! ../../view/monitor/graph */ "./src/main/js/view/monitor/graph.ts");
+/**
+ * @hidden
+ */
 var GraphMonitorController = /** @class */ (function () {
     function GraphMonitorController(document, config) {
         this.onGraphMouseLeave_ = this.onGraphMouseLeave_.bind(this);
@@ -2348,6 +2498,9 @@ exports.default = GraphMonitorController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var multi_log_1 = __webpack_require__(/*! ../../view/monitor/multi-log */ "./src/main/js/view/monitor/multi-log.ts");
+/**
+ * @hidden
+ */
 var MultiLogMonitorController = /** @class */ (function () {
     function MultiLogMonitorController(document, config) {
         this.value = config.value;
@@ -2374,6 +2527,9 @@ exports.default = MultiLogMonitorController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var single_log_1 = __webpack_require__(/*! ../../view/monitor/single-log */ "./src/main/js/view/monitor/single-log.ts");
+/**
+ * @hidden
+ */
 var SingleLogMonitorController = /** @class */ (function () {
     function SingleLogMonitorController(document, config) {
         this.value = config.value;
@@ -2413,6 +2569,9 @@ function createFolder(config) {
     }
     return new folder_1.default(config.title, type_util_1.default.getOrDefault(config.expanded, true));
 }
+/**
+ * @hidden
+ */
 var RootController = /** @class */ (function () {
     function RootController(document, config) {
         this.onFolderChange_ = this.onFolderChange_.bind(this);
@@ -2502,6 +2661,9 @@ exports.default = RootController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var separator_1 = __webpack_require__(/*! ../view/separator */ "./src/main/js/view/separator.ts");
+/**
+ * @hidden
+ */
 var SeparatorController = /** @class */ (function () {
     function SeparatorController(document) {
         this.view = new separator_1.default(document);
@@ -2524,6 +2686,9 @@ exports.default = SeparatorController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var folder_1 = __webpack_require__(/*! ./folder */ "./src/main/js/controller/folder.ts");
+/**
+ * @hidden
+ */
 function findControllers(uiControllers, controllerClass) {
     return uiControllers.reduce(function (results, uc) {
         if (uc instanceof folder_1.default) {
@@ -2551,6 +2716,9 @@ exports.findControllers = findControllers;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 function fromMixed(value) {
     if (value === 'false') {
         return false;
@@ -2558,6 +2726,9 @@ function fromMixed(value) {
     return !!value;
 }
 exports.fromMixed = fromMixed;
+/**
+ * @hidden
+ */
 function toString(value) {
     return String(value);
 }
@@ -2579,6 +2750,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
 var color_2 = __webpack_require__(/*! ../parser/color */ "./src/main/js/parser/color.ts");
+/**
+ * @hidden
+ */
 function fromMixed(value) {
     if (typeof value === 'string') {
         var cv = color_2.default(value);
@@ -2589,6 +2763,9 @@ function fromMixed(value) {
     return new color_1.default(0, 0, 0);
 }
 exports.fromMixed = fromMixed;
+/**
+ * @hidden
+ */
 function toString(value) {
     var hexes = value
         .getComponents()
@@ -2615,6 +2792,9 @@ exports.toString = toString;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var number_1 = __webpack_require__(/*! ../parser/number */ "./src/main/js/parser/number.ts");
+/**
+ * @hidden
+ */
 function fromMixed(value) {
     if (typeof value === 'number') {
         return value;
@@ -2628,6 +2808,9 @@ function fromMixed(value) {
     return 0;
 }
 exports.fromMixed = fromMixed;
+/**
+ * @hidden
+ */
 function toString(value) {
     return String(value);
 }
@@ -2646,10 +2829,16 @@ exports.toString = toString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 function fromMixed(value) {
     return String(value);
 }
 exports.fromMixed = fromMixed;
+/**
+ * @hidden
+ */
 function toString(value) {
     return value;
 }
@@ -2669,6 +2858,9 @@ exports.toString = toString;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var BooleanConverter = __webpack_require__(/*! ../converter/boolean */ "./src/main/js/converter/boolean.ts");
+/**
+ * @hidden
+ */
 var BooleanFormatter = /** @class */ (function () {
     function BooleanFormatter() {
     }
@@ -2694,6 +2886,9 @@ exports.default = BooleanFormatter;
 Object.defineProperty(exports, "__esModule", { value: true });
 var ColorConverter = __webpack_require__(/*! ../converter/color */ "./src/main/js/converter/color.ts");
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
+/**
+ * @hidden
+ */
 var ColorFormatter = /** @class */ (function () {
     function ColorFormatter() {
     }
@@ -2733,6 +2928,9 @@ exports.default = ColorFormatter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var NumberFormatter = /** @class */ (function () {
     function NumberFormatter(digits) {
         this.digits_ = digits;
@@ -2764,6 +2962,9 @@ exports.default = NumberFormatter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var StringFormatter = /** @class */ (function () {
     function StringFormatter() {
     }
@@ -3068,6 +3269,9 @@ exports.getCanvasContext = getCanvasContext;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var Emitter = /** @class */ (function () {
     function Emitter() {
         this.observers_ = {};
@@ -3187,7 +3391,10 @@ PaneError.prototype.constructor = PaneError;
 Object.defineProperty(exports, "__esModule", { value: true });
 var DomUtil = __webpack_require__(/*! ./dom-util */ "./src/main/js/misc/dom-util.ts");
 var emitter_1 = __webpack_require__(/*! ./emitter */ "./src/main/js/misc/emitter.ts");
-// Handles both mouse and touch events
+/**
+ * A utility class to handle both mouse and touch events.
+ * @hidden
+ */
 var PointerHandler = /** @class */ (function () {
     function PointerHandler(document, element) {
         this.onDocumentMouseMove_ = this.onDocumentMouseMove_.bind(this);
@@ -3277,6 +3484,9 @@ exports.default = PointerHandler;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var emitter_1 = __webpack_require__(/*! ../emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
 var IntervalTicker = /** @class */ (function () {
     function IntervalTicker(document, interval) {
         var _this = this;
@@ -3374,6 +3584,9 @@ exports.default = TypeUtil;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
 var Button = /** @class */ (function () {
     function Button(title) {
         this.emitter = new emitter_1.default();
@@ -3404,6 +3617,9 @@ var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/j
 function constrainComponent(comp) {
     return number_util_1.default.constrain(comp, 0, 255);
 }
+/**
+ * @hidden
+ */
 var Color = /** @class */ (function () {
     function Color(r, g, b) {
         this.emitter = new emitter_1.default();
@@ -3443,6 +3659,9 @@ exports.default = Color;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
 var Foldable = /** @class */ (function () {
     function Foldable() {
         this.emitter = new emitter_1.default();
@@ -3480,6 +3699,9 @@ exports.default = Foldable;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
 var Folder = /** @class */ (function () {
     function Folder(title, expanded) {
         this.emitter = new emitter_1.default();
@@ -3533,6 +3755,9 @@ exports.default = Folder;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
 var GraphCursor = /** @class */ (function () {
     function GraphCursor() {
         this.emitter = new emitter_1.default();
@@ -3570,6 +3795,9 @@ exports.default = GraphCursor;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
 var InputValue = /** @class */ (function () {
     function InputValue(initialValue, constraint) {
         this.constraint_ = constraint;
@@ -3621,6 +3849,9 @@ exports.default = InputValue;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
 var List = /** @class */ (function () {
     function List() {
         this.emitter = new emitter_1.default();
@@ -3655,6 +3886,9 @@ exports.default = List;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
 var MonitorValue = /** @class */ (function () {
     function MonitorValue(totalCount) {
         this.emitter = new emitter_1.default();
@@ -3700,6 +3934,9 @@ exports.default = MonitorValue;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
+/**
+ * @hidden
+ */
 var Target = /** @class */ (function () {
     function Target(object, key, opt_id) {
         this.obj_ = object;
@@ -3762,6 +3999,9 @@ var SUB_PARSERS = [
         return new color_1.default(parseInt(matches[1] + matches[1], 16), parseInt(matches[2] + matches[2], 16), parseInt(matches[3] + matches[3], 16));
     },
 ];
+/**
+ * @hidden
+ */
 var ColorParser = function (text) {
     return SUB_PARSERS.reduce(function (result, subparser) {
         return result ? result : subparser(text);
@@ -3782,6 +4022,9 @@ exports.default = ColorParser;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var NumberParser = function (text) {
     var num = parseFloat(text);
     if (isNaN(num)) {
@@ -3820,6 +4063,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('btn');
+/**
+ * @hidden
+ */
 var ButtonView = /** @class */ (function (_super) {
     __extends(ButtonView, _super);
     function ButtonView(document, config) {
@@ -3874,6 +4120,9 @@ var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('fld');
+/**
+ * @hidden
+ */
 var FolderView = /** @class */ (function (_super) {
     __extends(FolderView, _super);
     function FolderView(document, config) {
@@ -3964,6 +4213,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('ckb', 'input');
+/**
+ * @hidden
+ */
 var CheckboxInputView = /** @class */ (function (_super) {
     __extends(CheckboxInputView, _super);
     function CheckboxInputView(document, config) {
@@ -4032,6 +4284,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('clp', 'input');
+/**
+ * @hidden
+ */
 var ColorPickerInputView = /** @class */ (function (_super) {
     __extends(ColorPickerInputView, _super);
     function ColorPickerInputView(document, config) {
@@ -4132,6 +4387,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('cswtxt', 'input');
+/**
+ * @hidden
+ */
 var ColorSwatchTextInputView = /** @class */ (function (_super) {
     __extends(ColorSwatchTextInputView, _super);
     function ColorSwatchTextInputView(document, config) {
@@ -4194,6 +4452,9 @@ var ColorConverter = __webpack_require__(/*! ../../converter/color */ "./src/mai
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('csw', 'input');
+/**
+ * @hidden
+ */
 var ColorSwatchInputView = /** @class */ (function (_super) {
     __extends(ColorSwatchInputView, _super);
     function ColorSwatchInputView(document, config) {
@@ -4269,6 +4530,9 @@ var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('hpl', 'input');
+/**
+ * @hidden
+ */
 var HPaletteInputView = /** @class */ (function (_super) {
     __extends(HPaletteInputView, _super);
     function HPaletteInputView(document, config) {
@@ -4346,6 +4610,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('lst', 'input');
+/**
+ * @hidden
+ */
 var ListInputView = /** @class */ (function (_super) {
     __extends(ListInputView, _super);
     function ListInputView(document, config) {
@@ -4418,6 +4685,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('sldtxt', 'input');
+/**
+ * @hidden
+ */
 var SliderTextInputView = /** @class */ (function (_super) {
     __extends(SliderTextInputView, _super);
     function SliderTextInputView(document, config) {
@@ -4480,6 +4750,9 @@ var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('sld', 'input');
+/**
+ * @hidden
+ */
 var SliderInputView = /** @class */ (function (_super) {
     __extends(SliderInputView, _super);
     function SliderInputView(document, config) {
@@ -4559,6 +4832,9 @@ var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('svp', 'input');
+/**
+ * @hidden
+ */
 var SvPaletteInputView = /** @class */ (function (_super) {
     __extends(SvPaletteInputView, _super);
     function SvPaletteInputView(document, config) {
@@ -4643,6 +4919,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('txt', 'input');
+/**
+ * @hidden
+ */
 var TextInputView = /** @class */ (function (_super) {
     __extends(TextInputView, _super);
     function TextInputView(document, config) {
@@ -4706,6 +4985,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('lbl');
+/**
+ * @hidden
+ */
 var LabeledView = /** @class */ (function (_super) {
     __extends(LabeledView, _super);
     function LabeledView(document, config) {
@@ -4757,6 +5039,9 @@ var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/mai
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var SVG_NS = 'http://www.w3.org/2000/svg';
 var className = class_name_1.default('grp', 'monitor');
+/**
+ * @hidden
+ */
 var GraphMonitorView = /** @class */ (function (_super) {
     __extends(GraphMonitorView, _super);
     function GraphMonitorView(document, config) {
@@ -4858,6 +5143,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('mll', 'monitor');
+/**
+ * @hidden
+ */
 var MultiLogMonitorView = /** @class */ (function (_super) {
     __extends(MultiLogMonitorView, _super);
     function MultiLogMonitorView(document, config) {
@@ -4924,6 +5212,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('sgl', 'monitor');
+/**
+ * @hidden
+ */
 var SingleLogMonitorView = /** @class */ (function (_super) {
     __extends(SingleLogMonitorView, _super);
     function SingleLogMonitorView(document, config) {
@@ -4985,6 +5276,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('rot');
+/**
+ * @hidden
+ */
 var RootView = /** @class */ (function (_super) {
     __extends(RootView, _super);
     function RootView(document, config) {
@@ -5074,6 +5368,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('spt');
+/**
+ * @hidden
+ */
 var SeparatorView = /** @class */ (function (_super) {
     __extends(SeparatorView, _super);
     function SeparatorView(document) {
@@ -5101,6 +5398,9 @@ exports.default = SeparatorView;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @hidden
+ */
 var View = /** @class */ (function () {
     function View(document) {
         this.document = document;
