@@ -395,6 +395,9 @@ var ButtonApi = /** @class */ (function () {
     function ButtonApi(buttonController) {
         this.controller = buttonController;
     }
+    ButtonApi.prototype.dispose = function () {
+        this.controller.dispose();
+    };
     ButtonApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.button.emitter;
         emitter.on(eventName, handler);
@@ -446,6 +449,9 @@ var FolderApi = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    FolderApi.prototype.dispose = function () {
+        this.controller.dispose();
+    };
     FolderApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.default(object, key, params.presetKey), params);
@@ -504,6 +510,9 @@ var InputBindingApi = /** @class */ (function () {
     function InputBindingApi(bindingController) {
         this.controller = bindingController;
     }
+    InputBindingApi.prototype.dispose = function () {
+        this.controller.dispose();
+    };
     InputBindingApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.binding.value.emitter;
         emitter.on(eventName, handler);
@@ -539,6 +548,9 @@ var MonitorBindingApi = /** @class */ (function () {
     function MonitorBindingApi(bindingController) {
         this.controller = bindingController;
     }
+    MonitorBindingApi.prototype.dispose = function () {
+        this.controller.dispose();
+    };
     MonitorBindingApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.binding.value.emitter;
         emitter.on(eventName, handler);
@@ -658,6 +670,9 @@ var RootApi = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    RootApi.prototype.dispose = function () {
+        this.controller.dispose();
+    };
     RootApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.default(object, key, params.presetKey), params);
@@ -804,6 +819,9 @@ var MonitorBinding = /** @class */ (function () {
         this.ticker.emitter.on('tick', this.onTick_);
         this.read();
     }
+    MonitorBinding.prototype.dispose = function () {
+        this.ticker.dispose();
+    };
     MonitorBinding.prototype.read = function () {
         var targetValue = this.target.read();
         if (targetValue !== undefined) {
@@ -1623,6 +1641,9 @@ var ButtonController = /** @class */ (function () {
         });
         this.view.buttonElement.addEventListener('click', this.onButtonClick_);
     }
+    ButtonController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     ButtonController.prototype.onButtonClick_ = function () {
         this.button.click();
     };
@@ -1686,6 +1707,9 @@ var FolderController = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    FolderController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     FolderController.prototype.computeExpandedHeight_ = function () {
         var _this = this;
         var elem = this.view.containerElement;
@@ -1758,6 +1782,10 @@ var InputBindingController = /** @class */ (function () {
             view: this.controller.view,
         });
     }
+    InputBindingController.prototype.dispose = function () {
+        this.controller.dispose();
+        this.view.dispose();
+    };
     return InputBindingController;
 }());
 exports.default = InputBindingController;
@@ -1789,6 +1817,9 @@ var CheckboxInputController = /** @class */ (function () {
         });
         this.view.inputElement.addEventListener('change', this.onInputChange_);
     }
+    CheckboxInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     CheckboxInputController.prototype.onInputChange_ = function (e) {
         var inputElem = type_util_1.default.forceCast(e.currentTarget);
         this.value.rawValue = inputElem.checked;
@@ -1885,6 +1916,9 @@ var ColorPickerInputController = /** @class */ (function () {
             elem.addEventListener('blur', _this.onInputBlur_);
         });
     }
+    ColorPickerInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     ColorPickerInputController.prototype.onInputBlur_ = function (e) {
         var elem = this.view.element;
         var nextTarget = type_util_1.default.forceCast(e.relatedTarget);
@@ -1937,6 +1971,9 @@ var ColorSwatchTextInputController = /** @class */ (function () {
             textInputView: this.textIc_.view,
         });
     }
+    ColorSwatchTextInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     return ColorSwatchTextInputController;
 }());
 exports.default = ColorSwatchTextInputController;
@@ -1975,6 +2012,9 @@ var ColorSwatchInputController = /** @class */ (function () {
         this.view.buttonElement.addEventListener('blur', this.onButtonBlur_);
         this.view.buttonElement.addEventListener('click', this.onButtonClick_);
     }
+    ColorSwatchInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     ColorSwatchInputController.prototype.onButtonBlur_ = function (e) {
         var elem = this.view.element;
         var nextTarget = type_util_1.default.forceCast(e.relatedTarget);
@@ -2024,6 +2064,9 @@ var HPaletteInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
+    HPaletteInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     HPaletteInputController.prototype.handlePointerEvent_ = function (d) {
         var hue = number_util_1.default.map(d.py, 0, 1, 0, 360);
         var c = this.value.rawValue;
@@ -2099,6 +2142,9 @@ var ListInputController = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    ListInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     ListInputController.prototype.onSelectChange_ = function (e) {
         var selectElem = type_util_1.default.forceCast(e.currentTarget);
         var optElem = selectElem.selectedOptions.item(0);
@@ -2168,6 +2214,9 @@ var NumberTextInputController = /** @class */ (function (_super) {
         _this.view.inputElement.addEventListener('keydown', _this.onInputKeyDown_);
         return _this;
     }
+    NumberTextInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     NumberTextInputController.prototype.onInputKeyDown_ = function (e) {
         var step = this.step_ * (e.altKey ? 0.1 : 1) * (e.shiftKey ? 10 : 1);
         if (e.keyCode === 38) {
@@ -2232,6 +2281,9 @@ var SliderTextInputController = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    SliderTextInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     return SliderTextInputController;
 }());
 exports.default = SliderTextInputController;
@@ -2293,6 +2345,9 @@ var SliderInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
+    SliderInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     SliderInputController.prototype.onPointerDown_ = function (d) {
         this.value.rawValue = number_util_1.default.map(d.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
@@ -2344,6 +2399,9 @@ var SvPaletteInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
+    SvPaletteInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     SvPaletteInputController.prototype.handlePointerEvent_ = function (d) {
         var saturation = number_util_1.default.map(d.px, 0, 1, 0, 100);
         var value = number_util_1.default.map(d.py, 0, 1, 100, 0);
@@ -2394,6 +2452,9 @@ var TextInputController = /** @class */ (function () {
         });
         this.view.inputElement.addEventListener('change', this.onInputChange_);
     }
+    TextInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     TextInputController.prototype.onInputChange_ = function (e) {
         var _this = this;
         var inputElem = type_util_1.default.forceCast(e.currentTarget);
@@ -2433,6 +2494,11 @@ var MonitorBindingController = /** @class */ (function () {
             view: this.controller.view,
         });
     }
+    MonitorBindingController.prototype.dispose = function () {
+        this.binding.dispose();
+        this.controller.dispose();
+        this.view.dispose();
+    };
     return MonitorBindingController;
 }());
 exports.default = MonitorBindingController;
@@ -2472,6 +2538,9 @@ var GraphMonitorController = /** @class */ (function () {
         this.view.graphElement.addEventListener('mouseleave', this.onGraphMouseLeave_);
         this.view.graphElement.addEventListener('mousemove', this.onGraphMouseMove_);
     }
+    GraphMonitorController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     GraphMonitorController.prototype.onGraphMouseLeave_ = function () {
         this.cursor_.index = -1;
     };
@@ -2509,6 +2578,9 @@ var MultiLogMonitorController = /** @class */ (function () {
             value: this.value,
         });
     }
+    MultiLogMonitorController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     return MultiLogMonitorController;
 }());
 exports.default = MultiLogMonitorController;
@@ -2538,6 +2610,9 @@ var SingleLogMonitorController = /** @class */ (function () {
             value: this.value,
         });
     }
+    SingleLogMonitorController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     return SingleLogMonitorController;
 }());
 exports.default = SingleLogMonitorController;
@@ -2609,6 +2684,9 @@ var RootController = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    RootController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     RootController.prototype.onUiControllerListAppend_ = function (uc) {
         if (uc instanceof input_binding_1.default) {
             var emitter = uc.binding.value.emitter;
@@ -2668,6 +2746,9 @@ var SeparatorController = /** @class */ (function () {
     function SeparatorController(document) {
         this.view = new separator_1.default(document);
     }
+    SeparatorController.prototype.dispose = function () {
+        this.view.dispose();
+    };
     return SeparatorController;
 }());
 exports.default = SeparatorController;
@@ -3002,19 +3083,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Style = __webpack_require__(/*! ../sass/bundle.scss */ "./src/main/sass/bundle.scss");
-var root_1 = __webpack_require__(/*! ./api/root */ "./src/main/js/api/root.ts");
-var root_2 = __webpack_require__(/*! ./controller/root */ "./src/main/js/controller/root.ts");
-var class_name_1 = __webpack_require__(/*! ./misc/class-name */ "./src/main/js/misc/class-name.ts");
-var DomUtil = __webpack_require__(/*! ./misc/dom-util */ "./src/main/js/misc/dom-util.ts");
-var type_util_1 = __webpack_require__(/*! ./misc/type-util */ "./src/main/js/misc/type-util.ts");
-function createDefaultWrapperElement(document) {
-    var elem = document.createElement('div');
-    elem.classList.add(class_name_1.default('dfw')());
-    if (document.body) {
-        document.body.appendChild(elem);
-    }
-    return elem;
-}
+var tweakpane_without_style_1 = __webpack_require__(/*! ./tweakpane-without-style */ "./src/main/js/tweakpane-without-style.ts");
 function embedDefaultStyleIfNeeded(document) {
     var MARKER = 'tweakpane';
     if (document.querySelector("style[data-for=" + MARKER + "]")) {
@@ -3030,20 +3099,12 @@ function embedDefaultStyleIfNeeded(document) {
 var Tweakpane = /** @class */ (function (_super) {
     __extends(Tweakpane, _super);
     function Tweakpane(opt_config) {
-        var _this = this;
-        var config = opt_config || {};
-        var document = type_util_1.default.getOrDefault(config.document, DomUtil.getWindowDocument());
-        embedDefaultStyleIfNeeded(document);
-        var rootController = new root_2.default(document, {
-            title: config.title,
-        });
-        _this = _super.call(this, rootController) || this;
-        var containerElem = config.container || createDefaultWrapperElement(document);
-        containerElem.appendChild(_this.element);
+        var _this = _super.call(this, opt_config) || this;
+        embedDefaultStyleIfNeeded(_this.document);
         return _this;
     }
     return Tweakpane;
-}(root_1.default));
+}(tweakpane_without_style_1.default));
 exports.default = Tweakpane;
 
 
@@ -3210,6 +3271,27 @@ exports.hsvToRgb = hsvToRgb;
 
 /***/ }),
 
+/***/ "./src/main/js/misc/disposing-util.ts":
+/*!********************************************!*\
+  !*** ./src/main/js/misc/disposing-util.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function disposeElement(elem) {
+    if (elem && elem.parentElement) {
+        elem.parentElement.removeChild(elem);
+    }
+    return null;
+}
+exports.disposeElement = disposeElement;
+
+
+/***/ }),
+
 /***/ "./src/main/js/misc/dom-util.ts":
 /*!**************************************!*\
   !*** ./src/main/js/misc/dom-util.ts ***!
@@ -3352,6 +3434,9 @@ exports.default = NumberUtil;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 function createMessage(config) {
+    if (config.type === 'alreadydisposed') {
+        return 'View has been already disposed';
+    }
     if (config.type === 'emptyvalue') {
         return "Value is empty for " + config.context.key;
     }
@@ -3360,6 +3445,9 @@ function createMessage(config) {
     }
     if (config.type === 'nomatchingcontroller') {
         return "No matching controller for " + config.context.key;
+    }
+    if (config.type === 'shouldneverhappen') {
+        return 'This error should never happen';
     }
     return 'Unexpected error';
 }
@@ -3370,6 +3458,12 @@ var PaneError = /** @class */ (function () {
         this.stack = new Error(this.message).stack;
         this.type = config.type;
     }
+    PaneError.alreadyDisposed = function () {
+        return new PaneError({ type: 'alreadydisposed' });
+    };
+    PaneError.shouldNeverHappen = function () {
+        return new PaneError({ type: 'shouldneverhappen' });
+    };
     return PaneError;
 }());
 exports.default = PaneError;
@@ -4037,6 +4131,92 @@ exports.default = NumberParser;
 
 /***/ }),
 
+/***/ "./src/main/js/tweakpane-without-style.ts":
+/*!************************************************!*\
+  !*** ./src/main/js/tweakpane-without-style.ts ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var root_1 = __webpack_require__(/*! ./api/root */ "./src/main/js/api/root.ts");
+var root_2 = __webpack_require__(/*! ./controller/root */ "./src/main/js/controller/root.ts");
+var class_name_1 = __webpack_require__(/*! ./misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DomUtil = __webpack_require__(/*! ./misc/dom-util */ "./src/main/js/misc/dom-util.ts");
+var pane_error_1 = __webpack_require__(/*! ./misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var type_util_1 = __webpack_require__(/*! ./misc/type-util */ "./src/main/js/misc/type-util.ts");
+function createDefaultWrapperElement(document) {
+    var elem = document.createElement('div');
+    elem.classList.add(class_name_1.default('dfw')());
+    if (document.body) {
+        document.body.appendChild(elem);
+    }
+    return elem;
+}
+var TweakpaneWithoutStyle = /** @class */ (function (_super) {
+    __extends(TweakpaneWithoutStyle, _super);
+    function TweakpaneWithoutStyle(opt_config) {
+        var _this = this;
+        var config = opt_config || {};
+        var document = type_util_1.default.getOrDefault(config.document, DomUtil.getWindowDocument());
+        var rootController = new root_2.default(document, {
+            title: config.title,
+        });
+        _this = _super.call(this, rootController) || this;
+        _this.containerElem_ =
+            config.container || createDefaultWrapperElement(document);
+        _this.containerElem_.appendChild(_this.element);
+        _this.doc_ = document;
+        _this.usesDefaultWrapper_ = !config.container;
+        return _this;
+    }
+    TweakpaneWithoutStyle.prototype.dispose = function () {
+        var containerElem = this.containerElem_;
+        if (!containerElem) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
+        if (this.usesDefaultWrapper_) {
+            var parentElem = containerElem.parentElement;
+            if (parentElem) {
+                parentElem.removeChild(containerElem);
+            }
+        }
+        this.containerElem_ = null;
+        this.doc_ = null;
+        _super.prototype.dispose.call(this);
+    };
+    Object.defineProperty(TweakpaneWithoutStyle.prototype, "document", {
+        get: function () {
+            if (!this.doc_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
+            return this.doc_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return TweakpaneWithoutStyle;
+}(root_1.default));
+exports.default = TweakpaneWithoutStyle;
+
+
+/***/ }),
+
 /***/ "./src/main/js/view/button.ts":
 /*!************************************!*\
   !*** ./src/main/js/view/button.ts ***!
@@ -4061,6 +4241,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('btn');
 /**
@@ -4081,11 +4263,18 @@ var ButtonView = /** @class */ (function (_super) {
     }
     Object.defineProperty(ButtonView.prototype, "buttonElement", {
         get: function () {
+            if (!this.buttonElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.buttonElem_;
         },
         enumerable: true,
         configurable: true
     });
+    ButtonView.prototype.dispose = function () {
+        this.buttonElem_ = DisposingUtil.disposeElement(this.buttonElem_);
+        _super.prototype.dispose.call(this);
+    };
     return ButtonView;
 }(view_1.default));
 exports.default = ButtonView;
@@ -4117,6 +4306,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('fld');
@@ -4148,6 +4339,9 @@ var FolderView = /** @class */ (function (_super) {
     }
     Object.defineProperty(FolderView.prototype, "titleElement", {
         get: function () {
+            if (!this.titleElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.titleElem_;
         },
         enumerable: true,
@@ -4155,13 +4349,24 @@ var FolderView = /** @class */ (function (_super) {
     });
     Object.defineProperty(FolderView.prototype, "containerElement", {
         get: function () {
+            if (!this.containerElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.containerElem_;
         },
         enumerable: true,
         configurable: true
     });
+    FolderView.prototype.dispose = function () {
+        this.containerElem_ = DisposingUtil.disposeElement(this.containerElem_);
+        this.titleElem_ = DisposingUtil.disposeElement(this.titleElem_);
+        _super.prototype.dispose.call(this);
+    };
     FolderView.prototype.applyModel_ = function () {
-        var _this = this;
+        var containerElem = this.containerElem_;
+        if (!containerElem) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         var expanded = this.folder_.expanded;
         var expandedClass = className(undefined, 'expanded');
         if (expanded) {
@@ -4172,9 +4377,9 @@ var FolderView = /** @class */ (function (_super) {
         }
         type_util_1.default.ifNotEmpty(this.folder_.expandedHeight, function (expandedHeight) {
             var containerHeight = expanded ? expandedHeight : 0;
-            _this.containerElem_.style.height = containerHeight + "px";
+            containerElem.style.height = containerHeight + "px";
         }, function () {
-            _this.containerElem_.style.height = expanded ? 'auto' : '0px';
+            containerElem.style.height = expanded ? 'auto' : '0px';
         });
     };
     FolderView.prototype.onFolderChange_ = function () {
@@ -4211,6 +4416,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('ckb', 'input');
 /**
@@ -4240,12 +4447,22 @@ var CheckboxInputView = /** @class */ (function (_super) {
     }
     Object.defineProperty(CheckboxInputView.prototype, "inputElement", {
         get: function () {
+            if (!this.inputElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.inputElem_;
         },
         enumerable: true,
         configurable: true
     });
+    CheckboxInputView.prototype.dispose = function () {
+        this.inputElem_ = DisposingUtil.disposeElement(this.inputElem_);
+        _super.prototype.dispose.call(this);
+    };
     CheckboxInputView.prototype.update = function () {
+        if (!this.inputElem_) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         this.inputElem_.checked = this.value.rawValue;
     };
     CheckboxInputView.prototype.onValueChange_ = function () {
@@ -4337,6 +4554,12 @@ var ColorPickerInputView = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ColorPickerInputView.prototype.dispose = function () {
+        this.hPaletteView_.dispose();
+        this.rgbInputViews_ = [];
+        this.svPaletteView_.dispose();
+        _super.prototype.dispose.call(this);
+    };
     ColorPickerInputView.prototype.update = function () {
         if (this.foldable.expanded) {
             this.element.classList.add(className(undefined, 'expanded'));
@@ -4414,6 +4637,11 @@ var ColorSwatchTextInputView = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ColorSwatchTextInputView.prototype.dispose = function () {
+        this.swatchInputView_.dispose();
+        this.textInputView_.dispose();
+        _super.prototype.dispose.call(this);
+    };
     ColorSwatchTextInputView.prototype.update = function () {
         this.swatchInputView_.update();
         this.textInputView_.update();
@@ -4450,6 +4678,8 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ColorConverter = __webpack_require__(/*! ../../converter/color */ "./src/main/js/converter/color.ts");
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('csw', 'input');
 /**
@@ -4459,6 +4689,9 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
     __extends(ColorSwatchInputView, _super);
     function ColorSwatchInputView(document, config) {
         var _this = _super.call(this, document) || this;
+        if (_this.element === null) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
@@ -4481,12 +4714,24 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
     }
     Object.defineProperty(ColorSwatchInputView.prototype, "buttonElement", {
         get: function () {
+            if (this.buttonElem_ === null) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.buttonElem_;
         },
         enumerable: true,
         configurable: true
     });
+    ColorSwatchInputView.prototype.dispose = function () {
+        this.pickerView_.dispose();
+        this.buttonElem_ = DisposingUtil.disposeElement(this.buttonElem_);
+        this.swatchElem_ = DisposingUtil.disposeElement(this.swatchElem_);
+        _super.prototype.dispose.call(this);
+    };
     ColorSwatchInputView.prototype.update = function () {
+        if (!this.swatchElem_) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         var value = this.value.rawValue;
         this.swatchElem_.style.backgroundColor = ColorConverter.toString(value);
     };
@@ -4526,8 +4771,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/formatter/color.ts");
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var ColorModel = __webpack_require__(/*! ../../misc/color-model */ "./src/main/js/misc/color-model.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('hpl', 'input');
 /**
@@ -4545,7 +4792,7 @@ var HPaletteInputView = /** @class */ (function (_super) {
         canvasElem.classList.add(className('c'));
         canvasElem.tabIndex = -1;
         _this.element.appendChild(canvasElem);
-        _this.canvasElement = canvasElem;
+        _this.canvasElem_ = canvasElem;
         var markerElem = document.createElement('div');
         markerElem.classList.add(className('m'));
         _this.element.appendChild(markerElem);
@@ -4553,7 +4800,25 @@ var HPaletteInputView = /** @class */ (function (_super) {
         _this.update();
         return _this;
     }
+    Object.defineProperty(HPaletteInputView.prototype, "canvasElement", {
+        get: function () {
+            if (!this.canvasElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
+            return this.canvasElem_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HPaletteInputView.prototype.dispose = function () {
+        this.canvasElem_ = DisposingUtil.disposeElement(this.canvasElem_);
+        this.markerElem_ = DisposingUtil.disposeElement(this.markerElem_);
+        _super.prototype.dispose.call(this);
+    };
     HPaletteInputView.prototype.update = function () {
+        if (!this.markerElem_) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         var ctx = DomUtil.getCanvasContext(this.canvasElement);
         if (!ctx) {
             return;
@@ -4608,6 +4873,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('lst', 'input');
 /**
@@ -4641,12 +4908,22 @@ var ListInputView = /** @class */ (function (_super) {
     }
     Object.defineProperty(ListInputView.prototype, "selectElement", {
         get: function () {
+            if (!this.selectElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.selectElem_;
         },
         enumerable: true,
         configurable: true
     });
+    ListInputView.prototype.dispose = function () {
+        this.selectElem_ = DisposingUtil.disposeElement(this.selectElem_);
+        _super.prototype.dispose.call(this);
+    };
     ListInputView.prototype.update = function () {
+        if (!this.selectElem_) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         this.selectElem_.value = this.stringifyValue_(this.value.rawValue);
     };
     ListInputView.prototype.onValueChange_ = function () {
@@ -4712,6 +4989,11 @@ var SliderTextInputView = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    SliderTextInputView.prototype.dispose = function () {
+        this.sliderInputView_.dispose();
+        this.textInputView_.dispose();
+        _super.prototype.dispose.call(this);
+    };
     SliderTextInputView.prototype.update = function () {
         this.sliderInputView_.update();
         this.textInputView_.update();
@@ -4747,7 +5029,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('sld', 'input');
 /**
@@ -4776,6 +5060,9 @@ var SliderInputView = /** @class */ (function (_super) {
     }
     Object.defineProperty(SliderInputView.prototype, "outerElement", {
         get: function () {
+            if (!this.outerElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.outerElem_;
         },
         enumerable: true,
@@ -4783,12 +5070,23 @@ var SliderInputView = /** @class */ (function (_super) {
     });
     Object.defineProperty(SliderInputView.prototype, "innerElement", {
         get: function () {
+            if (!this.innerElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.innerElem_;
         },
         enumerable: true,
         configurable: true
     });
+    SliderInputView.prototype.dispose = function () {
+        this.innerElem_ = DisposingUtil.disposeElement(this.innerElem_);
+        this.outerElem_ = DisposingUtil.disposeElement(this.outerElem_);
+        _super.prototype.dispose.call(this);
+    };
     SliderInputView.prototype.update = function () {
+        if (!this.innerElem_) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         var p = number_util_1.default.map(this.value.rawValue, this.minValue_, this.maxValue_, 0, 100);
         this.innerElem_.style.width = p + "%";
     };
@@ -4828,8 +5126,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/formatter/color.ts");
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var ColorModel = __webpack_require__(/*! ../../misc/color-model */ "./src/main/js/misc/color-model.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('svp', 'input');
 /**
@@ -4847,7 +5147,7 @@ var SvPaletteInputView = /** @class */ (function (_super) {
         canvasElem.classList.add(className('c'));
         canvasElem.tabIndex = -1;
         _this.element.appendChild(canvasElem);
-        _this.canvasElement = canvasElem;
+        _this.canvasElem_ = canvasElem;
         var markerElem = document.createElement('div');
         markerElem.classList.add(className('m'));
         _this.element.appendChild(markerElem);
@@ -4855,7 +5155,25 @@ var SvPaletteInputView = /** @class */ (function (_super) {
         _this.update();
         return _this;
     }
+    Object.defineProperty(SvPaletteInputView.prototype, "canvasElement", {
+        get: function () {
+            if (!this.canvasElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
+            return this.canvasElem_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    SvPaletteInputView.prototype.dispose = function () {
+        this.canvasElem_ = DisposingUtil.disposeElement(this.canvasElem_);
+        this.markerElem_ = DisposingUtil.disposeElement(this.markerElem_);
+        _super.prototype.dispose.call(this);
+    };
     SvPaletteInputView.prototype.update = function () {
+        if (!this.markerElem_) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         var ctx = DomUtil.getCanvasContext(this.canvasElement);
         if (!ctx) {
             return;
@@ -4917,6 +5235,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('txt', 'input');
 /**
@@ -4941,12 +5261,22 @@ var TextInputView = /** @class */ (function (_super) {
     }
     Object.defineProperty(TextInputView.prototype, "inputElement", {
         get: function () {
+            if (!this.inputElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.inputElem_;
         },
         enumerable: true,
         configurable: true
     });
+    TextInputView.prototype.dispose = function () {
+        this.inputElem_ = DisposingUtil.disposeElement(this.inputElem_);
+        _super.prototype.dispose.call(this);
+    };
     TextInputView.prototype.update = function () {
+        if (!this.inputElem_) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         this.inputElem_.value = this.formatter_.format(this.value.rawValue);
     };
     TextInputView.prototype.onValueChange_ = function () {
@@ -5035,7 +5365,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var SVG_NS = 'http://www.w3.org/2000/svg';
 var className = class_name_1.default('grp', 'monitor');
@@ -5072,12 +5404,25 @@ var GraphMonitorView = /** @class */ (function (_super) {
     }
     Object.defineProperty(GraphMonitorView.prototype, "graphElement", {
         get: function () {
+            if (!this.svgElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.svgElem_;
         },
         enumerable: true,
         configurable: true
     });
+    GraphMonitorView.prototype.dispose = function () {
+        this.lineElem_ = DisposingUtil.disposeElement(this.lineElem_);
+        this.svgElem_ = DisposingUtil.disposeElement(this.svgElem_);
+        this.tooltipElem_ = DisposingUtil.disposeElement(this.tooltipElem_);
+        _super.prototype.dispose.call(this);
+    };
     GraphMonitorView.prototype.update = function () {
+        var tooltipElem = this.tooltipElem_;
+        if (!this.lineElem_ || !this.svgElem_ || !tooltipElem) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         var bounds = this.svgElem_.getBoundingClientRect();
         // Graph
         var maxIndex = this.value.totalCount - 1;
@@ -5091,7 +5436,6 @@ var GraphMonitorView = /** @class */ (function (_super) {
         })
             .join(' '));
         // Cursor
-        var tooltipElem = this.tooltipElem_;
         var value = this.value.rawValues[this.cursor_.index];
         if (value === undefined) {
             tooltipElem.classList.remove(className('t', 'valid'));
@@ -5102,7 +5446,7 @@ var GraphMonitorView = /** @class */ (function (_super) {
         var ty = number_util_1.default.map(value, min, max, bounds.height, 0);
         tooltipElem.style.left = tx + "px";
         tooltipElem.style.top = ty + "px";
-        this.tooltipElem_.textContent = "" + this.formatter_.format(value);
+        tooltipElem.textContent = "" + this.formatter_.format(value);
     };
     GraphMonitorView.prototype.onValueUpdate_ = function () {
         this.update();
@@ -5141,6 +5485,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('mll', 'monitor');
 /**
@@ -5163,9 +5509,16 @@ var MultiLogMonitorView = /** @class */ (function (_super) {
         _this.update();
         return _this;
     }
+    MultiLogMonitorView.prototype.dispose = function () {
+        this.textareaElem_ = DisposingUtil.disposeElement(this.textareaElem_);
+        _super.prototype.dispose.call(this);
+    };
     MultiLogMonitorView.prototype.update = function () {
         var _this = this;
         var elem = this.textareaElem_;
+        if (!elem) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         var shouldScroll = elem.scrollTop === elem.scrollHeight - elem.clientHeight;
         elem.textContent = this.value.rawValues
             .map(function (value) {
@@ -5210,6 +5563,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('sgl', 'monitor');
 /**
@@ -5233,7 +5588,14 @@ var SingleLogMonitorView = /** @class */ (function (_super) {
         _this.update();
         return _this;
     }
+    SingleLogMonitorView.prototype.dispose = function () {
+        this.inputElem_ = DisposingUtil.disposeElement(this.inputElem_);
+        _super.prototype.dispose.call(this);
+    };
     SingleLogMonitorView.prototype.update = function () {
+        if (!this.inputElem_) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
         var values = this.value.rawValues;
         this.inputElem_.value =
             values.length > 0
@@ -5274,6 +5636,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.default('rot');
 /**
@@ -5316,11 +5680,20 @@ var RootView = /** @class */ (function (_super) {
     });
     Object.defineProperty(RootView.prototype, "containerElement", {
         get: function () {
+            if (!this.containerElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
             return this.containerElem_;
         },
         enumerable: true,
         configurable: true
     });
+    RootView.prototype.dispose = function () {
+        this.containerElem_ = DisposingUtil.disposeElement(this.containerElem_);
+        this.folder_ = null;
+        this.titleElem_ = DisposingUtil.disposeElement(this.titleElem_);
+        _super.prototype.dispose.call(this);
+    };
     RootView.prototype.applyModel_ = function () {
         var expanded = this.folder_ ? this.folder_.expanded : true;
         var expandedClass = className(undefined, 'expanded');
@@ -5398,14 +5771,49 @@ exports.default = SeparatorView;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 /**
  * @hidden
  */
 var View = /** @class */ (function () {
     function View(document) {
-        this.document = document;
-        this.element = this.document.createElement('div');
+        this.disposed_ = false;
+        this.doc_ = document;
+        this.elem_ = this.doc_.createElement('div');
     }
+    Object.defineProperty(View.prototype, "disposed", {
+        get: function () {
+            return this.disposed_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(View.prototype, "document", {
+        get: function () {
+            if (!this.doc_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
+            return this.doc_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(View.prototype, "element", {
+        get: function () {
+            if (!this.elem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
+            return this.elem_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    View.prototype.dispose = function () {
+        this.doc_ = null;
+        this.elem_ = DisposingUtil.disposeElement(this.elem_);
+        this.disposed_ = true;
+    };
     return View;
 }());
 exports.default = View;
@@ -5425,7 +5833,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.1);color:#c8cad0;cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:rgba(200,202,208,0.2)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:rgba(200,202,208,0.25)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, #c8cad0, #c8cad0 2px, transparent 2px, transparent 4px, #c8cad0 4px, #c8cad0);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;-webkit-transform:rotate(90deg);transform:rotate(90deg);transition:-webkit-transform 0.2s ease-in-out;transition:transform 0.2s ease-in-out;transition:transform 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{-webkit-transform:none;transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:#bbbcc4}.tp-btnv_b:focus{background-color:#c8cad0}.tp-btnv_b:active{background-color:#d6d7db}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_c{border-left:rgba(200,202,208,0.1) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:rgba(200,202,208,0.2)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:rgba(200,202,208,0.25)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;-webkit-transform:none;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:rgba(200,202,208,0.15);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:#c8cad0;border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:rgba(200,202,208,0.15)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:rgba(200,202,208,0.25)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:rgba(200,202,208,0.35)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_pl{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_is{display:flex;margin-top:4px}.tp-clpiv_iw{align-items:center;display:flex}.tp-clpiv_iw+.tp-clpiv_iw{margin-left:4px}.tp-clpiv_il{color:rgba(200,202,208,0.8);margin-left:4px;margin-right:8px}.tp-clpiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-clpiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-clpiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-clpiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{color:#c8cad0;display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:#bbbcc4}.tp-lstiv_s:focus{background-color:#c8cad0}.tp-lstiv_s:active{background-color:#d6d7db}.tp-lstiv_m{border-color:#2f3137 transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-sldiv{color:#c8cad0;display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:rgba(200,202,208,0.2);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:#adafb8;border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:#bbbcc4}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:#c8cad0}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:#d6d7db}.tp-txtiv{color:#c8cad0;display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-txtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-txtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:rgba(200,202,208,0.15)}.tp-cswiv_sw:focus{background-color:rgba(200,202,208,0.25)}.tp-cswiv_sw:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:rgba(200,202,208,0.8);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{color:#c8cad0;display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:rgba(200,202,208,0.7);stroke-linejoin:round}.tp-grpmv_t{font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:rgba(200,202,208,0.7);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%}.tp-rotv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);font-family:\"Roboto Mono\",\"Source Code Pro\",Menlo,Courier,monospace;font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:rgba(24,24,27,0.3);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
+exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.1);color:#c8cad0;cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:rgba(200,202,208,0.2)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:rgba(200,202,208,0.25)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, #c8cad0, #c8cad0 2px, transparent 2px, transparent 4px, #c8cad0 4px, #c8cad0);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;-webkit-transform:rotate(90deg);transform:rotate(90deg);-webkit-transition:-webkit-transform 0.2s ease-in-out;transition:-webkit-transform 0.2s ease-in-out;transition:transform 0.2s ease-in-out;transition:transform 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{-webkit-transform:none;transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:#bbbcc4}.tp-btnv_b:focus{background-color:#c8cad0}.tp-btnv_b:active{background-color:#d6d7db}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_c{border-left:rgba(200,202,208,0.1) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;-webkit-transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:rgba(200,202,208,0.2)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:rgba(200,202,208,0.25)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;-webkit-transform:none;transform:none;-webkit-transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:rgba(200,202,208,0.15);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:#c8cad0;border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:rgba(200,202,208,0.15)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:rgba(200,202,208,0.25)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:rgba(200,202,208,0.35)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_pl{display:-webkit-box;display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_is{display:-webkit-box;display:flex;margin-top:4px}.tp-clpiv_iw{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.tp-clpiv_iw+.tp-clpiv_iw{margin-left:4px}.tp-clpiv_il{color:rgba(200,202,208,0.8);margin-left:4px;margin-right:8px}.tp-clpiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-clpiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-clpiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-clpiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{color:#c8cad0;display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:#bbbcc4}.tp-lstiv_s:focus{background-color:#c8cad0}.tp-lstiv_s:active{background-color:#d6d7db}.tp-lstiv_m{border-color:#2f3137 transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-sldiv{color:#c8cad0;display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:rgba(200,202,208,0.2);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:#adafb8;border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:#bbbcc4}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:#c8cad0}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:#d6d7db}.tp-txtiv{color:#c8cad0;display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-txtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-txtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:rgba(200,202,208,0.15)}.tp-cswiv_sw:focus{background-color:rgba(200,202,208,0.25)}.tp-cswiv_sw:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:-webkit-box;display:flex;position:relative}.tp-cswtxtiv_s{-webkit-box-flex:0;flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{-webkit-box-flex:1;flex:1;margin-left:4px}.tp-sldtxtiv{display:-webkit-box;display:flex}.tp-sldtxtiv_s{-webkit-box-flex:2;flex:2}.tp-sldtxtiv_t{-webkit-box-flex:1;flex:1;margin-left:4px}.tp-lblv{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:rgba(200,202,208,0.8);-webkit-box-flex:1;flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{-webkit-box-flex:0;flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{color:#c8cad0;display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:rgba(200,202,208,0.7);stroke-linejoin:round}.tp-grpmv_t{font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:rgba(200,202,208,0.7);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%}.tp-rotv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);font-family:\"Roboto Mono\",\"Source Code Pro\",Menlo,Courier,monospace;font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv_m{-webkit-transition:none;transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:rgba(24,24,27,0.3);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
 
 // exports
 
