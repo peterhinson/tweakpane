@@ -1842,30 +1842,14 @@ exports.default = CheckboxInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var composite_1 = __webpack_require__(/*! ../../constraint/composite */ "./src/main/js/constraint/composite.ts");
-var range_1 = __webpack_require__(/*! ../../constraint/range */ "./src/main/js/constraint/range.ts");
-var step_1 = __webpack_require__(/*! ../../constraint/step */ "./src/main/js/constraint/step.ts");
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
-var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
 var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/model/foldable.ts");
-var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var number_2 = __webpack_require__(/*! ../../parser/number */ "./src/main/js/parser/number.ts");
 var color_picker_1 = __webpack_require__(/*! ../../view/input/color-picker */ "./src/main/js/view/input/color-picker.ts");
 var h_palette_1 = __webpack_require__(/*! ./h-palette */ "./src/main/js/controller/input/h-palette.ts");
-var number_text_1 = __webpack_require__(/*! ./number-text */ "./src/main/js/controller/input/number-text.ts");
 var sv_palette_1 = __webpack_require__(/*! ./sv-palette */ "./src/main/js/controller/input/sv-palette.ts");
-var COMPONENT_CONSTRAINT = new composite_1.default({
-    constraints: [
-        new range_1.default({
-            max: 255,
-            min: 0,
-        }),
-        new step_1.default({
-            step: 1,
-        }),
-    ],
-});
+var rgb_text_1 = __webpack_require__(/*! ./rgb-text */ "./src/main/js/controller/input/rgb-text.ts");
 /**
  * @hidden
  */
@@ -1873,9 +1857,7 @@ var ColorPickerInputController = /** @class */ (function () {
     function ColorPickerInputController(document, config) {
         var _this = this;
         this.onInputBlur_ = this.onInputBlur_.bind(this);
-        this.onValueChange_ = this.onValueChange_.bind(this);
         this.value = config.value;
-        this.value.emitter.on('change', this.onValueChange_);
         this.foldable = new foldable_1.default();
         this.hPaletteIc_ = new h_palette_1.default(document, {
             value: this.value,
@@ -1883,32 +1865,15 @@ var ColorPickerInputController = /** @class */ (function () {
         this.svPaletteIc_ = new sv_palette_1.default(document, {
             value: this.value,
         });
-        var initialComps = this.value.rawValue.getComponents();
-        var rgbValues = [0, 1, 2].map(function (index) {
-            return new input_value_1.default(initialComps[index], COMPONENT_CONSTRAINT);
-        });
-        rgbValues.forEach(function (compValue, index) {
-            compValue.emitter.on('change', function (rawValue) {
-                var comps = _this.value.rawValue.getComponents();
-                if (index === 0 || index === 1 || index === 2) {
-                    comps[index] = rawValue;
-                }
-                _this.value.rawValue = new (color_1.default.bind.apply(color_1.default, [void 0].concat(comps)))();
-            });
-        });
-        this.rgbIcs_ = rgbValues.map(function (compValue) {
-            return new number_text_1.default(document, {
-                formatter: new number_1.default(0),
-                parser: number_2.default,
-                value: compValue,
-            });
+        this.rgbTextIc_ = new rgb_text_1.default(document, {
+            formatter: new number_1.default(0),
+            parser: number_2.default,
+            value: this.value,
         });
         this.view = new color_picker_1.default(document, {
             foldable: this.foldable,
             hPaletteInputView: this.hPaletteIc_.view,
-            rgbInputViews: this.rgbIcs_.map(function (ic) {
-                return ic.view;
-            }),
+            rgbTextView: this.rgbTextIc_.view,
             svPaletteInputView: this.svPaletteIc_.view,
             value: this.value,
         });
@@ -1925,12 +1890,6 @@ var ColorPickerInputController = /** @class */ (function () {
         if (!nextTarget || !elem.contains(nextTarget)) {
             this.foldable.expanded = false;
         }
-    };
-    ColorPickerInputController.prototype.onValueChange_ = function () {
-        var comps = this.value.rawValue.getComponents();
-        this.rgbIcs_.forEach(function (ic, index) {
-            ic.value.rawValue = comps[index];
-        });
     };
     return ColorPickerInputController;
 }());
@@ -2042,7 +2001,6 @@ exports.default = ColorSwatchInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ColorModel = __webpack_require__(/*! ../../misc/color-model */ "./src/main/js/misc/color-model.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
 var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
@@ -2070,8 +2028,8 @@ var HPaletteInputController = /** @class */ (function () {
     HPaletteInputController.prototype.handlePointerEvent_ = function (d) {
         var hue = number_util_1.default.map(d.py, 0, 1, 0, 360);
         var c = this.value.rawValue;
-        var _a = ColorModel.rgbToHsv.apply(ColorModel, c.getComponents()), s = _a[1], v = _a[2];
-        this.value.rawValue = new (color_1.default.bind.apply(color_1.default, [void 0].concat(ColorModel.hsvToRgb(hue, s, v))))();
+        var _a = c.getComponents('hsv'), s = _a[1], v = _a[2];
+        this.value.rawValue = new color_1.default([hue, s, v], 'hsv');
         this.view.update();
     };
     HPaletteInputController.prototype.onPointerDown_ = function (d) {
@@ -2185,23 +2143,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var step_1 = __webpack_require__(/*! ../../constraint/step */ "./src/main/js/constraint/step.ts");
-var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
-var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
 var text_1 = __webpack_require__(/*! ./text */ "./src/main/js/controller/input/text.ts");
-function findStep(value) {
-    var c = value.constraint
-        ? util_1.default.findConstraint(value.constraint, step_1.default)
-        : null;
-    if (!c) {
-        return null;
-    }
-    return c.step;
-}
-function estimateSuitableStep(value) {
-    var step = findStep(value);
-    return type_util_1.default.getOrDefault(step, 1);
-}
 /**
  * @hidden
  */
@@ -2210,7 +2153,7 @@ var NumberTextInputController = /** @class */ (function (_super) {
     function NumberTextInputController(document, config) {
         var _this = _super.call(this, document, config) || this;
         _this.onInputKeyDown_ = _this.onInputKeyDown_.bind(_this);
-        _this.step_ = estimateSuitableStep(_this.value);
+        _this.step_ = UiUtil.getStepForTextInput(_this.value.constraint);
         _this.view.inputElement.addEventListener('keydown', _this.onInputKeyDown_);
         return _this;
     }
@@ -2218,19 +2161,98 @@ var NumberTextInputController = /** @class */ (function (_super) {
         this.view.dispose();
     };
     NumberTextInputController.prototype.onInputKeyDown_ = function (e) {
-        var step = this.step_ * (e.altKey ? 0.1 : 1) * (e.shiftKey ? 10 : 1);
-        if (e.keyCode === 38) {
+        var step = UiUtil.getStepForKey(this.step_, e);
+        if (step !== 0) {
             this.value.rawValue += step;
-            this.view.update();
-        }
-        else if (e.keyCode === 40) {
-            this.value.rawValue -= step;
             this.view.update();
         }
     };
     return NumberTextInputController;
 }(text_1.default));
 exports.default = NumberTextInputController;
+
+
+/***/ }),
+
+/***/ "./src/main/js/controller/input/rgb-text.ts":
+/*!**************************************************!*\
+  !*** ./src/main/js/controller/input/rgb-text.ts ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
+var rgb_text_1 = __webpack_require__(/*! ../../view/input/rgb-text */ "./src/main/js/view/input/rgb-text.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
+var STEP = 1;
+/**
+ * @hidden
+ */
+var RgbTextInputController = /** @class */ (function () {
+    function RgbTextInputController(document, config) {
+        var _this = this;
+        this.onInputChange_ = this.onInputChange_.bind(this);
+        this.onInputKeyDown_ = this.onInputKeyDown_.bind(this);
+        this.parser_ = config.parser;
+        this.value = config.value;
+        this.view = new rgb_text_1.default(document, {
+            formatter: config.formatter,
+            value: this.value,
+        });
+        this.view.inputElements.forEach(function (inputElem) {
+            inputElem.addEventListener('change', _this.onInputChange_);
+            inputElem.addEventListener('keydown', _this.onInputKeyDown_);
+        });
+    }
+    RgbTextInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
+    RgbTextInputController.prototype.findIndexOfInputElem_ = function (inputElem) {
+        var inputElems = this.view.inputElements;
+        for (var i = 0; i < inputElems.length; i++) {
+            if (inputElems[i] === inputElem) {
+                return i;
+            }
+        }
+        return null;
+    };
+    RgbTextInputController.prototype.updateComponent_ = function (index, newValue) {
+        var comps = this.value.rawValue.getComponents('rgb');
+        var newComps = comps.map(function (comp, i) {
+            return i === index ? newValue : comp;
+        });
+        this.value.rawValue = new color_1.default([newComps[0], newComps[1], newComps[2]], 'rgb');
+        this.view.update();
+    };
+    RgbTextInputController.prototype.onInputChange_ = function (e) {
+        var _this = this;
+        var inputElem = type_util_1.default.forceCast(e.currentTarget);
+        type_util_1.default.ifNotEmpty(this.parser_(inputElem.value), function (parsedValue) {
+            type_util_1.default.ifNotEmpty(_this.findIndexOfInputElem_(inputElem), function (compIndex) {
+                _this.updateComponent_(compIndex, parsedValue);
+            });
+        });
+    };
+    RgbTextInputController.prototype.onInputKeyDown_ = function (e) {
+        var _this = this;
+        var step = UiUtil.getStepForKey(STEP, e);
+        if (step === 0) {
+            return;
+        }
+        var inputElem = type_util_1.default.forceCast(e.currentTarget);
+        type_util_1.default.ifNotEmpty(this.parser_(inputElem.value), function (parsedValue) {
+            type_util_1.default.ifNotEmpty(_this.findIndexOfInputElem_(inputElem), function (compIndex) {
+                _this.updateComponent_(compIndex, parsedValue + step);
+            });
+        });
+    };
+    return RgbTextInputController;
+}());
+exports.default = RgbTextInputController;
 
 
 /***/ }),
@@ -2377,7 +2399,6 @@ exports.default = SliderInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ColorModel = __webpack_require__(/*! ../../misc/color-model */ "./src/main/js/misc/color-model.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
 var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
@@ -2405,9 +2426,8 @@ var SvPaletteInputController = /** @class */ (function () {
     SvPaletteInputController.prototype.handlePointerEvent_ = function (d) {
         var saturation = number_util_1.default.map(d.px, 0, 1, 0, 100);
         var value = number_util_1.default.map(d.py, 0, 1, 100, 0);
-        var c = this.value.rawValue;
-        var h = ColorModel.rgbToHsv.apply(ColorModel, c.getComponents())[0];
-        this.value.rawValue = new (color_1.default.bind.apply(color_1.default, [void 0].concat(ColorModel.hsvToRgb(h, saturation, value))))();
+        var h = this.value.rawValue.getComponents('hsv')[0];
+        this.value.rawValue = new color_1.default([h, saturation, value], 'hsv');
         this.view.update();
     };
     SvPaletteInputController.prototype.onPointerDown_ = function (d) {
@@ -2766,6 +2786,9 @@ exports.default = SeparatorController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var step_1 = __webpack_require__(/*! ../constraint/step */ "./src/main/js/constraint/step.ts");
+var util_1 = __webpack_require__(/*! ../constraint/util */ "./src/main/js/constraint/util.ts");
+var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ./folder */ "./src/main/js/controller/folder.ts");
 /**
  * @hidden
@@ -2783,6 +2806,37 @@ function findControllers(uiControllers, controllerClass) {
     }, []);
 }
 exports.findControllers = findControllers;
+function findStep(constraint) {
+    var c = constraint
+        ? util_1.default.findConstraint(constraint, step_1.default)
+        : null;
+    if (!c) {
+        return null;
+    }
+    return c.step;
+}
+/**
+ * @hidden
+ */
+function getStepForTextInput(constraint) {
+    var step = findStep(constraint);
+    return type_util_1.default.getOrDefault(step, 1);
+}
+exports.getStepForTextInput = getStepForTextInput;
+/**
+ * @hidden
+ */
+function getStepForKey(baseStep, keys) {
+    var step = baseStep * (keys.altKey ? 0.1 : 1) * (keys.shiftKey ? 10 : 1);
+    if (keys.keyCode === 38) {
+        return +step;
+    }
+    else if (keys.keyCode === 40) {
+        return -step;
+    }
+    return 0;
+}
+exports.getStepForKey = getStepForKey;
 
 
 /***/ }),
@@ -2841,7 +2895,7 @@ function fromMixed(value) {
             return cv;
         }
     }
-    return new color_1.default(0, 0, 0);
+    return new color_1.default([0, 0, 0], 'rgb');
 }
 exports.fromMixed = fromMixed;
 /**
@@ -2849,7 +2903,7 @@ exports.fromMixed = fromMixed;
  */
 function toString(value) {
     var hexes = value
-        .getComponents()
+        .getComponents('rgb')
         .map(function (comp) {
         var hex = number_util_1.default.constrain(Math.floor(comp), 0, 255).toString(16);
         return hex.length === 1 ? "0" + hex : hex;
@@ -3239,7 +3293,7 @@ function rgbToHsv(r, g, b) {
 exports.rgbToHsv = rgbToHsv;
 function hsvToRgb(h, s, v) {
     var _a, _b, _c, _d, _e, _f;
-    var hp = ((h % 360) + 360) % 360;
+    var hp = number_util_1.default.loop(h, 360);
     var sp = number_util_1.default.constrain(s / 100, 0, 1);
     var vp = number_util_1.default.constrain(v / 100, 0, 1);
     var c = vp * sp;
@@ -3416,6 +3470,9 @@ var NumberUtil = {
     },
     constrain: function (value, min, max) {
         return Math.min(Math.max(value, min), max);
+    },
+    loop: function (value, max) {
+        return ((value % max) + max) % max;
     },
 };
 exports.default = NumberUtil;
@@ -3706,32 +3763,57 @@ exports.default = Button;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var ColorModel = __webpack_require__(/*! ../misc/color-model */ "./src/main/js/misc/color-model.ts");
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
-function constrainComponent(comp) {
-    return number_util_1.default.constrain(comp, 0, 255);
-}
+var CONSTRAINT_MAP = {
+    hsv: function (comps) {
+        return [
+            number_util_1.default.loop(comps[0], 360),
+            number_util_1.default.constrain(comps[1], 0, 100),
+            number_util_1.default.constrain(comps[2], 0, 100),
+        ];
+    },
+    rgb: function (comps) {
+        return [
+            number_util_1.default.constrain(comps[0], 0, 255),
+            number_util_1.default.constrain(comps[1], 0, 255),
+            number_util_1.default.constrain(comps[2], 0, 255),
+        ];
+    },
+};
 /**
  * @hidden
  */
 var Color = /** @class */ (function () {
-    function Color(r, g, b) {
+    function Color(comps, mode) {
         this.emitter = new emitter_1.default();
-        this.comps_ = [
-            constrainComponent(r),
-            constrainComponent(g),
-            constrainComponent(b),
-        ];
+        this.mode_ = mode;
+        this.comps_ = CONSTRAINT_MAP[mode](comps);
     }
-    Color.prototype.getComponents = function () {
+    Object.defineProperty(Color.prototype, "mode", {
+        get: function () {
+            return this.mode_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Color.prototype.getComponents = function (mode) {
+        if (this.mode_ === 'hsv' && mode === 'rgb') {
+            return ColorModel.hsvToRgb.apply(ColorModel, this.comps_);
+        }
+        if (this.mode_ === 'rgb' && mode === 'hsv') {
+            return ColorModel.rgbToHsv.apply(ColorModel, this.comps_);
+        }
         return this.comps_;
     };
-    Color.prototype.toObject = function () {
+    Color.prototype.toRgbObject = function () {
+        var rgbComps = this.getComponents('rgb');
         // tslint:disable:object-literal-sort-keys
         return {
-            r: this.comps_[0],
-            g: this.comps_[1],
-            b: this.comps_[2],
+            r: rgbComps[0],
+            g: rgbComps[1],
+            b: rgbComps[2],
         };
         // tslint:enable:object-literal-sort-keys
     };
@@ -4082,7 +4164,11 @@ var SUB_PARSERS = [
         if (!matches) {
             return null;
         }
-        return new color_1.default(parseInt(matches[1], 16), parseInt(matches[2], 16), parseInt(matches[3], 16));
+        return new color_1.default([
+            parseInt(matches[1], 16),
+            parseInt(matches[2], 16),
+            parseInt(matches[3], 16),
+        ], 'rgb');
     },
     // #abc
     function (text) {
@@ -4090,7 +4176,11 @@ var SUB_PARSERS = [
         if (!matches) {
             return null;
         }
-        return new color_1.default(parseInt(matches[1] + matches[1], 16), parseInt(matches[2] + matches[2], 16), parseInt(matches[3] + matches[3], 16));
+        return new color_1.default([
+            parseInt(matches[1] + matches[1], 16),
+            parseInt(matches[2] + matches[2], 16),
+            parseInt(matches[3] + matches[3], 16),
+        ], 'rgb');
     },
 ];
 /**
@@ -4515,48 +4605,37 @@ var ColorPickerInputView = /** @class */ (function (_super) {
         _this.foldable = config.foldable;
         _this.foldable.emitter.on('change', _this.onFoldableChange_);
         _this.element.classList.add(className());
-        var plElem = document.createElement('div');
-        plElem.classList.add(className('pl'));
+        var hsvElem = document.createElement('div');
+        hsvElem.classList.add(className('hsv'));
         var svElem = document.createElement('div');
         svElem.classList.add(className('sv'));
         _this.svPaletteView_ = config.svPaletteInputView;
         svElem.appendChild(_this.svPaletteView_.element);
-        plElem.appendChild(svElem);
+        hsvElem.appendChild(svElem);
         var hElem = document.createElement('div');
         hElem.classList.add(className('h'));
         _this.hPaletteView_ = config.hPaletteInputView;
         hElem.appendChild(_this.hPaletteView_.element);
-        plElem.appendChild(hElem);
-        _this.element.appendChild(plElem);
-        var inputElems = document.createElement('div');
-        inputElems.classList.add(className('is'));
-        _this.rgbInputViews_ = config.rgbInputViews;
-        _this.rgbInputViews_.forEach(function (iv, index) {
-            var elem = document.createElement('div');
-            elem.classList.add(className('iw'));
-            var labelElem = document.createElement('label');
-            labelElem.classList.add(className('il'));
-            labelElem.textContent = ['R', 'G', 'B'][index];
-            elem.appendChild(labelElem);
-            elem.appendChild(iv.element);
-            inputElems.appendChild(elem);
-        });
-        _this.element.appendChild(inputElems);
+        hsvElem.appendChild(hElem);
+        _this.element.appendChild(hsvElem);
+        var rgbElem = document.createElement('div');
+        rgbElem.classList.add(className('rgb'));
+        _this.rgbTextView_ = config.rgbTextView;
+        rgbElem.appendChild(_this.rgbTextView_.element);
+        _this.element.appendChild(rgbElem);
         _this.update();
         return _this;
     }
     Object.defineProperty(ColorPickerInputView.prototype, "allFocusableElements", {
         get: function () {
-            return [].concat(this.hPaletteView_.canvasElement, this.svPaletteView_.canvasElement, this.rgbInputViews_.map(function (iv) {
-                return iv.inputElement;
-            }));
+            return [].concat(this.hPaletteView_.canvasElement, this.rgbTextView_.inputElements, this.svPaletteView_.canvasElement);
         },
         enumerable: true,
         configurable: true
     });
     ColorPickerInputView.prototype.dispose = function () {
         this.hPaletteView_.dispose();
-        this.rgbInputViews_ = [];
+        this.rgbTextView_.dispose();
         this.svPaletteView_.dispose();
         _super.prototype.dispose.call(this);
     };
@@ -4567,9 +4646,6 @@ var ColorPickerInputView = /** @class */ (function (_super) {
         else {
             this.element.classList.remove(className(undefined, 'expanded'));
         }
-        this.rgbInputViews_.forEach(function (iv) {
-            iv.update();
-        });
     };
     ColorPickerInputView.prototype.onValueChange_ = function () {
         this.update();
@@ -4835,7 +4911,7 @@ var HPaletteInputView = /** @class */ (function (_super) {
             ctx.fillRect(0, y, width, ch);
         }
         var c = this.value.rawValue;
-        var hsvComps = ColorModel.rgbToHsv.apply(ColorModel, c.getComponents());
+        var hsvComps = c.getComponents('hsv');
         var top = number_util_1.default.map(hsvComps[0], 0, 360, 0, 100);
         this.markerElem_.style.top = top + "%";
     };
@@ -4932,6 +5008,111 @@ var ListInputView = /** @class */ (function (_super) {
     return ListInputView;
 }(view_1.default));
 exports.default = ListInputView;
+
+
+/***/ }),
+
+/***/ "./src/main/js/view/input/rgb-text.ts":
+/*!********************************************!*\
+  !*** ./src/main/js/view/input/rgb-text.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
+var COMPONENT_LABELS = ['R', 'G', 'B'];
+var className = class_name_1.default('rgbtxt', 'input');
+/**
+ * @hidden
+ */
+var RgbTextInputView = /** @class */ (function (_super) {
+    __extends(RgbTextInputView, _super);
+    function RgbTextInputView(document, config) {
+        var _this = _super.call(this, document) || this;
+        _this.onValueChange_ = _this.onValueChange_.bind(_this);
+        _this.formatter_ = config.formatter;
+        _this.element.classList.add(className());
+        var labelElems = COMPONENT_LABELS.map(function (text) {
+            var elem = document.createElement('label');
+            elem.classList.add(className('l'));
+            elem.textContent = text;
+            return elem;
+        });
+        var inputElems = COMPONENT_LABELS.map(function () {
+            var inputElem = document.createElement('input');
+            inputElem.classList.add(className('i'));
+            inputElem.type = 'text';
+            return inputElem;
+        });
+        COMPONENT_LABELS.forEach(function (_, index) {
+            var elem = document.createElement('div');
+            elem.classList.add(className('w'));
+            elem.appendChild(labelElems[index]);
+            elem.appendChild(inputElems[index]);
+            _this.element.appendChild(elem);
+        });
+        _this.inputElems_ = [inputElems[0], inputElems[1], inputElems[2]];
+        config.value.emitter.on('change', _this.onValueChange_);
+        _this.value = config.value;
+        _this.update();
+        return _this;
+    }
+    RgbTextInputView.prototype.dispose = function () {
+        if (this.inputElems_) {
+            this.inputElems_.forEach(function (elem) {
+                DisposingUtil.disposeElement(elem);
+            });
+            this.inputElems_ = null;
+        }
+        _super.prototype.dispose.call(this);
+    };
+    Object.defineProperty(RgbTextInputView.prototype, "inputElements", {
+        get: function () {
+            if (!this.inputElems_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
+            return this.inputElems_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    RgbTextInputView.prototype.update = function () {
+        var _this = this;
+        var inputElems = this.inputElems_;
+        if (!inputElems) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
+        var rgbComps = this.value.rawValue.getComponents('rgb');
+        rgbComps.forEach(function (comp, index) {
+            var inputElem = inputElems[index];
+            inputElem.value = _this.formatter_.format(comp);
+        });
+    };
+    RgbTextInputView.prototype.onValueChange_ = function () {
+        this.update();
+    };
+    return RgbTextInputView;
+}(view_1.default));
+exports.default = RgbTextInputView;
 
 
 /***/ }),
@@ -5179,7 +5360,7 @@ var SvPaletteInputView = /** @class */ (function (_super) {
             return;
         }
         var c = this.value.rawValue;
-        var hsvComps = ColorModel.rgbToHsv.apply(ColorModel, c.getComponents());
+        var hsvComps = c.getComponents('hsv');
         var width = this.canvasElement.width;
         var height = this.canvasElement.height;
         var cellCount = 64;
@@ -5833,7 +6014,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.1);color:#c8cad0;cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:rgba(200,202,208,0.2)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:rgba(200,202,208,0.25)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, #c8cad0, #c8cad0 2px, transparent 2px, transparent 4px, #c8cad0 4px, #c8cad0);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;-webkit-transform:rotate(90deg);transform:rotate(90deg);-webkit-transition:-webkit-transform 0.2s ease-in-out;transition:-webkit-transform 0.2s ease-in-out;transition:transform 0.2s ease-in-out;transition:transform 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{-webkit-transform:none;transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:#bbbcc4}.tp-btnv_b:focus{background-color:#c8cad0}.tp-btnv_b:active{background-color:#d6d7db}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_c{border-left:rgba(200,202,208,0.1) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;-webkit-transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:rgba(200,202,208,0.2)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:rgba(200,202,208,0.25)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;-webkit-transform:none;transform:none;-webkit-transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:rgba(200,202,208,0.15);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:#c8cad0;border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:rgba(200,202,208,0.15)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:rgba(200,202,208,0.25)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:rgba(200,202,208,0.35)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_pl{display:-webkit-box;display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_is{display:-webkit-box;display:flex;margin-top:4px}.tp-clpiv_iw{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.tp-clpiv_iw+.tp-clpiv_iw{margin-left:4px}.tp-clpiv_il{color:rgba(200,202,208,0.8);margin-left:4px;margin-right:8px}.tp-clpiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-clpiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-clpiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-clpiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{color:#c8cad0;display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:#bbbcc4}.tp-lstiv_s:focus{background-color:#c8cad0}.tp-lstiv_s:active{background-color:#d6d7db}.tp-lstiv_m{border-color:#2f3137 transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-sldiv{color:#c8cad0;display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:rgba(200,202,208,0.2);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:#adafb8;border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:#bbbcc4}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:#c8cad0}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:#d6d7db}.tp-txtiv{color:#c8cad0;display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-txtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-txtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:rgba(200,202,208,0.15)}.tp-cswiv_sw:focus{background-color:rgba(200,202,208,0.25)}.tp-cswiv_sw:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:-webkit-box;display:flex;position:relative}.tp-cswtxtiv_s{-webkit-box-flex:0;flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{-webkit-box-flex:1;flex:1;margin-left:4px}.tp-sldtxtiv{display:-webkit-box;display:flex}.tp-sldtxtiv_s{-webkit-box-flex:2;flex:2}.tp-sldtxtiv_t{-webkit-box-flex:1;flex:1;margin-left:4px}.tp-lblv{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:rgba(200,202,208,0.8);-webkit-box-flex:1;flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{-webkit-box-flex:0;flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{color:#c8cad0;display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:rgba(200,202,208,0.7);stroke-linejoin:round}.tp-grpmv_t{font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:rgba(200,202,208,0.7);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%}.tp-rotv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);font-family:\"Roboto Mono\",\"Source Code Pro\",Menlo,Courier,monospace;font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv_m{-webkit-transition:none;transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:rgba(24,24,27,0.3);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
+exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.1);color:#c8cad0;cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:rgba(200,202,208,0.2)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:rgba(200,202,208,0.25)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, #c8cad0, #c8cad0 2px, transparent 2px, transparent 4px, #c8cad0 4px, #c8cad0);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:#bbbcc4}.tp-btnv_b:focus{background-color:#c8cad0}.tp-btnv_b:active{background-color:#d6d7db}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_c{border-left:rgba(200,202,208,0.1) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:rgba(200,202,208,0.2)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:rgba(200,202,208,0.25)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:rgba(200,202,208,0.15);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:#c8cad0;border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:rgba(200,202,208,0.15)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:rgba(200,202,208,0.25)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:rgba(200,202,208,0.35)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{color:#c8cad0;display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:#bbbcc4}.tp-lstiv_s:focus{background-color:#c8cad0}.tp-lstiv_s:active{background-color:#d6d7db}.tp-lstiv_m{border-color:#2f3137 transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_w{align-items:center;display:flex}.tp-rgbtxtiv_w+.tp-rgbtxtiv_w{margin-left:4px}.tp-rgbtxtiv_l{color:rgba(200,202,208,0.8);display:inline;line-height:20px;margin-left:4px;margin-right:8px}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-rgbtxtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-rgbtxtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-sldiv{color:#c8cad0;display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:rgba(200,202,208,0.2);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:#adafb8;border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:#bbbcc4}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:#c8cad0}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:#d6d7db}.tp-txtiv{color:#c8cad0;display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-txtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-txtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:rgba(200,202,208,0.15)}.tp-cswiv_sw:focus{background-color:rgba(200,202,208,0.25)}.tp-cswiv_sw:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:rgba(200,202,208,0.8);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{color:#c8cad0;display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:rgba(200,202,208,0.7);stroke-linejoin:round}.tp-grpmv_t{font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:rgba(200,202,208,0.7);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%}.tp-rotv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);font-family:\"Roboto Mono\",\"Source Code Pro\",Menlo,Courier,monospace;font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:rgba(24,24,27,0.3);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
 
 // exports
 
