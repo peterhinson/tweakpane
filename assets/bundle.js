@@ -137,53 +137,48 @@ exports.default = {
     pathname: /^(\/tweakpane)?\/$/,
     init: function () {
         var ENV = {
+            amp: { x: 0.1, y: 0.5 },
             color: '#e4e4e7',
+            freq: {
+                x: 12.57,
+                y: 6.28,
+            },
             maxSize: 64,
             range: 0.8,
             spacing: 24,
             speed: 0.02,
             title: 'Tweakpane',
-            xamp: 0.1,
-            xfreq: 2 * Math.PI * 2,
-            yamp: 0.5,
-            yfreq: 2 * Math.PI,
         };
         var PRESETS = {
             atmos: {
+                amp: { x: 0.1, y: 0.53 },
                 color: '#e4e4e7',
+                freq: { x: 45, y: 16 },
                 maxSize: 128,
-                range: 0.7934782608695652,
+                range: 0.79,
                 spacing: 24,
                 speed: 0.02,
                 title: 'Tweakpane',
-                xamp: 0.10434782608695652,
-                xfreq: 45,
-                yamp: 0.53,
-                yfreq: 16,
             },
             bubble: {
+                amp: { x: 0.3, y: 0.51 },
                 color: '#ffffff',
+                freq: { x: 64, y: 32 },
                 maxSize: 128,
                 range: 0.65,
                 spacing: 48,
                 speed: 0.02,
                 title: 'Tweakpane',
-                xamp: 0.3,
-                xfreq: 64,
-                yamp: 0.51,
-                yfreq: 32,
             },
             cloud: {
+                amp: { x: 0.07, y: 0 },
                 color: '#e4e4e7',
+                freq: { x: 22.25, y: 0 },
                 maxSize: 105,
                 range: 0.63,
                 spacing: 48,
                 speed: 0.02,
                 title: 'Tweakpane',
-                xamp: 0.07,
-                xfreq: 22.25,
-                yamp: 0,
-                yfreq: 0,
             },
         };
         var HIDDEN_PARAMS = {
@@ -221,29 +216,13 @@ exports.default = {
                     max: 128,
                     min: 5,
                 });
-                var xf = pane.addFolder({
-                    expanded: false,
-                    title: 'X',
+                pane.addInput(ENV, 'freq', {
+                    x: { max: 64, min: 0 },
+                    y: { max: 32, min: 0 },
                 });
-                xf.addInput(ENV, 'xfreq', {
-                    max: 64,
-                    min: 0,
-                });
-                xf.addInput(ENV, 'xamp', {
-                    max: 0.3,
-                    min: 0,
-                });
-                var yf = pane.addFolder({
-                    expanded: false,
-                    title: 'Y',
-                });
-                yf.addInput(ENV, 'yfreq', {
-                    max: 32,
-                    min: 0,
-                });
-                yf.addInput(ENV, 'yamp', {
-                    max: 1,
-                    min: 0,
+                pane.addInput(ENV, 'amp', {
+                    x: { max: 0.3, min: 0 },
+                    y: { max: 1, min: 0 },
                 });
                 var pf = pane.addFolder({
                     expanded: false,
@@ -329,6 +308,7 @@ exports.default = {
                     b: true,
                     c: '#ff8800',
                     n: 50,
+                    p: { x: 12, y: 34 },
                     s: 'string',
                 };
                 var pane = new Tweakpane({
@@ -376,7 +356,13 @@ exports.default = {
                     title: 'Color',
                 });
                 cf.addInput(PARAMS, 'c', {
-                    label: 'text',
+                    label: 'picker',
+                });
+                var pf = pane.addFolder({
+                    title: 'Point',
+                });
+                pf.addInput(PARAMS, 'p', {
+                    label: 'picker',
                 });
             },
             numberText: function (container) {
@@ -478,6 +464,26 @@ exports.default = {
                 });
                 pane.addInput(PARAMS, 'value', {
                     label: 'color',
+                });
+            },
+            point2d: function (container) {
+                var PARAMS = { value: { x: 50, y: 25 } };
+                var pane = new Tweakpane({
+                    container: container,
+                });
+                pane.addInput(PARAMS, 'value', {
+                    label: 'offset',
+                });
+            },
+            point2dParams: function (container) {
+                var PARAMS = { value: { x: 20, y: 30 } };
+                var pane = new Tweakpane({
+                    container: container,
+                });
+                pane.addInput(PARAMS, 'value', {
+                    label: 'offset',
+                    x: { step: 20 },
+                    y: { min: 0, max: 100 },
                 });
             },
         };
@@ -980,9 +986,9 @@ var Sketch = /** @class */ (function () {
         var t = this.t_;
         var _loop_1 = function (iw) {
             var p = map(iw, 0, 100, 0, 1);
-            var wx = p * w + Math.sin(p * env.xfreq + t) * env.xamp * w;
-            var py = Math.sin(t + p * env.yfreq);
-            var wy = h / 2 + py * env.yamp * h;
+            var wx = p * w + Math.sin(p * env.freq.x + t) * env.amp.x * w;
+            var py = Math.sin(t + p * env.freq.y);
+            var wy = h / 2 + py * env.amp.y * h;
             this_1.dots_.forEach(function (dot) {
                 var d = dist(dot.x, dot.y, wx, wy);
                 dot.en += Math.pow(env.range, d * 0.1);

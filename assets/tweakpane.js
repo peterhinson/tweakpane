@@ -915,6 +915,35 @@ exports.default = ListConstraint;
 
 /***/ }),
 
+/***/ "./src/main/js/constraint/point-2d.ts":
+/*!********************************************!*\
+  !*** ./src/main/js/constraint/point-2d.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var point_2d_1 = __webpack_require__(/*! ../model/point-2d */ "./src/main/js/model/point-2d.ts");
+/**
+ * @hidden
+ */
+var Point2dConstraint = /** @class */ (function () {
+    function Point2dConstraint(config) {
+        this.xConstraint = config.x;
+        this.yConstraint = config.y;
+    }
+    Point2dConstraint.prototype.constrain = function (value) {
+        return new point_2d_1.default(this.xConstraint ? this.xConstraint.constrain(value.x) : value.x, this.yConstraint ? this.yConstraint.constrain(value.y) : value.y);
+    };
+    return Point2dConstraint;
+}());
+exports.default = Point2dConstraint;
+
+
+/***/ }),
+
 /***/ "./src/main/js/constraint/range.ts":
 /*!*****************************************!*\
   !*** ./src/main/js/constraint/range.ts ***!
@@ -925,35 +954,22 @@ exports.default = ListConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 /**
  * @hidden
  */
 var RangeConstraint = /** @class */ (function () {
     function RangeConstraint(config) {
-        this.max_ = config.max;
-        this.min_ = config.min;
+        this.maxValue = config.max;
+        this.minValue = config.min;
     }
-    Object.defineProperty(RangeConstraint.prototype, "minValue", {
-        get: function () {
-            return this.min_;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(RangeConstraint.prototype, "maxValue", {
-        get: function () {
-            return this.max_;
-        },
-        enumerable: true,
-        configurable: true
-    });
     RangeConstraint.prototype.constrain = function (value) {
         var result = value;
-        if (this.min_ !== null && this.min_ !== undefined) {
-            result = Math.max(result, this.min_);
+        if (!type_util_1.default.isEmpty(this.minValue)) {
+            result = Math.max(result, this.minValue);
         }
-        if (this.max_ !== null && this.max_ !== undefined) {
-            result = Math.min(result, this.max_);
+        if (!type_util_1.default.isEmpty(this.maxValue)) {
+            result = Math.min(result, this.maxValue);
         }
         return result;
     };
@@ -1160,7 +1176,7 @@ var input_1 = __webpack_require__(/*! ../../binding/input */ "./src/main/js/bind
 var ColorConverter = __webpack_require__(/*! ../../converter/color */ "./src/main/js/converter/color.ts");
 var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/formatter/color.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
-var color_2 = __webpack_require__(/*! ../../parser/color */ "./src/main/js/parser/color.ts");
+var string_color_1 = __webpack_require__(/*! ../../parser/string-color */ "./src/main/js/parser/string-color.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var color_swatch_text_1 = __webpack_require__(/*! ../input/color-swatch-text */ "./src/main/js/controller/input/color-swatch-text.ts");
 /**
@@ -1177,7 +1193,7 @@ function create(document, target, initialValue, params) {
         }),
         controller: new color_swatch_text_1.default(document, {
             formatter: new color_1.default(),
-            parser: color_2.default,
+            parser: string_color_1.default,
             value: value,
         }),
         label: params.label || target.key,
@@ -1202,10 +1218,12 @@ var BooleanConverter = __webpack_require__(/*! ../../converter/boolean */ "./src
 var NumberConverter = __webpack_require__(/*! ../../converter/number */ "./src/main/js/converter/number.ts");
 var StringConverter = __webpack_require__(/*! ../../converter/string */ "./src/main/js/converter/string.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
-var color_1 = __webpack_require__(/*! ../../parser/color */ "./src/main/js/parser/color.ts");
+var any_point_2d_1 = __webpack_require__(/*! ../../parser/any-point-2d */ "./src/main/js/parser/any-point-2d.ts");
+var string_color_1 = __webpack_require__(/*! ../../parser/string-color */ "./src/main/js/parser/string-color.ts");
 var BooleanInputBindingControllerCreators = __webpack_require__(/*! ./boolean-input */ "./src/main/js/controller/binding-creators/boolean-input.ts");
 var ColorInputBindingControllerCreators = __webpack_require__(/*! ./color-input */ "./src/main/js/controller/binding-creators/color-input.ts");
 var NumberInputBindingControllerCreators = __webpack_require__(/*! ./number-input */ "./src/main/js/controller/binding-creators/number-input.ts");
+var Point2dInputBindingControllerCreators = __webpack_require__(/*! ./point-2d-input */ "./src/main/js/controller/binding-creators/point-2d-input.ts");
 var StringInputBindingControllerCreators = __webpack_require__(/*! ./string-input */ "./src/main/js/controller/binding-creators/string-input.ts");
 function normalizeParams(p1, convert) {
     var p2 = {
@@ -1256,11 +1274,17 @@ function create(document, target, params) {
         return NumberInputBindingControllerCreators.create(document, target, normalizeParams(params, NumberConverter.fromMixed));
     }
     if (typeof initialValue === 'string') {
-        var color = color_1.default(initialValue);
+        var color = string_color_1.default(initialValue);
         if (color) {
             return ColorInputBindingControllerCreators.create(document, target, color, params);
         }
         return StringInputBindingControllerCreators.create(document, target, normalizeParams(params, StringConverter.fromMixed));
+    }
+    {
+        var p = any_point_2d_1.default(initialValue);
+        if (p) {
+            return Point2dInputBindingControllerCreators.create(document, target, p, params);
+        }
     }
     throw new pane_error_1.default({
         context: {
@@ -1343,22 +1367,22 @@ var step_1 = __webpack_require__(/*! ../../constraint/step */ "./src/main/js/con
 var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
 var NumberConverter = __webpack_require__(/*! ../../converter/number */ "./src/main/js/converter/number.ts");
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
-var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
-var number_2 = __webpack_require__(/*! ../../parser/number */ "./src/main/js/parser/number.ts");
+var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/input/list.ts");
 var number_text_1 = __webpack_require__(/*! ../input/number-text */ "./src/main/js/controller/input/number-text.ts");
 var slider_text_1 = __webpack_require__(/*! ../input/slider-text */ "./src/main/js/controller/input/slider-text.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 function createConstraint(params) {
     var constraints = [];
-    if (params.step !== null && params.step !== undefined) {
+    if (!type_util_1.default.isEmpty(params.step)) {
         constraints.push(new step_1.default({
             step: params.step,
         }));
     }
-    if ((params.max !== null && params.max !== undefined) ||
-        (params.min !== null && params.min !== undefined)) {
+    if (!type_util_1.default.isEmpty(params.max) || !type_util_1.default.isEmpty(params.min)) {
         constraints.push(new range_1.default({
             max: params.max,
             min: params.min,
@@ -1373,14 +1397,6 @@ function createConstraint(params) {
         constraints: constraints,
     });
 }
-function getSuitableDecimalDigits(value) {
-    var c = value.constraint;
-    var sc = c && util_1.default.findConstraint(c, step_1.default);
-    if (sc) {
-        return number_util_1.default.getDecimalDigits(sc.step);
-    }
-    return Math.max(number_util_1.default.getDecimalDigits(value.rawValue), 2);
-}
 function createController(document, value) {
     var c = value.constraint;
     if (c && util_1.default.findConstraint(c, list_1.default)) {
@@ -1391,14 +1407,14 @@ function createController(document, value) {
     }
     if (c && util_1.default.findConstraint(c, range_1.default)) {
         return new slider_text_1.default(document, {
-            formatter: new number_1.default(getSuitableDecimalDigits(value)),
-            parser: number_2.default,
+            formatter: new number_1.default(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
+            parser: string_number_1.default,
             value: value,
         });
     }
     return new number_text_1.default(document, {
-        formatter: new number_1.default(getSuitableDecimalDigits(value)),
-        parser: number_2.default,
+        formatter: new number_1.default(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
+        parser: string_number_1.default,
         value: value,
     });
 }
@@ -1495,6 +1511,90 @@ function createGraphMonitor(document, target, params) {
     });
 }
 exports.createGraphMonitor = createGraphMonitor;
+
+
+/***/ }),
+
+/***/ "./src/main/js/controller/binding-creators/point-2d-input.ts":
+/*!*******************************************************************!*\
+  !*** ./src/main/js/controller/binding-creators/point-2d-input.ts ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var input_1 = __webpack_require__(/*! ../../binding/input */ "./src/main/js/binding/input.ts");
+var composite_1 = __webpack_require__(/*! ../../constraint/composite */ "./src/main/js/constraint/composite.ts");
+var point_2d_1 = __webpack_require__(/*! ../../constraint/point-2d */ "./src/main/js/constraint/point-2d.ts");
+var range_1 = __webpack_require__(/*! ../../constraint/range */ "./src/main/js/constraint/range.ts");
+var step_1 = __webpack_require__(/*! ../../constraint/step */ "./src/main/js/constraint/step.ts");
+var Point2dConverter = __webpack_require__(/*! ../../converter/point-2d */ "./src/main/js/converter/point-2d.ts");
+var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
+var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
+var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
+var point_2d_pad_text_1 = __webpack_require__(/*! ../input/point-2d-pad-text */ "./src/main/js/controller/input/point-2d-pad-text.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
+function createDimensionConstraint(params) {
+    if (!params) {
+        return undefined;
+    }
+    var constraints = [];
+    if (!type_util_1.default.isEmpty(params.step)) {
+        constraints.push(new step_1.default({
+            step: params.step,
+        }));
+    }
+    if (!type_util_1.default.isEmpty(params.max) || !type_util_1.default.isEmpty(params.min)) {
+        constraints.push(new range_1.default({
+            max: params.max,
+            min: params.min,
+        }));
+    }
+    return new composite_1.default({
+        constraints: constraints,
+    });
+}
+function createConstraint(params) {
+    return new point_2d_1.default({
+        x: createDimensionConstraint(params.x),
+        y: createDimensionConstraint(params.y),
+    });
+}
+function createController(document, value) {
+    var c = value.constraint;
+    if (!(c instanceof point_2d_1.default)) {
+        throw pane_error_1.default.shouldNeverHappen();
+    }
+    return new point_2d_pad_text_1.default(document, {
+        parser: string_number_1.default,
+        value: value,
+        xFormatter: new number_1.default(UiUtil.getSuitableDecimalDigits(c.xConstraint, value.rawValue.x)),
+        yFormatter: new number_1.default(UiUtil.getSuitableDecimalDigits(c.yConstraint, value.rawValue.y)),
+    });
+}
+/**
+ * @hidden
+ */
+function create(document, target, initialValue, params) {
+    var value = new input_value_1.default(initialValue, createConstraint(params));
+    var binding = new input_1.default({
+        reader: Point2dConverter.fromMixed,
+        target: target,
+        value: value,
+        writer: function (v) { return v.toObject(); },
+    });
+    return new input_binding_1.default(document, {
+        binding: binding,
+        controller: createController(document, value),
+        label: params.label || target.key,
+    });
+}
+exports.create = create;
 
 
 /***/ }),
@@ -1845,7 +1945,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/model/foldable.ts");
-var number_2 = __webpack_require__(/*! ../../parser/number */ "./src/main/js/parser/number.ts");
+var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var color_picker_1 = __webpack_require__(/*! ../../view/input/color-picker */ "./src/main/js/view/input/color-picker.ts");
 var h_palette_1 = __webpack_require__(/*! ./h-palette */ "./src/main/js/controller/input/h-palette.ts");
 var sv_palette_1 = __webpack_require__(/*! ./sv-palette */ "./src/main/js/controller/input/sv-palette.ts");
@@ -1867,7 +1967,7 @@ var ColorPickerInputController = /** @class */ (function () {
         });
         this.rgbTextIc_ = new rgb_text_1.default(document, {
             formatter: new number_1.default(0),
-            parser: number_2.default,
+            parser: string_number_1.default,
             value: this.value,
         });
         this.view = new color_picker_1.default(document, {
@@ -2170,6 +2270,210 @@ var NumberTextInputController = /** @class */ (function (_super) {
     return NumberTextInputController;
 }(text_1.default));
 exports.default = NumberTextInputController;
+
+
+/***/ }),
+
+/***/ "./src/main/js/controller/input/point-2d-pad-text.ts":
+/*!***********************************************************!*\
+  !*** ./src/main/js/controller/input/point-2d-pad-text.ts ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var point_2d_pad_text_1 = __webpack_require__(/*! ../../view/input/point-2d-pad-text */ "./src/main/js/view/input/point-2d-pad-text.ts");
+var point_2d_pad_1 = __webpack_require__(/*! ./point-2d-pad */ "./src/main/js/controller/input/point-2d-pad.ts");
+var point_2d_text_1 = __webpack_require__(/*! ./point-2d-text */ "./src/main/js/controller/input/point-2d-text.ts");
+/**
+ * @hidden
+ */
+var Point2dPadTextInputController = /** @class */ (function () {
+    function Point2dPadTextInputController(document, config) {
+        this.onPadButtonBlur_ = this.onPadButtonBlur_.bind(this);
+        this.onPadButtonClick_ = this.onPadButtonClick_.bind(this);
+        this.value = config.value;
+        this.padIc_ = new point_2d_pad_1.default(document, {
+            value: this.value,
+        });
+        this.textIc_ = new point_2d_text_1.default(document, {
+            parser: config.parser,
+            value: this.value,
+            xFormatter: config.xFormatter,
+            yFormatter: config.yFormatter,
+        });
+        this.view = new point_2d_pad_text_1.default(document, {
+            padInputView: this.padIc_.view,
+            textInputView: this.textIc_.view,
+        });
+        this.view.padButtonElement.addEventListener('blur', this.onPadButtonBlur_);
+        this.view.padButtonElement.addEventListener('click', this.onPadButtonClick_);
+    }
+    Point2dPadTextInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
+    Point2dPadTextInputController.prototype.onPadButtonBlur_ = function () {
+        this.padIc_.foldable.expanded = false;
+    };
+    Point2dPadTextInputController.prototype.onPadButtonClick_ = function () {
+        this.padIc_.foldable.expanded = !this.padIc_.foldable.expanded;
+    };
+    return Point2dPadTextInputController;
+}());
+exports.default = Point2dPadTextInputController;
+
+
+/***/ }),
+
+/***/ "./src/main/js/controller/input/point-2d-pad.ts":
+/*!******************************************************!*\
+  !*** ./src/main/js/controller/input/point-2d-pad.ts ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
+var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
+var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/model/foldable.ts");
+var point_2d_1 = __webpack_require__(/*! ../../model/point-2d */ "./src/main/js/model/point-2d.ts");
+var point_2d_pad_1 = __webpack_require__(/*! ../../view/input/point-2d-pad */ "./src/main/js/view/input/point-2d-pad.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
+/**
+ * @hidden
+ */
+var Point2dPadInputController = /** @class */ (function () {
+    function Point2dPadInputController(document, config) {
+        this.onPointerDown_ = this.onPointerDown_.bind(this);
+        this.onPointerMove_ = this.onPointerMove_.bind(this);
+        this.onPointerUp_ = this.onPointerUp_.bind(this);
+        this.value = config.value;
+        this.foldable = new foldable_1.default();
+        this.maxValue_ = UiUtil.getSuitableMaxValueForPoint2dPad(this.value.constraint, this.value.rawValue);
+        this.view = new point_2d_pad_1.default(document, {
+            foldable: this.foldable,
+            maxValue: this.maxValue_,
+            value: this.value,
+        });
+        this.ptHandler_ = new pointer_handler_1.default(document, this.view.padElement);
+        this.ptHandler_.emitter.on('down', this.onPointerDown_);
+        this.ptHandler_.emitter.on('move', this.onPointerMove_);
+        this.ptHandler_.emitter.on('up', this.onPointerUp_);
+    }
+    Point2dPadInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
+    Point2dPadInputController.prototype.handlePointerEvent_ = function (d) {
+        var max = this.maxValue_;
+        this.value.rawValue = new point_2d_1.default(number_util_1.default.map(d.px, 0, 1, -max, +max), number_util_1.default.map(d.py, 0, 1, -max, +max));
+        this.view.update();
+    };
+    Point2dPadInputController.prototype.onPointerDown_ = function (d) {
+        this.handlePointerEvent_(d);
+    };
+    Point2dPadInputController.prototype.onPointerMove_ = function (d) {
+        this.handlePointerEvent_(d);
+    };
+    Point2dPadInputController.prototype.onPointerUp_ = function (d) {
+        this.handlePointerEvent_(d);
+    };
+    return Point2dPadInputController;
+}());
+exports.default = Point2dPadInputController;
+
+
+/***/ }),
+
+/***/ "./src/main/js/controller/input/point-2d-text.ts":
+/*!*******************************************************!*\
+  !*** ./src/main/js/controller/input/point-2d-text.ts ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var point_2d_1 = __webpack_require__(/*! ../../constraint/point-2d */ "./src/main/js/constraint/point-2d.ts");
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var point_2d_2 = __webpack_require__(/*! ../../model/point-2d */ "./src/main/js/model/point-2d.ts");
+var point_2d_text_1 = __webpack_require__(/*! ../../view/input/point-2d-text */ "./src/main/js/view/input/point-2d-text.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
+/**
+ * @hidden
+ */
+var Point2dTextInputController = /** @class */ (function () {
+    function Point2dTextInputController(document, config) {
+        var _this = this;
+        this.onInputChange_ = this.onInputChange_.bind(this);
+        this.onInputKeyDown_ = this.onInputKeyDown_.bind(this);
+        this.parser_ = config.parser;
+        this.value = config.value;
+        var c = this.value.constraint;
+        this.xStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.default ? c.xConstraint : undefined);
+        this.yStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.default ? c.yConstraint : undefined);
+        this.view = new point_2d_text_1.default(document, {
+            value: this.value,
+            xFormatter: config.xFormatter,
+            yFormatter: config.yFormatter,
+        });
+        this.view.inputElements.forEach(function (inputElem) {
+            inputElem.addEventListener('change', _this.onInputChange_);
+            inputElem.addEventListener('keydown', _this.onInputKeyDown_);
+        });
+    }
+    Point2dTextInputController.prototype.dispose = function () {
+        this.view.dispose();
+    };
+    Point2dTextInputController.prototype.findIndexOfInputElem_ = function (inputElem) {
+        var inputElems = this.view.inputElements;
+        for (var i = 0; i < inputElems.length; i++) {
+            if (inputElems[i] === inputElem) {
+                return i;
+            }
+        }
+        return null;
+    };
+    Point2dTextInputController.prototype.updateComponent_ = function (index, newValue) {
+        var comps = this.value.rawValue.getComponents();
+        var newComps = comps.map(function (comp, i) {
+            return i === index ? newValue : comp;
+        });
+        this.value.rawValue = new point_2d_2.default(newComps[0], newComps[1]);
+        this.view.update();
+    };
+    Point2dTextInputController.prototype.onInputChange_ = function (e) {
+        var _this = this;
+        var inputElem = type_util_1.default.forceCast(e.currentTarget);
+        type_util_1.default.ifNotEmpty(this.parser_(inputElem.value), function (parsedValue) {
+            type_util_1.default.ifNotEmpty(_this.findIndexOfInputElem_(inputElem), function (compIndex) {
+                _this.updateComponent_(compIndex, parsedValue);
+            });
+        });
+    };
+    Point2dTextInputController.prototype.onInputKeyDown_ = function (e) {
+        var inputElem = type_util_1.default.forceCast(e.currentTarget);
+        var parsedValue = this.parser_(inputElem.value);
+        if (type_util_1.default.isEmpty(parsedValue)) {
+            return;
+        }
+        var compIndex = this.findIndexOfInputElem_(inputElem);
+        if (type_util_1.default.isEmpty(compIndex)) {
+            return;
+        }
+        var step = UiUtil.getStepForKey(compIndex === 0 ? this.xStep_ : this.yStep_, e);
+        if (step === 0) {
+            return;
+        }
+        this.updateComponent_(compIndex, parsedValue + step);
+    };
+    return Point2dTextInputController;
+}());
+exports.default = Point2dTextInputController;
 
 
 /***/ }),
@@ -2786,8 +3090,11 @@ exports.default = SeparatorController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var point_2d_1 = __webpack_require__(/*! ../constraint/point-2d */ "./src/main/js/constraint/point-2d.ts");
+var range_1 = __webpack_require__(/*! ../constraint/range */ "./src/main/js/constraint/range.ts");
 var step_1 = __webpack_require__(/*! ../constraint/step */ "./src/main/js/constraint/step.ts");
 var util_1 = __webpack_require__(/*! ../constraint/util */ "./src/main/js/constraint/util.ts");
+var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ./folder */ "./src/main/js/controller/folder.ts");
 /**
@@ -2837,6 +3144,43 @@ function getStepForKey(baseStep, keys) {
     return 0;
 }
 exports.getStepForKey = getStepForKey;
+/**
+ * @hidden
+ */
+function getSuitableDecimalDigits(constraint, rawValue) {
+    var sc = constraint && util_1.default.findConstraint(constraint, step_1.default);
+    if (sc) {
+        return number_util_1.default.getDecimalDigits(sc.step);
+    }
+    return Math.max(number_util_1.default.getDecimalDigits(rawValue), 2);
+}
+exports.getSuitableDecimalDigits = getSuitableDecimalDigits;
+/**
+ * @hidden
+ */
+function getSuitableMaxDimensionValue(constraint, rawValue) {
+    var rc = constraint && util_1.default.findConstraint(constraint, range_1.default);
+    if (rc) {
+        return Math.max(Math.abs(rc.minValue || 0), Math.abs(rc.maxValue || 0));
+    }
+    var step = getStepForTextInput(constraint);
+    return Math.max(Math.abs(step) * 10, Math.abs(rawValue) * 10);
+}
+/**
+ * @hidden
+ */
+function getSuitableMaxValueForPoint2dPad(constraint, rawValue) {
+    var xc = constraint instanceof point_2d_1.default
+        ? constraint.xConstraint
+        : undefined;
+    var yc = constraint instanceof point_2d_1.default
+        ? constraint.yConstraint
+        : undefined;
+    var xr = getSuitableMaxDimensionValue(xc, rawValue.x);
+    var yr = getSuitableMaxDimensionValue(yc, rawValue.y);
+    return Math.max(xr, yr);
+}
+exports.getSuitableMaxValueForPoint2dPad = getSuitableMaxValueForPoint2dPad;
 
 
 /***/ }),
@@ -2884,13 +3228,13 @@ exports.toString = toString;
 Object.defineProperty(exports, "__esModule", { value: true });
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
-var color_2 = __webpack_require__(/*! ../parser/color */ "./src/main/js/parser/color.ts");
+var string_color_1 = __webpack_require__(/*! ../parser/string-color */ "./src/main/js/parser/string-color.ts");
 /**
  * @hidden
  */
 function fromMixed(value) {
     if (typeof value === 'string') {
-        var cv = color_2.default(value);
+        var cv = string_color_1.default(value);
         if (cv) {
             return cv;
         }
@@ -2926,7 +3270,7 @@ exports.toString = toString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var number_1 = __webpack_require__(/*! ../parser/number */ "./src/main/js/parser/number.ts");
+var string_number_1 = __webpack_require__(/*! ../parser/string-number */ "./src/main/js/parser/string-number.ts");
 /**
  * @hidden
  */
@@ -2935,7 +3279,7 @@ function fromMixed(value) {
         return value;
     }
     if (typeof value === 'string') {
-        var pv = number_1.default(value);
+        var pv = string_number_1.default(value);
         if (pv !== null && pv !== undefined) {
             return pv;
         }
@@ -2950,6 +3294,29 @@ function toString(value) {
     return String(value);
 }
 exports.toString = toString;
+
+
+/***/ }),
+
+/***/ "./src/main/js/converter/point-2d.ts":
+/*!*******************************************!*\
+  !*** ./src/main/js/converter/point-2d.ts ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var point_2d_1 = __webpack_require__(/*! ../model/point-2d */ "./src/main/js/model/point-2d.ts");
+var any_point_2d_1 = __webpack_require__(/*! ../parser/any-point-2d */ "./src/main/js/parser/any-point-2d.ts");
+/**
+ * @hidden
+ */
+function fromMixed(value) {
+    return any_point_2d_1.default(value) || new point_2d_1.default();
+}
+exports.fromMixed = fromMixed;
 
 
 /***/ }),
@@ -3357,6 +3724,7 @@ exports.disposeElement = disposeElement;
 /* WEBPACK VAR INJECTION */(function(process) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var type_util_1 = __webpack_require__(/*! ./type-util */ "./src/main/js/misc/type-util.ts");
+exports.SVG_NS = 'http://www.w3.org/2000/svg';
 function forceReflow(element) {
     // tslint:disable-next-line:no-unused-expression
     element.offsetHeight;
@@ -3390,6 +3758,16 @@ function getCanvasContext(canvasElement) {
     return isBrowser() ? canvasElement.getContext('2d') : null;
 }
 exports.getCanvasContext = getCanvasContext;
+// tslint:disable: max-line-length
+var ICON_ID_TO_INNER_HTML_MAP = {
+    p2dpad: '<path d="M8 2V14" stroke="currentColor" stroke-width="1.5"/><path d="M2 8H14" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="currentColor"/>',
+};
+function createSvgIconElement(document, iconId) {
+    var elem = document.createElementNS(exports.SVG_NS, 'svg');
+    elem.innerHTML = ICON_ID_TO_INNER_HTML_MAP[iconId];
+    return elem;
+}
+exports.createSvgIconElement = createSvgIconElement;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
@@ -3707,11 +4085,14 @@ var TypeUtil = {
     forceCast: function (v) {
         return v;
     },
+    isEmpty: function (value) {
+        return value === null || value === undefined;
+    },
     getOrDefault: function (value, defaultValue) {
-        return value !== null && value !== undefined ? value : defaultValue;
+        return !TypeUtil.isEmpty(value) ? value : defaultValue;
     },
     ifNotEmpty: function (value, thenFn, elseFn) {
-        if (value !== null && value !== undefined) {
+        if (!TypeUtil.isEmpty(value)) {
             thenFn(value);
         }
         else if (elseFn) {
@@ -4099,6 +4480,39 @@ exports.default = MonitorValue;
 
 /***/ }),
 
+/***/ "./src/main/js/model/point-2d.ts":
+/*!***************************************!*\
+  !*** ./src/main/js/model/point-2d.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Point2d = /** @class */ (function () {
+    function Point2d(x, y) {
+        if (x === void 0) { x = 0; }
+        if (y === void 0) { y = 0; }
+        this.x = x;
+        this.y = y;
+    }
+    Point2d.prototype.getComponents = function () {
+        return [this.x, this.y];
+    };
+    Point2d.prototype.toObject = function () {
+        return {
+            x: this.x,
+            y: this.y,
+        };
+    };
+    return Point2d;
+}());
+exports.default = Point2d;
+
+
+/***/ }),
+
 /***/ "./src/main/js/model/target.ts":
 /*!*************************************!*\
   !*** ./src/main/js/model/target.ts ***!
@@ -4146,10 +4560,40 @@ exports.default = Target;
 
 /***/ }),
 
-/***/ "./src/main/js/parser/color.ts":
-/*!*************************************!*\
-  !*** ./src/main/js/parser/color.ts ***!
-  \*************************************/
+/***/ "./src/main/js/parser/any-point-2d.ts":
+/*!********************************************!*\
+  !*** ./src/main/js/parser/any-point-2d.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var point_2d_1 = __webpack_require__(/*! ../model/point-2d */ "./src/main/js/model/point-2d.ts");
+/**
+ * @hidden
+ */
+var AnyPoint2dParser = function (obj) {
+    if (obj === null || obj === undefined) {
+        return null;
+    }
+    var x = obj.x;
+    var y = obj.y;
+    if (typeof x !== 'number' || typeof y !== 'number') {
+        return null;
+    }
+    return new point_2d_1.default(x, y);
+};
+exports.default = AnyPoint2dParser;
+
+
+/***/ }),
+
+/***/ "./src/main/js/parser/string-color.ts":
+/*!********************************************!*\
+  !*** ./src/main/js/parser/string-color.ts ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4186,20 +4630,20 @@ var SUB_PARSERS = [
 /**
  * @hidden
  */
-var ColorParser = function (text) {
+var StringColorParser = function (text) {
     return SUB_PARSERS.reduce(function (result, subparser) {
         return result ? result : subparser(text);
     }, null);
 };
-exports.default = ColorParser;
+exports.default = StringColorParser;
 
 
 /***/ }),
 
-/***/ "./src/main/js/parser/number.ts":
-/*!**************************************!*\
-  !*** ./src/main/js/parser/number.ts ***!
-  \**************************************/
+/***/ "./src/main/js/parser/string-number.ts":
+/*!*********************************************!*\
+  !*** ./src/main/js/parser/string-number.ts ***!
+  \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4209,14 +4653,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @hidden
  */
-var NumberParser = function (text) {
+var StringNumberParser = function (text) {
     var num = parseFloat(text);
     if (isNaN(num)) {
         return null;
     }
     return num;
 };
-exports.default = NumberParser;
+exports.default = StringNumberParser;
 
 
 /***/ }),
@@ -5012,6 +5456,319 @@ exports.default = ListInputView;
 
 /***/ }),
 
+/***/ "./src/main/js/view/input/point-2d-pad-text.ts":
+/*!*****************************************************!*\
+  !*** ./src/main/js/view/input/point-2d-pad-text.ts ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
+var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
+var className = class_name_1.default('p2dpadtxt', 'input');
+/**
+ * @hidden
+ */
+var Point2dPadTextInputView = /** @class */ (function (_super) {
+    __extends(Point2dPadTextInputView, _super);
+    function Point2dPadTextInputView(document, config) {
+        var _this = _super.call(this, document) || this;
+        _this.element.classList.add(className());
+        var padWrapperElem = document.createElement('div');
+        padWrapperElem.classList.add(className('w'));
+        _this.element.appendChild(padWrapperElem);
+        var buttonElem = document.createElement('button');
+        buttonElem.classList.add(className('b'));
+        buttonElem.appendChild(DomUtil.createSvgIconElement(document, 'p2dpad'));
+        padWrapperElem.appendChild(buttonElem);
+        _this.padButtonElem_ = buttonElem;
+        var padElem = document.createElement('div');
+        padElem.classList.add(className('p'));
+        padWrapperElem.appendChild(padElem);
+        _this.padInputView_ = config.padInputView;
+        padElem.appendChild(_this.padInputView_.element);
+        var textElem = document.createElement('div');
+        textElem.classList.add(className('t'));
+        _this.textInputView_ = config.textInputView;
+        textElem.appendChild(_this.textInputView_.element);
+        _this.element.appendChild(textElem);
+        return _this;
+    }
+    Object.defineProperty(Point2dPadTextInputView.prototype, "value", {
+        get: function () {
+            return this.textInputView_.value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Point2dPadTextInputView.prototype, "padButtonElement", {
+        get: function () {
+            return this.padButtonElem_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Point2dPadTextInputView.prototype.dispose = function () {
+        this.padInputView_.dispose();
+        this.textInputView_.dispose();
+        _super.prototype.dispose.call(this);
+    };
+    Point2dPadTextInputView.prototype.update = function () {
+        this.padInputView_.update();
+        this.textInputView_.update();
+    };
+    return Point2dPadTextInputView;
+}(view_1.default));
+exports.default = Point2dPadTextInputView;
+
+
+/***/ }),
+
+/***/ "./src/main/js/view/input/point-2d-pad.ts":
+/*!************************************************!*\
+  !*** ./src/main/js/view/input/point-2d-pad.ts ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
+var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
+var SVG_NS = DomUtil.SVG_NS;
+var className = class_name_1.default('p2dpad', 'input');
+/**
+ * @hidden
+ */
+var Point2dPadInputView = /** @class */ (function (_super) {
+    __extends(Point2dPadInputView, _super);
+    function Point2dPadInputView(document, config) {
+        var _this = _super.call(this, document) || this;
+        _this.onFoldableChange_ = _this.onFoldableChange_.bind(_this);
+        _this.onValueChange_ = _this.onValueChange_.bind(_this);
+        _this.foldable = config.foldable;
+        _this.foldable.emitter.on('change', _this.onFoldableChange_);
+        _this.maxValue_ = config.maxValue;
+        _this.element.classList.add(className());
+        var padElem = document.createElement('div');
+        padElem.classList.add(className('p'));
+        _this.element.appendChild(padElem);
+        _this.padElem_ = padElem;
+        var svgElem = document.createElementNS(SVG_NS, 'svg');
+        svgElem.classList.add(className('g'));
+        _this.padElem_.appendChild(svgElem);
+        _this.svgElem_ = svgElem;
+        var xAxisElem = document.createElementNS(SVG_NS, 'line');
+        xAxisElem.classList.add(className('ax'));
+        xAxisElem.setAttributeNS(null, 'x1', '0');
+        xAxisElem.setAttributeNS(null, 'y1', '50%');
+        xAxisElem.setAttributeNS(null, 'x2', '100%');
+        xAxisElem.setAttributeNS(null, 'y2', '50%');
+        _this.svgElem_.appendChild(xAxisElem);
+        var yAxisElem = document.createElementNS(SVG_NS, 'line');
+        yAxisElem.classList.add(className('ax'));
+        yAxisElem.setAttributeNS(null, 'x1', '50%');
+        yAxisElem.setAttributeNS(null, 'y1', '0');
+        yAxisElem.setAttributeNS(null, 'x2', '50%');
+        yAxisElem.setAttributeNS(null, 'y2', '100%');
+        _this.svgElem_.appendChild(yAxisElem);
+        var lineElem = document.createElementNS(SVG_NS, 'line');
+        lineElem.classList.add(className('l'));
+        lineElem.setAttributeNS(null, 'x1', '50%');
+        lineElem.setAttributeNS(null, 'y1', '50%');
+        _this.svgElem_.appendChild(lineElem);
+        _this.lineElem_ = lineElem;
+        var markerElem = document.createElementNS(SVG_NS, 'circle');
+        markerElem.classList.add(className('m'));
+        markerElem.setAttributeNS(null, 'r', '2px');
+        _this.svgElem_.appendChild(markerElem);
+        _this.markerElem_ = markerElem;
+        config.value.emitter.on('change', _this.onValueChange_);
+        _this.value = config.value;
+        _this.update();
+        return _this;
+    }
+    Point2dPadInputView.prototype.dispose = function () {
+        this.padElem_ = DisposingUtil.disposeElement(this.padElem_);
+        _super.prototype.dispose.call(this);
+    };
+    Object.defineProperty(Point2dPadInputView.prototype, "padElement", {
+        get: function () {
+            if (!this.padElem_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
+            return this.padElem_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Point2dPadInputView.prototype.update = function () {
+        if (this.foldable.expanded) {
+            this.element.classList.add(className(undefined, 'expanded'));
+        }
+        else {
+            this.element.classList.remove(className(undefined, 'expanded'));
+        }
+        var lineElem = this.lineElem_;
+        var markerElem = this.markerElem_;
+        if (!lineElem || !markerElem) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
+        var _a = this.value.rawValue.getComponents(), x = _a[0], y = _a[1];
+        var max = this.maxValue_;
+        var px = number_util_1.default.map(x, -max, +max, 0, 100);
+        var py = number_util_1.default.map(y, -max, +max, 0, 100);
+        lineElem.setAttributeNS(null, 'x2', px + "%");
+        lineElem.setAttributeNS(null, 'y2', py + "%");
+        markerElem.setAttributeNS(null, 'cx', px + "%");
+        markerElem.setAttributeNS(null, 'cy', py + "%");
+    };
+    Point2dPadInputView.prototype.onValueChange_ = function () {
+        this.update();
+    };
+    Point2dPadInputView.prototype.onFoldableChange_ = function () {
+        this.update();
+    };
+    return Point2dPadInputView;
+}(view_1.default));
+exports.default = Point2dPadInputView;
+
+
+/***/ }),
+
+/***/ "./src/main/js/view/input/point-2d-text.ts":
+/*!*************************************************!*\
+  !*** ./src/main/js/view/input/point-2d-text.ts ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
+var COMPONENT_LABELS = ['X', 'Y'];
+var className = class_name_1.default('p2dtxt', 'input');
+/**
+ * @hidden
+ */
+var Point2dTextInputView = /** @class */ (function (_super) {
+    __extends(Point2dTextInputView, _super);
+    function Point2dTextInputView(document, config) {
+        var _this = _super.call(this, document) || this;
+        _this.onValueChange_ = _this.onValueChange_.bind(_this);
+        _this.formatters_ = [config.xFormatter, config.yFormatter];
+        _this.element.classList.add(className());
+        var inputElems = COMPONENT_LABELS.map(function () {
+            var inputElem = document.createElement('input');
+            inputElem.classList.add(className('i'));
+            inputElem.type = 'text';
+            return inputElem;
+        });
+        COMPONENT_LABELS.forEach(function (_, index) {
+            var elem = document.createElement('div');
+            elem.classList.add(className('w'));
+            elem.appendChild(inputElems[index]);
+            _this.element.appendChild(elem);
+        });
+        _this.inputElems_ = [inputElems[0], inputElems[1]];
+        config.value.emitter.on('change', _this.onValueChange_);
+        _this.value = config.value;
+        _this.update();
+        return _this;
+    }
+    Point2dTextInputView.prototype.dispose = function () {
+        if (this.inputElems_) {
+            this.inputElems_.forEach(function (elem) {
+                DisposingUtil.disposeElement(elem);
+            });
+            this.inputElems_ = null;
+        }
+        _super.prototype.dispose.call(this);
+    };
+    Object.defineProperty(Point2dTextInputView.prototype, "inputElements", {
+        get: function () {
+            if (!this.inputElems_) {
+                throw pane_error_1.default.alreadyDisposed();
+            }
+            return this.inputElems_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Point2dTextInputView.prototype.update = function () {
+        var _this = this;
+        var inputElems = this.inputElems_;
+        if (!inputElems) {
+            throw pane_error_1.default.alreadyDisposed();
+        }
+        var xyComps = this.value.rawValue.getComponents();
+        xyComps.forEach(function (comp, index) {
+            var inputElem = inputElems[index];
+            inputElem.value = _this.formatters_[index].format(comp);
+        });
+    };
+    Point2dTextInputView.prototype.onValueChange_ = function () {
+        this.update();
+    };
+    return Point2dTextInputView;
+}(view_1.default));
+exports.default = Point2dTextInputView;
+
+
+/***/ }),
+
 /***/ "./src/main/js/view/input/rgb-text.ts":
 /*!********************************************!*\
   !*** ./src/main/js/view/input/rgb-text.ts ***!
@@ -5547,10 +6304,11 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var SVG_NS = 'http://www.w3.org/2000/svg';
+var SVG_NS = DomUtil.SVG_NS;
 var className = class_name_1.default('grp', 'monitor');
 /**
  * @hidden
@@ -6014,7 +6772,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.1);color:#c8cad0;cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:rgba(200,202,208,0.2)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:rgba(200,202,208,0.25)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, #c8cad0, #c8cad0 2px, transparent 2px, transparent 4px, #c8cad0 4px, #c8cad0);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:#bbbcc4}.tp-btnv_b:focus{background-color:#c8cad0}.tp-btnv_b:active{background-color:#d6d7db}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_c{border-left:rgba(200,202,208,0.1) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:rgba(200,202,208,0.2)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:rgba(200,202,208,0.25)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:rgba(200,202,208,0.15);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:#c8cad0;border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:rgba(200,202,208,0.15)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:rgba(200,202,208,0.25)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:rgba(200,202,208,0.35)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{color:#c8cad0;display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:#bbbcc4}.tp-lstiv_s:focus{background-color:#c8cad0}.tp-lstiv_s:active{background-color:#d6d7db}.tp-lstiv_m{border-color:#2f3137 transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_w{align-items:center;display:flex}.tp-rgbtxtiv_w+.tp-rgbtxtiv_w{margin-left:4px}.tp-rgbtxtiv_l{color:rgba(200,202,208,0.8);display:inline;line-height:20px;margin-left:4px;margin-right:8px}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-rgbtxtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-rgbtxtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-sldiv{color:#c8cad0;display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:rgba(200,202,208,0.2);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:#adafb8;border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:#bbbcc4}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:#c8cad0}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:#d6d7db}.tp-txtiv{color:#c8cad0;display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-txtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-txtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:rgba(200,202,208,0.15)}.tp-cswiv_sw:focus{background-color:rgba(200,202,208,0.25)}.tp-cswiv_sw:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:rgba(200,202,208,0.8);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{color:#c8cad0;display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:rgba(200,202,208,0.7);stroke-linejoin:round}.tp-grpmv_t{font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:rgba(200,202,208,0.7);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%}.tp-rotv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);font-family:\"Roboto Mono\",\"Source Code Pro\",Menlo,Courier,monospace;font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:rgba(24,24,27,0.3);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
+exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.1);color:#c8cad0;cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:rgba(200,202,208,0.2)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:rgba(200,202,208,0.25)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, #c8cad0, #c8cad0 2px, transparent 2px, transparent 4px, #c8cad0 4px, #c8cad0);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:#bbbcc4}.tp-btnv_b:focus{background-color:#c8cad0}.tp-btnv_b:active{background-color:#d6d7db}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_c{border-left:rgba(200,202,208,0.1) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:rgba(200,202,208,0.15)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:rgba(200,202,208,0.2)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:rgba(200,202,208,0.25)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:rgba(200,202,208,0.15);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:#c8cad0;border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:rgba(200,202,208,0.15)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:rgba(200,202,208,0.25)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:rgba(200,202,208,0.35)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{color:#c8cad0;display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:#bbbcc4}.tp-lstiv_s:focus{background-color:#c8cad0}.tp-lstiv_s:active{background-color:#d6d7db}.tp-lstiv_m{border-color:#2f3137 transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_w{align-items:center;display:flex}.tp-rgbtxtiv_w+.tp-rgbtxtiv_w{margin-left:4px}.tp-rgbtxtiv_l{color:rgba(200,202,208,0.8);display:inline;line-height:20px;margin-left:4px;margin-right:8px}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-rgbtxtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-rgbtxtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-p2dpadiv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:rgba(200,202,208,0.15)}.tp-p2dpadiv_p:focus{background-color:rgba(200,202,208,0.25)}.tp-p2dpadiv_p:active{background-color:rgba(200,202,208,0.35)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:rgba(47,49,55,0.5)}.tp-p2dpadiv_l{stroke:#c8cad0;stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:#c8cad0}.tp-p2dpadtxtiv{display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:#adafb8;border-radius:2px;color:#2f3137;cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:#bbbcc4}.tp-p2dpadtxtiv_b:focus{background-color:#c8cad0}.tp-p2dpadtxtiv_b:active{background-color:#d6d7db}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:flex}.tp-p2dtxtiv_w{align-items:center;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-p2dtxtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-p2dtxtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{color:#c8cad0;display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:rgba(200,202,208,0.2);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:#adafb8;border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:#bbbcc4}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:#c8cad0}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:#d6d7db}.tp-txtiv{color:#c8cad0;display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:rgba(200,202,208,0.15)}.tp-txtiv_i:focus{background-color:rgba(200,202,208,0.25)}.tp-txtiv_i:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(200,202,208,0.15);border-radius:2px;box-sizing:border-box;color:#c8cad0;font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:rgba(200,202,208,0.15)}.tp-cswiv_sw:focus{background-color:rgba(200,202,208,0.25)}.tp-cswiv_sw:active{background-color:rgba(200,202,208,0.35)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:rgba(200,202,208,0.8);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{color:#c8cad0;display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:rgba(200,202,208,0.7);stroke-linejoin:round}.tp-grpmv_t{font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:rgba(200,202,208,0.7);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:rgba(24,24,27,0.5);border-radius:2px;box-sizing:border-box;color:rgba(200,202,208,0.7);height:20px;width:100%}.tp-rotv{background-color:#2f3137;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,0.2);font-family:\"Roboto Mono\",\"Source Code Pro\",Menlo,Courier,monospace;font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:rgba(24,24,27,0.3);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
 
 // exports
 
