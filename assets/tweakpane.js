@@ -1067,11 +1067,12 @@ var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/ma
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var checkbox_1 = __webpack_require__(/*! ../input/checkbox */ "./src/main/js/controller/input/checkbox.ts");
 var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/input/list.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
 function createConstraint(params) {
     var constraints = [];
     if (params.options) {
         constraints.push(new list_1.default({
-            options: params.options,
+            options: UiUtil.normalizeInputParamsOptions(params.options, BooleanConverter.fromMixed),
         }));
     }
     return new composite_1.default({
@@ -1094,6 +1095,10 @@ function createController(document, value) {
  * @hidden
  */
 function create(document, target, params) {
+    var initialValue = target.read();
+    if (typeof initialValue !== 'boolean') {
+        return null;
+    }
     var value = new input_value_1.default(false, createConstraint(params));
     var binding = new input_1.default({
         reader: BooleanConverter.fromMixed,
@@ -1134,7 +1139,11 @@ var single_log_1 = __webpack_require__(/*! ../monitor/single-log */ "./src/main/
 /**
  * @hidden
  */
-function createTextMonitor(document, target, params) {
+function create(document, target, params) {
+    var initialValue = target.read();
+    if (typeof initialValue !== 'boolean') {
+        return null;
+    }
     var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
         ? new single_log_1.default(document, {
@@ -1157,7 +1166,7 @@ function createTextMonitor(document, target, params) {
         label: params.label || target.key,
     });
 }
-exports.createTextMonitor = createTextMonitor;
+exports.create = create;
 
 
 /***/ }),
@@ -1182,8 +1191,16 @@ var color_swatch_text_1 = __webpack_require__(/*! ../input/color-swatch-text */ 
 /**
  * @hidden
  */
-function create(document, target, initialValue, params) {
-    var value = new input_value_1.default(initialValue);
+function create(document, target, params) {
+    var initialValue = target.read();
+    if (typeof initialValue !== 'string') {
+        return null;
+    }
+    var color = string_color_1.default(initialValue);
+    if (!color) {
+        return null;
+    }
+    var value = new input_value_1.default(color);
     return new input_binding_1.default(document, {
         binding: new input_1.default({
             reader: ColorConverter.fromMixed,
@@ -1214,46 +1231,12 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var BooleanConverter = __webpack_require__(/*! ../../converter/boolean */ "./src/main/js/converter/boolean.ts");
-var NumberConverter = __webpack_require__(/*! ../../converter/number */ "./src/main/js/converter/number.ts");
-var StringConverter = __webpack_require__(/*! ../../converter/string */ "./src/main/js/converter/string.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
-var any_point_2d_1 = __webpack_require__(/*! ../../parser/any-point-2d */ "./src/main/js/parser/any-point-2d.ts");
-var string_color_1 = __webpack_require__(/*! ../../parser/string-color */ "./src/main/js/parser/string-color.ts");
 var BooleanInputBindingControllerCreators = __webpack_require__(/*! ./boolean-input */ "./src/main/js/controller/binding-creators/boolean-input.ts");
 var ColorInputBindingControllerCreators = __webpack_require__(/*! ./color-input */ "./src/main/js/controller/binding-creators/color-input.ts");
 var NumberInputBindingControllerCreators = __webpack_require__(/*! ./number-input */ "./src/main/js/controller/binding-creators/number-input.ts");
 var Point2dInputBindingControllerCreators = __webpack_require__(/*! ./point-2d-input */ "./src/main/js/controller/binding-creators/point-2d-input.ts");
 var StringInputBindingControllerCreators = __webpack_require__(/*! ./string-input */ "./src/main/js/controller/binding-creators/string-input.ts");
-function normalizeParams(p1, convert) {
-    var p2 = {
-        label: p1.label,
-        max: p1.max,
-        min: p1.min,
-        step: p1.step,
-    };
-    if (p1.options) {
-        if (Array.isArray(p1.options)) {
-            p2.options = p1.options.map(function (item) {
-                return {
-                    text: item.text,
-                    value: convert(item.value),
-                };
-            });
-        }
-        else {
-            var textToValueMap_1 = p1.options;
-            var texts = Object.keys(textToValueMap_1);
-            p2.options = texts.reduce(function (options, text) {
-                return options.concat({
-                    text: text,
-                    value: convert(textToValueMap_1[text]),
-                });
-            }, []);
-        }
-    }
-    return p2;
-}
 /**
  * @hidden
  */
@@ -1267,24 +1250,17 @@ function create(document, target, params) {
             type: 'emptyvalue',
         });
     }
-    if (typeof initialValue === 'boolean') {
-        return BooleanInputBindingControllerCreators.create(document, target, normalizeParams(params, BooleanConverter.fromMixed));
-    }
-    if (typeof initialValue === 'number') {
-        return NumberInputBindingControllerCreators.create(document, target, normalizeParams(params, NumberConverter.fromMixed));
-    }
-    if (typeof initialValue === 'string') {
-        var color = string_color_1.default(initialValue);
-        if (color) {
-            return ColorInputBindingControllerCreators.create(document, target, color, params);
-        }
-        return StringInputBindingControllerCreators.create(document, target, normalizeParams(params, StringConverter.fromMixed));
-    }
-    {
-        var p = any_point_2d_1.default(initialValue);
-        if (p) {
-            return Point2dInputBindingControllerCreators.create(document, target, p, params);
-        }
+    var bc = [
+        BooleanInputBindingControllerCreators.create,
+        NumberInputBindingControllerCreators.create,
+        ColorInputBindingControllerCreators.create,
+        StringInputBindingControllerCreators.create,
+        Point2dInputBindingControllerCreators.create,
+    ].reduce(function (result, createBindingController) {
+        return result || createBindingController(document, target, params);
+    }, null);
+    if (bc) {
+        return bc;
     }
     throw new pane_error_1.default({
         context: {
@@ -1325,17 +1301,15 @@ function create(document, target, params) {
             type: 'emptyvalue',
         });
     }
-    if (typeof initialValue === 'number') {
-        if (params.type === 'graph') {
-            return NumberMonitorBindingControllerCreators.createGraphMonitor(document, target, params);
-        }
-        return NumberMonitorBindingControllerCreators.createTextMonitor(document, target, params);
-    }
-    if (typeof initialValue === 'string') {
-        return StringMonitorBindingControllerCreators.createTextMonitor(document, target, params);
-    }
-    if (typeof initialValue === 'boolean') {
-        return BooleanMonitorBindingControllerCreators.createTextMonitor(document, target, params);
+    var bc = [
+        NumberMonitorBindingControllerCreators.create,
+        StringMonitorBindingControllerCreators.create,
+        BooleanMonitorBindingControllerCreators.create,
+    ].reduce(function (result, createBindingController) {
+        return result || createBindingController(document, target, params);
+    }, null);
+    if (bc) {
+        return bc;
     }
     throw new pane_error_1.default({
         context: {
@@ -1367,6 +1341,7 @@ var step_1 = __webpack_require__(/*! ../../constraint/step */ "./src/main/js/con
 var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
 var NumberConverter = __webpack_require__(/*! ../../converter/number */ "./src/main/js/converter/number.ts");
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
@@ -1374,7 +1349,6 @@ var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/
 var number_text_1 = __webpack_require__(/*! ../input/number-text */ "./src/main/js/controller/input/number-text.ts");
 var slider_text_1 = __webpack_require__(/*! ../input/slider-text */ "./src/main/js/controller/input/slider-text.ts");
 var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
-var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 function createConstraint(params) {
     var constraints = [];
     if (!type_util_1.default.isEmpty(params.step)) {
@@ -1390,7 +1364,7 @@ function createConstraint(params) {
     }
     if (params.options) {
         constraints.push(new list_1.default({
-            options: params.options,
+            options: UiUtil.normalizeInputParamsOptions(params.options, NumberConverter.fromMixed),
         }));
     }
     return new composite_1.default({
@@ -1418,7 +1392,14 @@ function createController(document, value) {
         value: value,
     });
 }
+/**
+ * @hidden
+ */
 function create(document, target, params) {
+    var initialValue = target.read();
+    if (typeof initialValue !== 'number') {
+        return null;
+    }
     var value = new input_value_1.default(0, createConstraint(params));
     var binding = new input_1.default({
         reader: NumberConverter.fromMixed,
@@ -1461,9 +1442,6 @@ function createFormatter() {
     // TODO: formatter precision
     return new number_1.default(2);
 }
-/**
- * @hidden
- */
 function createTextMonitor(document, target, params) {
     var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
@@ -1487,10 +1465,6 @@ function createTextMonitor(document, target, params) {
         label: params.label || target.key,
     });
 }
-exports.createTextMonitor = createTextMonitor;
-/**
- * @hidden
- */
 function createGraphMonitor(document, target, params) {
     var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 64));
     var ticker = new interval_1.default(document, type_util_1.default.getOrDefault(params.interval, 200));
@@ -1510,7 +1484,17 @@ function createGraphMonitor(document, target, params) {
         label: params.label || target.key,
     });
 }
-exports.createGraphMonitor = createGraphMonitor;
+function create(document, target, params) {
+    var initialValue = target.read();
+    if (typeof initialValue !== 'number') {
+        return null;
+    }
+    if (params.type === 'graph') {
+        return createGraphMonitor(document, target, params);
+    }
+    return createTextMonitor(document, target, params);
+}
+exports.create = create;
 
 
 /***/ }),
@@ -1535,6 +1519,7 @@ var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
+var any_point_2d_1 = __webpack_require__(/*! ../../parser/any-point-2d */ "./src/main/js/parser/any-point-2d.ts");
 var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var point_2d_pad_text_1 = __webpack_require__(/*! ../input/point-2d-pad-text */ "./src/main/js/controller/input/point-2d-pad-text.ts");
@@ -1580,8 +1565,13 @@ function createController(document, value) {
 /**
  * @hidden
  */
-function create(document, target, initialValue, params) {
-    var value = new input_value_1.default(initialValue, createConstraint(params));
+function create(document, target, params) {
+    var initialValue = target.read();
+    var p = any_point_2d_1.default(initialValue);
+    if (!p) {
+        return null;
+    }
+    var value = new input_value_1.default(p, createConstraint(params));
     var binding = new input_1.default({
         reader: Point2dConverter.fromMixed,
         target: target,
@@ -1619,11 +1609,12 @@ var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/ma
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/input/list.ts");
 var text_1 = __webpack_require__(/*! ../input/text */ "./src/main/js/controller/input/text.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
 function createConstraint(params) {
     var constraints = [];
     if (params.options) {
         constraints.push(new list_1.default({
-            options: params.options,
+            options: UiUtil.normalizeInputParamsOptions(params.options, StringConverter.fromMixed),
         }));
     }
     return new composite_1.default({
@@ -1648,6 +1639,10 @@ function createController(document, value) {
  * @hidden
  */
 function create(document, target, params) {
+    var initialValue = target.read();
+    if (typeof initialValue !== 'string') {
+        return null;
+    }
     var value = new input_value_1.default('', createConstraint(params));
     var binding = new input_1.default({
         reader: StringConverter.fromMixed,
@@ -1688,7 +1683,11 @@ var single_log_1 = __webpack_require__(/*! ../monitor/single-log */ "./src/main/
 /**
  * @hidden
  */
-function createTextMonitor(document, target, params) {
+function create(document, target, params) {
+    var initialValue = target.read();
+    if (typeof initialValue !== 'string') {
+        return null;
+    }
     var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
     var multiline = value.totalCount > 1 || params.multiline;
     var controller = multiline
@@ -1712,7 +1711,7 @@ function createTextMonitor(document, target, params) {
         label: params.label || target.key,
     });
 }
-exports.createTextMonitor = createTextMonitor;
+exports.create = create;
 
 
 /***/ }),
@@ -3097,6 +3096,28 @@ var util_1 = __webpack_require__(/*! ../constraint/util */ "./src/main/js/constr
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ./folder */ "./src/main/js/controller/folder.ts");
+/**
+ * @hidden
+ */
+function normalizeInputParamsOptions(options, convert) {
+    if (Array.isArray(options)) {
+        return options.map(function (item) {
+            return {
+                text: item.text,
+                value: convert(item.value),
+            };
+        });
+    }
+    var textToValueMap = options;
+    var texts = Object.keys(textToValueMap);
+    return texts.reduce(function (result, text) {
+        return result.concat({
+            text: text,
+            value: convert(textToValueMap[text]),
+        });
+    }, []);
+}
+exports.normalizeInputParamsOptions = normalizeInputParamsOptions;
 /**
  * @hidden
  */
