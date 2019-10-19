@@ -404,7 +404,7 @@ var ButtonApi = /** @class */ (function () {
     };
     return ButtonApi;
 }());
-exports.default = ButtonApi;
+exports.ButtonApi = ButtonApi;
 
 
 /***/ }),
@@ -454,23 +454,23 @@ var FolderApi = /** @class */ (function () {
     };
     FolderApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
-        var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.default(object, key, params.presetKey), params);
+        var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key, params.presetKey), params);
         this.controller.uiControllerList.append(uc);
-        return new input_binding_1.default(uc);
+        return new input_binding_1.InputBindingApi(uc);
     };
     FolderApi.prototype.addMonitor = function (object, key, opt_params) {
         var params = opt_params || {};
-        var uc = MonitorBindingControllerCreators.create(this.controller.document, new target_1.default(object, key), params);
+        var uc = MonitorBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key), params);
         this.controller.uiControllerList.append(uc);
-        return new monitor_binding_1.default(uc);
+        return new monitor_binding_1.MonitorBindingApi(uc);
     };
     FolderApi.prototype.addButton = function (params) {
-        var uc = new button_1.default(this.controller.document, params);
+        var uc = new button_1.ButtonController(this.controller.document, params);
         this.controller.uiControllerList.append(uc);
-        return new button_2.default(uc);
+        return new button_2.ButtonApi(uc);
     };
     FolderApi.prototype.addSeparator = function () {
-        var uc = new separator_1.default(this.controller.document);
+        var uc = new separator_1.SeparatorController(this.controller.document);
         this.controller.uiControllerList.append(uc);
     };
     FolderApi.prototype.on = function (eventName, handler) {
@@ -483,7 +483,7 @@ var FolderApi = /** @class */ (function () {
     };
     return FolderApi;
 }());
-exports.default = FolderApi;
+exports.FolderApi = FolderApi;
 
 
 /***/ }),
@@ -523,7 +523,7 @@ var InputBindingApi = /** @class */ (function () {
     };
     return InputBindingApi;
 }());
-exports.default = InputBindingApi;
+exports.InputBindingApi = InputBindingApi;
 
 
 /***/ }),
@@ -561,7 +561,7 @@ var MonitorBindingApi = /** @class */ (function () {
     };
     return MonitorBindingApi;
 }());
-exports.default = MonitorBindingApi;
+exports.MonitorBindingApi = MonitorBindingApi;
 
 
 /***/ }),
@@ -675,28 +675,28 @@ var RootApi = /** @class */ (function () {
     };
     RootApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
-        var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.default(object, key, params.presetKey), params);
+        var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key, params.presetKey), params);
         this.controller.uiControllerList.append(uc);
-        return new input_binding_2.default(uc);
+        return new input_binding_2.InputBindingApi(uc);
     };
     RootApi.prototype.addMonitor = function (object, key, opt_params) {
         var params = opt_params || {};
-        var uc = MonitorBindingControllerCreators.create(this.controller.document, new target_1.default(object, key), params);
+        var uc = MonitorBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key), params);
         this.controller.uiControllerList.append(uc);
-        return new monitor_binding_2.default(uc);
+        return new monitor_binding_2.MonitorBindingApi(uc);
     };
     RootApi.prototype.addButton = function (params) {
-        var uc = new button_1.default(this.controller.document, params);
+        var uc = new button_1.ButtonController(this.controller.document, params);
         this.controller.uiControllerList.append(uc);
-        return new button_2.default(uc);
+        return new button_2.ButtonApi(uc);
     };
     RootApi.prototype.addFolder = function (params) {
-        var uc = new folder_1.default(this.controller.document, params);
+        var uc = new folder_1.FolderController(this.controller.document, params);
         this.controller.uiControllerList.append(uc);
-        return new folder_2.default(uc);
+        return new folder_2.FolderApi(uc);
     };
     RootApi.prototype.addSeparator = function () {
-        var uc = new separator_1.default(this.controller.document);
+        var uc = new separator_1.SeparatorController(this.controller.document);
         this.controller.uiControllerList.append(uc);
     };
     /**
@@ -704,7 +704,7 @@ var RootApi = /** @class */ (function () {
      * @param preset The preset object to import.
      */
     RootApi.prototype.importPreset = function (preset) {
-        var targets = UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.default).map(function (ibc) {
+        var targets = UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.InputBindingController).map(function (ibc) {
             return ibc.binding.target;
         });
         Preset.importJson(targets, preset);
@@ -715,7 +715,7 @@ var RootApi = /** @class */ (function () {
      * @return The exported preset object.
      */
     RootApi.prototype.exportPreset = function () {
-        var targets = UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.default).map(function (ibc) {
+        var targets = UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.InputBindingController).map(function (ibc) {
             return ibc.binding.target;
         });
         return Preset.exportJson(targets);
@@ -738,17 +738,17 @@ var RootApi = /** @class */ (function () {
      */
     RootApi.prototype.refresh = function () {
         // Force-read all input bindings
-        UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.default).forEach(function (ibc) {
+        UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.InputBindingController).forEach(function (ibc) {
             ibc.binding.read();
         });
         // Force-read all monitor bindings
-        UiUtil.findControllers(this.controller.uiControllerList.items, monitor_binding_1.default).forEach(function (mbc) {
+        UiUtil.findControllers(this.controller.uiControllerList.items, monitor_binding_1.MonitorBindingController).forEach(function (mbc) {
             mbc.binding.read();
         });
     };
     return RootApi;
 }());
-exports.default = RootApi;
+exports.RootApi = RootApi;
 
 
 /***/ }),
@@ -791,7 +791,7 @@ var InputBinding = /** @class */ (function () {
     };
     return InputBinding;
 }());
-exports.default = InputBinding;
+exports.InputBinding = InputBinding;
 
 
 /***/ }),
@@ -833,7 +833,7 @@ var MonitorBinding = /** @class */ (function () {
     };
     return MonitorBinding;
 }());
-exports.default = MonitorBinding;
+exports.MonitorBinding = MonitorBinding;
 
 
 /***/ }),
@@ -869,7 +869,7 @@ var CompositeConstraint = /** @class */ (function () {
     };
     return CompositeConstraint;
 }());
-exports.default = CompositeConstraint;
+exports.CompositeConstraint = CompositeConstraint;
 
 
 /***/ }),
@@ -910,7 +910,7 @@ var ListConstraint = /** @class */ (function () {
     };
     return ListConstraint;
 }());
-exports.default = ListConstraint;
+exports.ListConstraint = ListConstraint;
 
 
 /***/ }),
@@ -935,11 +935,11 @@ var Point2dConstraint = /** @class */ (function () {
         this.yConstraint = config.y;
     }
     Point2dConstraint.prototype.constrain = function (value) {
-        return new point_2d_1.default(this.xConstraint ? this.xConstraint.constrain(value.x) : value.x, this.yConstraint ? this.yConstraint.constrain(value.y) : value.y);
+        return new point_2d_1.Point2d(this.xConstraint ? this.xConstraint.constrain(value.x) : value.x, this.yConstraint ? this.yConstraint.constrain(value.y) : value.y);
     };
     return Point2dConstraint;
 }());
-exports.default = Point2dConstraint;
+exports.Point2dConstraint = Point2dConstraint;
 
 
 /***/ }),
@@ -965,17 +965,17 @@ var RangeConstraint = /** @class */ (function () {
     }
     RangeConstraint.prototype.constrain = function (value) {
         var result = value;
-        if (!type_util_1.default.isEmpty(this.minValue)) {
+        if (!type_util_1.TypeUtil.isEmpty(this.minValue)) {
             result = Math.max(result, this.minValue);
         }
-        if (!type_util_1.default.isEmpty(this.maxValue)) {
+        if (!type_util_1.TypeUtil.isEmpty(this.maxValue)) {
             result = Math.min(result, this.maxValue);
         }
         return result;
     };
     return RangeConstraint;
 }());
-exports.default = RangeConstraint;
+exports.RangeConstraint = RangeConstraint;
 
 
 /***/ }),
@@ -1005,7 +1005,7 @@ var StepConstraint = /** @class */ (function () {
     };
     return StepConstraint;
 }());
-exports.default = StepConstraint;
+exports.StepConstraint = StepConstraint;
 
 
 /***/ }),
@@ -1024,12 +1024,12 @@ var composite_1 = __webpack_require__(/*! ./composite */ "./src/main/js/constrai
 /**
  * @hidden
  */
-var ConstraintUtil = {
+exports.ConstraintUtil = {
     findConstraint: function (c, constraintClass) {
         if (c instanceof constraintClass) {
             return c;
         }
-        if (c instanceof composite_1.default) {
+        if (c instanceof composite_1.CompositeConstraint) {
             var result = c.constraints.reduce(function (tmpResult, sc) {
                 if (tmpResult) {
                     return tmpResult;
@@ -1043,7 +1043,6 @@ var ConstraintUtil = {
         return null;
     },
 };
-exports.default = ConstraintUtil;
 
 
 /***/ }),
@@ -1071,23 +1070,23 @@ var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-
 function createConstraint(params) {
     var constraints = [];
     if (params.options) {
-        constraints.push(new list_1.default({
+        constraints.push(new list_1.ListConstraint({
             options: UiUtil.normalizeInputParamsOptions(params.options, BooleanConverter.fromMixed),
         }));
     }
-    return new composite_1.default({
+    return new composite_1.CompositeConstraint({
         constraints: constraints,
     });
 }
 function createController(document, value) {
     var c = value.constraint;
-    if (c && util_1.default.findConstraint(c, list_1.default)) {
-        return new list_2.default(document, {
+    if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
+        return new list_2.ListInputController(document, {
             stringifyValue: BooleanConverter.toString,
             value: value,
         });
     }
-    return new checkbox_1.default(document, {
+    return new checkbox_1.CheckboxInputController(document, {
         value: value,
     });
 }
@@ -1099,14 +1098,14 @@ function create(document, target, params) {
     if (typeof initialValue !== 'boolean') {
         return null;
     }
-    var value = new input_value_1.default(false, createConstraint(params));
-    var binding = new input_1.default({
+    var value = new input_value_1.InputValue(false, createConstraint(params));
+    var binding = new input_1.InputBinding({
         reader: BooleanConverter.fromMixed,
         target: target,
         value: value,
         writer: function (v) { return v; },
     });
-    return new input_binding_1.default(document, {
+    return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: createController(document, value),
         label: params.label || target.key,
@@ -1130,6 +1129,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var monitor_1 = __webpack_require__(/*! ../../binding/monitor */ "./src/main/js/binding/monitor.ts");
 var BooleanConverter = __webpack_require__(/*! ../../converter/boolean */ "./src/main/js/converter/boolean.ts");
 var boolean_1 = __webpack_require__(/*! ../../formatter/boolean */ "./src/main/js/formatter/boolean.ts");
+var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
@@ -1144,19 +1144,19 @@ function create(document, target, params) {
     if (typeof initialValue !== 'boolean') {
         return null;
     }
-    var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
+    var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
-        ? new single_log_1.default(document, {
-            formatter: new boolean_1.default(),
+        ? new single_log_1.SingleLogMonitorController(document, {
+            formatter: new boolean_1.BooleanFormatter(),
             value: value,
         })
-        : new multi_log_1.default(document, {
-            formatter: new boolean_1.default(),
+        : new multi_log_1.MultiLogMonitorController(document, {
+            formatter: new boolean_1.BooleanFormatter(),
             value: value,
         });
-    var ticker = new interval_1.default(document, type_util_1.default.getOrDefault(params.interval, 200));
-    return new monitor_binding_1.default(document, {
-        binding: new monitor_1.default({
+    var ticker = new interval_1.IntervalTicker(document, type_util_1.TypeUtil.getOrDefault(params.interval, constants_1.Constants.monitorDefaultInterval));
+    return new monitor_binding_1.MonitorBindingController(document, {
+        binding: new monitor_1.MonitorBinding({
             reader: BooleanConverter.fromMixed,
             target: target,
             ticker: ticker,
@@ -1196,21 +1196,21 @@ function create(document, target, params) {
     if (typeof initialValue !== 'string') {
         return null;
     }
-    var color = string_color_1.default(initialValue);
+    var color = string_color_1.StringColorParser(initialValue);
     if (!color) {
         return null;
     }
-    var value = new input_value_1.default(color);
-    return new input_binding_1.default(document, {
-        binding: new input_1.default({
+    var value = new input_value_1.InputValue(color);
+    return new input_binding_1.InputBindingController(document, {
+        binding: new input_1.InputBinding({
             reader: ColorConverter.fromMixed,
             target: target,
             value: value,
             writer: ColorConverter.toString,
         }),
-        controller: new color_swatch_text_1.default(document, {
-            formatter: new color_1.default(),
-            parser: string_color_1.default,
+        controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
+            formatter: new color_1.ColorFormatter(),
+            parser: string_color_1.StringColorParser,
             value: value,
         }),
         label: params.label || target.key,
@@ -1232,6 +1232,7 @@ exports.create = create;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var BooleanInputBindingControllerCreators = __webpack_require__(/*! ./boolean-input */ "./src/main/js/controller/binding-creators/boolean-input.ts");
 var ColorInputBindingControllerCreators = __webpack_require__(/*! ./color-input */ "./src/main/js/controller/binding-creators/color-input.ts");
 var NumberInputBindingControllerCreators = __webpack_require__(/*! ./number-input */ "./src/main/js/controller/binding-creators/number-input.ts");
@@ -1242,8 +1243,8 @@ var StringInputBindingControllerCreators = __webpack_require__(/*! ./string-inpu
  */
 function create(document, target, params) {
     var initialValue = target.read();
-    if (initialValue === null || initialValue === undefined) {
-        throw new pane_error_1.default({
+    if (type_util_1.TypeUtil.isEmpty(initialValue)) {
+        throw new pane_error_1.PaneError({
             context: {
                 key: target.key,
             },
@@ -1262,7 +1263,7 @@ function create(document, target, params) {
     if (bc) {
         return bc;
     }
-    throw new pane_error_1.default({
+    throw new pane_error_1.PaneError({
         context: {
             key: target.key,
         },
@@ -1285,6 +1286,7 @@ exports.create = create;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var BooleanMonitorBindingControllerCreators = __webpack_require__(/*! ./boolean-monitor */ "./src/main/js/controller/binding-creators/boolean-monitor.ts");
 var NumberMonitorBindingControllerCreators = __webpack_require__(/*! ./number-monitor */ "./src/main/js/controller/binding-creators/number-monitor.ts");
 var StringMonitorBindingControllerCreators = __webpack_require__(/*! ./string-monitor */ "./src/main/js/controller/binding-creators/string-monitor.ts");
@@ -1293,8 +1295,8 @@ var StringMonitorBindingControllerCreators = __webpack_require__(/*! ./string-mo
  */
 function create(document, target, params) {
     var initialValue = target.read();
-    if (initialValue === null || initialValue === undefined) {
-        throw new pane_error_1.default({
+    if (type_util_1.TypeUtil.isEmpty(initialValue)) {
+        throw new pane_error_1.PaneError({
             context: {
                 key: target.key,
             },
@@ -1311,7 +1313,7 @@ function create(document, target, params) {
     if (bc) {
         return bc;
     }
-    throw new pane_error_1.default({
+    throw new pane_error_1.PaneError({
         context: {
             key: target.key,
         },
@@ -1351,44 +1353,44 @@ var slider_text_1 = __webpack_require__(/*! ../input/slider-text */ "./src/main/
 var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
 function createConstraint(params) {
     var constraints = [];
-    if (!type_util_1.default.isEmpty(params.step)) {
-        constraints.push(new step_1.default({
+    if (!type_util_1.TypeUtil.isEmpty(params.step)) {
+        constraints.push(new step_1.StepConstraint({
             step: params.step,
         }));
     }
-    if (!type_util_1.default.isEmpty(params.max) || !type_util_1.default.isEmpty(params.min)) {
-        constraints.push(new range_1.default({
+    if (!type_util_1.TypeUtil.isEmpty(params.max) || !type_util_1.TypeUtil.isEmpty(params.min)) {
+        constraints.push(new range_1.RangeConstraint({
             max: params.max,
             min: params.min,
         }));
     }
     if (params.options) {
-        constraints.push(new list_1.default({
+        constraints.push(new list_1.ListConstraint({
             options: UiUtil.normalizeInputParamsOptions(params.options, NumberConverter.fromMixed),
         }));
     }
-    return new composite_1.default({
+    return new composite_1.CompositeConstraint({
         constraints: constraints,
     });
 }
 function createController(document, value) {
     var c = value.constraint;
-    if (c && util_1.default.findConstraint(c, list_1.default)) {
-        return new list_2.default(document, {
+    if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
+        return new list_2.ListInputController(document, {
             stringifyValue: NumberConverter.toString,
             value: value,
         });
     }
-    if (c && util_1.default.findConstraint(c, range_1.default)) {
-        return new slider_text_1.default(document, {
-            formatter: new number_1.default(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
-            parser: string_number_1.default,
+    if (c && util_1.ConstraintUtil.findConstraint(c, range_1.RangeConstraint)) {
+        return new slider_text_1.SliderTextInputController(document, {
+            formatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
+            parser: string_number_1.StringNumberParser,
             value: value,
         });
     }
-    return new number_text_1.default(document, {
-        formatter: new number_1.default(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
-        parser: string_number_1.default,
+    return new number_text_1.NumberTextInputController(document, {
+        formatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
+        parser: string_number_1.StringNumberParser,
         value: value,
     });
 }
@@ -1400,14 +1402,14 @@ function create(document, target, params) {
     if (typeof initialValue !== 'number') {
         return null;
     }
-    var value = new input_value_1.default(0, createConstraint(params));
-    var binding = new input_1.default({
+    var value = new input_value_1.InputValue(0, createConstraint(params));
+    var binding = new input_1.InputBinding({
         reader: NumberConverter.fromMixed,
         target: target,
         value: value,
         writer: function (v) { return v; },
     });
-    return new input_binding_1.default(document, {
+    return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: createController(document, value),
         label: params.label || target.key,
@@ -1431,6 +1433,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var monitor_1 = __webpack_require__(/*! ../../binding/monitor */ "./src/main/js/binding/monitor.ts");
 var NumberConverter = __webpack_require__(/*! ../../converter/number */ "./src/main/js/converter/number.ts");
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
+var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
@@ -1440,22 +1443,22 @@ var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js
 var single_log_1 = __webpack_require__(/*! ../monitor/single-log */ "./src/main/js/controller/monitor/single-log.ts");
 function createFormatter() {
     // TODO: formatter precision
-    return new number_1.default(2);
+    return new number_1.NumberFormatter(2);
 }
 function createTextMonitor(document, target, params) {
-    var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
+    var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
-        ? new single_log_1.default(document, {
+        ? new single_log_1.SingleLogMonitorController(document, {
             formatter: createFormatter(),
             value: value,
         })
-        : new multi_log_1.default(document, {
+        : new multi_log_1.MultiLogMonitorController(document, {
             formatter: createFormatter(),
             value: value,
         });
-    var ticker = new interval_1.default(document, type_util_1.default.getOrDefault(params.interval, 200));
-    return new monitor_binding_1.default(document, {
-        binding: new monitor_1.default({
+    var ticker = new interval_1.IntervalTicker(document, type_util_1.TypeUtil.getOrDefault(params.interval, constants_1.Constants.monitorDefaultInterval));
+    return new monitor_binding_1.MonitorBindingController(document, {
+        binding: new monitor_1.MonitorBinding({
             reader: NumberConverter.fromMixed,
             target: target,
             ticker: ticker,
@@ -1466,19 +1469,19 @@ function createTextMonitor(document, target, params) {
     });
 }
 function createGraphMonitor(document, target, params) {
-    var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 64));
-    var ticker = new interval_1.default(document, type_util_1.default.getOrDefault(params.interval, 200));
-    return new monitor_binding_1.default(document, {
-        binding: new monitor_1.default({
+    var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 64));
+    var ticker = new interval_1.IntervalTicker(document, type_util_1.TypeUtil.getOrDefault(params.interval, constants_1.Constants.monitorDefaultInterval));
+    return new monitor_binding_1.MonitorBindingController(document, {
+        binding: new monitor_1.MonitorBinding({
             reader: NumberConverter.fromMixed,
             target: target,
             ticker: ticker,
             value: value,
         }),
-        controller: new graph_1.default(document, {
+        controller: new graph_1.GraphMonitorController(document, {
             formatter: createFormatter(),
-            maxValue: type_util_1.default.getOrDefault(params.max, 100),
-            minValue: type_util_1.default.getOrDefault(params.min, 0),
+            maxValue: type_util_1.TypeUtil.getOrDefault(params.max, 100),
+            minValue: type_util_1.TypeUtil.getOrDefault(params.min, 0),
             value: value,
         }),
         label: params.label || target.key,
@@ -1529,37 +1532,37 @@ function createDimensionConstraint(params) {
         return undefined;
     }
     var constraints = [];
-    if (!type_util_1.default.isEmpty(params.step)) {
-        constraints.push(new step_1.default({
+    if (!type_util_1.TypeUtil.isEmpty(params.step)) {
+        constraints.push(new step_1.StepConstraint({
             step: params.step,
         }));
     }
-    if (!type_util_1.default.isEmpty(params.max) || !type_util_1.default.isEmpty(params.min)) {
-        constraints.push(new range_1.default({
+    if (!type_util_1.TypeUtil.isEmpty(params.max) || !type_util_1.TypeUtil.isEmpty(params.min)) {
+        constraints.push(new range_1.RangeConstraint({
             max: params.max,
             min: params.min,
         }));
     }
-    return new composite_1.default({
+    return new composite_1.CompositeConstraint({
         constraints: constraints,
     });
 }
 function createConstraint(params) {
-    return new point_2d_1.default({
+    return new point_2d_1.Point2dConstraint({
         x: createDimensionConstraint(params.x),
         y: createDimensionConstraint(params.y),
     });
 }
 function createController(document, value) {
     var c = value.constraint;
-    if (!(c instanceof point_2d_1.default)) {
-        throw pane_error_1.default.shouldNeverHappen();
+    if (!(c instanceof point_2d_1.Point2dConstraint)) {
+        throw pane_error_1.PaneError.shouldNeverHappen();
     }
-    return new point_2d_pad_text_1.default(document, {
-        parser: string_number_1.default,
+    return new point_2d_pad_text_1.Point2dPadTextInputController(document, {
+        parser: string_number_1.StringNumberParser,
         value: value,
-        xFormatter: new number_1.default(UiUtil.getSuitableDecimalDigits(c.xConstraint, value.rawValue.x)),
-        yFormatter: new number_1.default(UiUtil.getSuitableDecimalDigits(c.yConstraint, value.rawValue.y)),
+        xFormatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(c.xConstraint, value.rawValue.x)),
+        yFormatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(c.yConstraint, value.rawValue.y)),
     });
 }
 /**
@@ -1567,18 +1570,18 @@ function createController(document, value) {
  */
 function create(document, target, params) {
     var initialValue = target.read();
-    var p = any_point_2d_1.default(initialValue);
+    var p = any_point_2d_1.AnyPoint2dParser(initialValue);
     if (!p) {
         return null;
     }
-    var value = new input_value_1.default(p, createConstraint(params));
-    var binding = new input_1.default({
+    var value = new input_value_1.InputValue(p, createConstraint(params));
+    var binding = new input_1.InputBinding({
         reader: Point2dConverter.fromMixed,
         target: target,
         value: value,
         writer: function (v) { return v.toObject(); },
     });
-    return new input_binding_1.default(document, {
+    return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: createController(document, value),
         label: params.label || target.key,
@@ -1613,24 +1616,24 @@ var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-
 function createConstraint(params) {
     var constraints = [];
     if (params.options) {
-        constraints.push(new list_1.default({
+        constraints.push(new list_1.ListConstraint({
             options: UiUtil.normalizeInputParamsOptions(params.options, StringConverter.fromMixed),
         }));
     }
-    return new composite_1.default({
+    return new composite_1.CompositeConstraint({
         constraints: constraints,
     });
 }
 function createController(document, value) {
     var c = value.constraint;
-    if (c && util_1.default.findConstraint(c, list_1.default)) {
-        return new list_2.default(document, {
+    if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
+        return new list_2.ListInputController(document, {
             stringifyValue: StringConverter.toString,
             value: value,
         });
     }
-    return new text_1.default(document, {
-        formatter: new string_1.default(),
+    return new text_1.TextInputController(document, {
+        formatter: new string_1.StringFormatter(),
         parser: StringConverter.toString,
         value: value,
     });
@@ -1643,14 +1646,14 @@ function create(document, target, params) {
     if (typeof initialValue !== 'string') {
         return null;
     }
-    var value = new input_value_1.default('', createConstraint(params));
-    var binding = new input_1.default({
+    var value = new input_value_1.InputValue('', createConstraint(params));
+    var binding = new input_1.InputBinding({
         reader: StringConverter.fromMixed,
         target: target,
         value: value,
         writer: function (v) { return v; },
     });
-    return new input_binding_1.default(document, {
+    return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: createController(document, value),
         label: params.label || target.key,
@@ -1674,6 +1677,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var monitor_1 = __webpack_require__(/*! ../../binding/monitor */ "./src/main/js/binding/monitor.ts");
 var StringConverter = __webpack_require__(/*! ../../converter/string */ "./src/main/js/converter/string.ts");
 var string_1 = __webpack_require__(/*! ../../formatter/string */ "./src/main/js/formatter/string.ts");
+var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
@@ -1688,20 +1692,20 @@ function create(document, target, params) {
     if (typeof initialValue !== 'string') {
         return null;
     }
-    var value = new monitor_value_1.default(type_util_1.default.getOrDefault(params.count, 1));
+    var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 1));
     var multiline = value.totalCount > 1 || params.multiline;
     var controller = multiline
-        ? new multi_log_1.default(document, {
-            formatter: new string_1.default(),
+        ? new multi_log_1.MultiLogMonitorController(document, {
+            formatter: new string_1.StringFormatter(),
             value: value,
         })
-        : new single_log_1.default(document, {
-            formatter: new string_1.default(),
+        : new single_log_1.SingleLogMonitorController(document, {
+            formatter: new string_1.StringFormatter(),
             value: value,
         });
-    var ticker = new interval_1.default(document, type_util_1.default.getOrDefault(params.interval, 200));
-    return new monitor_binding_1.default(document, {
-        binding: new monitor_1.default({
+    var ticker = new interval_1.IntervalTicker(document, type_util_1.TypeUtil.getOrDefault(params.interval, constants_1.Constants.monitorDefaultInterval));
+    return new monitor_binding_1.MonitorBindingController(document, {
+        binding: new monitor_1.MonitorBinding({
             reader: StringConverter.fromMixed,
             target: target,
             ticker: ticker,
@@ -1734,8 +1738,8 @@ var button_2 = __webpack_require__(/*! ../view/button */ "./src/main/js/view/but
 var ButtonController = /** @class */ (function () {
     function ButtonController(document, config) {
         this.onButtonClick_ = this.onButtonClick_.bind(this);
-        this.button = new button_1.default(config.title);
-        this.view = new button_2.default(document, {
+        this.button = new button_1.Button(config.title);
+        this.view = new button_2.ButtonView(document, {
             button: this.button,
         });
         this.view.buttonElement.addEventListener('click', this.onButtonClick_);
@@ -1748,7 +1752,7 @@ var ButtonController = /** @class */ (function () {
     };
     return ButtonController;
 }());
-exports.default = ButtonController;
+exports.ButtonController = ButtonController;
 
 
 /***/ }),
@@ -1781,13 +1785,13 @@ var FolderController = /** @class */ (function () {
         this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
         this.onTitleClick_ = this.onTitleClick_.bind(this);
         this.onUiControllerListAppend_ = this.onUiControllerListAppend_.bind(this);
-        this.emitter = new emitter_1.default();
-        this.folder = new folder_1.default(config.title, type_util_1.default.getOrDefault(config.expanded, true));
+        this.emitter = new emitter_1.Emitter();
+        this.folder = new folder_1.Folder(config.title, type_util_1.TypeUtil.getOrDefault(config.expanded, true));
         this.folder.emitter.on('change', this.onFolderChange_);
-        this.ucList_ = new list_1.default();
+        this.ucList_ = new list_1.List();
         this.ucList_.emitter.on('append', this.onUiControllerListAppend_);
         this.doc_ = document;
-        this.view = new folder_2.default(this.doc_, {
+        this.view = new folder_2.FolderView(this.doc_, {
             folder: this.folder,
         });
         this.view.titleElement.addEventListener('click', this.onTitleClick_);
@@ -1831,11 +1835,11 @@ var FolderController = /** @class */ (function () {
         this.folder.expanded = !this.folder.expanded;
     };
     FolderController.prototype.onUiControllerListAppend_ = function (uc) {
-        if (uc instanceof input_binding_1.default) {
+        if (uc instanceof input_binding_1.InputBindingController) {
             var emitter = uc.binding.value.emitter;
             emitter.on('change', this.onInputChange_);
         }
-        else if (uc instanceof monitor_binding_1.default) {
+        else if (uc instanceof monitor_binding_1.MonitorBindingController) {
             var emitter = uc.binding.value.emitter;
             emitter.on('update', this.onMonitorUpdate_);
         }
@@ -1853,7 +1857,7 @@ var FolderController = /** @class */ (function () {
     };
     return FolderController;
 }());
-exports.default = FolderController;
+exports.FolderController = FolderController;
 
 
 /***/ }),
@@ -1876,7 +1880,7 @@ var InputBindingController = /** @class */ (function () {
     function InputBindingController(document, config) {
         this.binding = config.binding;
         this.controller = config.controller;
-        this.view = new labeled_1.default(document, {
+        this.view = new labeled_1.LabeledView(document, {
             label: config.label,
             view: this.controller.view,
         });
@@ -1887,7 +1891,7 @@ var InputBindingController = /** @class */ (function () {
     };
     return InputBindingController;
 }());
-exports.default = InputBindingController;
+exports.InputBindingController = InputBindingController;
 
 
 /***/ }),
@@ -1911,7 +1915,7 @@ var CheckboxInputController = /** @class */ (function () {
     function CheckboxInputController(document, config) {
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.value = config.value;
-        this.view = new checkbox_1.default(document, {
+        this.view = new checkbox_1.CheckboxInputView(document, {
             value: this.value,
         });
         this.view.inputElement.addEventListener('change', this.onInputChange_);
@@ -1920,13 +1924,13 @@ var CheckboxInputController = /** @class */ (function () {
         this.view.dispose();
     };
     CheckboxInputController.prototype.onInputChange_ = function (e) {
-        var inputElem = type_util_1.default.forceCast(e.currentTarget);
+        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
         this.value.rawValue = inputElem.checked;
         this.view.update();
     };
     return CheckboxInputController;
 }());
-exports.default = CheckboxInputController;
+exports.CheckboxInputController = CheckboxInputController;
 
 
 /***/ }),
@@ -1947,8 +1951,8 @@ var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/
 var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var color_picker_1 = __webpack_require__(/*! ../../view/input/color-picker */ "./src/main/js/view/input/color-picker.ts");
 var h_palette_1 = __webpack_require__(/*! ./h-palette */ "./src/main/js/controller/input/h-palette.ts");
-var sv_palette_1 = __webpack_require__(/*! ./sv-palette */ "./src/main/js/controller/input/sv-palette.ts");
 var rgb_text_1 = __webpack_require__(/*! ./rgb-text */ "./src/main/js/controller/input/rgb-text.ts");
+var sv_palette_1 = __webpack_require__(/*! ./sv-palette */ "./src/main/js/controller/input/sv-palette.ts");
 /**
  * @hidden
  */
@@ -1957,19 +1961,19 @@ var ColorPickerInputController = /** @class */ (function () {
         var _this = this;
         this.onInputBlur_ = this.onInputBlur_.bind(this);
         this.value = config.value;
-        this.foldable = new foldable_1.default();
-        this.hPaletteIc_ = new h_palette_1.default(document, {
+        this.foldable = new foldable_1.Foldable();
+        this.hPaletteIc_ = new h_palette_1.HPaletteInputController(document, {
             value: this.value,
         });
-        this.svPaletteIc_ = new sv_palette_1.default(document, {
+        this.svPaletteIc_ = new sv_palette_1.SvPaletteInputController(document, {
             value: this.value,
         });
-        this.rgbTextIc_ = new rgb_text_1.default(document, {
-            formatter: new number_1.default(0),
-            parser: string_number_1.default,
+        this.rgbTextIc_ = new rgb_text_1.RgbTextInputController(document, {
+            formatter: new number_1.NumberFormatter(0),
+            parser: string_number_1.StringNumberParser,
             value: this.value,
         });
-        this.view = new color_picker_1.default(document, {
+        this.view = new color_picker_1.ColorPickerInputView(document, {
             foldable: this.foldable,
             hPaletteInputView: this.hPaletteIc_.view,
             rgbTextView: this.rgbTextIc_.view,
@@ -1985,14 +1989,14 @@ var ColorPickerInputController = /** @class */ (function () {
     };
     ColorPickerInputController.prototype.onInputBlur_ = function (e) {
         var elem = this.view.element;
-        var nextTarget = type_util_1.default.forceCast(e.relatedTarget);
+        var nextTarget = type_util_1.TypeUtil.forceCast(e.relatedTarget);
         if (!nextTarget || !elem.contains(nextTarget)) {
             this.foldable.expanded = false;
         }
     };
     return ColorPickerInputController;
 }());
-exports.default = ColorPickerInputController;
+exports.ColorPickerInputController = ColorPickerInputController;
 
 
 /***/ }),
@@ -2016,15 +2020,15 @@ var text_1 = __webpack_require__(/*! ./text */ "./src/main/js/controller/input/t
 var ColorSwatchTextInputController = /** @class */ (function () {
     function ColorSwatchTextInputController(document, config) {
         this.value = config.value;
-        this.swatchIc_ = new color_swatch_1.default(document, {
+        this.swatchIc_ = new color_swatch_1.ColorSwatchInputController(document, {
             value: this.value,
         });
-        this.textIc_ = new text_1.default(document, {
+        this.textIc_ = new text_1.TextInputController(document, {
             formatter: config.formatter,
             parser: config.parser,
             value: this.value,
         });
-        this.view = new color_swatch_text_1.default(document, {
+        this.view = new color_swatch_text_1.ColorSwatchTextInputView(document, {
             swatchInputView: this.swatchIc_.view,
             textInputView: this.textIc_.view,
         });
@@ -2034,7 +2038,7 @@ var ColorSwatchTextInputController = /** @class */ (function () {
     };
     return ColorSwatchTextInputController;
 }());
-exports.default = ColorSwatchTextInputController;
+exports.ColorSwatchTextInputController = ColorSwatchTextInputController;
 
 
 /***/ }),
@@ -2060,10 +2064,10 @@ var ColorSwatchInputController = /** @class */ (function () {
         this.onButtonBlur_ = this.onButtonBlur_.bind(this);
         this.onButtonClick_ = this.onButtonClick_.bind(this);
         this.value = config.value;
-        this.pickerIc_ = new color_picker_1.default(document, {
+        this.pickerIc_ = new color_picker_1.ColorPickerInputController(document, {
             value: this.value,
         });
-        this.view = new color_swatch_1.default(document, {
+        this.view = new color_swatch_1.ColorSwatchInputView(document, {
             pickerInputView: this.pickerIc_.view,
             value: this.value,
         });
@@ -2075,7 +2079,7 @@ var ColorSwatchInputController = /** @class */ (function () {
     };
     ColorSwatchInputController.prototype.onButtonBlur_ = function (e) {
         var elem = this.view.element;
-        var nextTarget = type_util_1.default.forceCast(e.relatedTarget);
+        var nextTarget = type_util_1.TypeUtil.forceCast(e.relatedTarget);
         if (!nextTarget || !elem.contains(nextTarget)) {
             this.pickerIc_.foldable.expanded = false;
         }
@@ -2085,7 +2089,7 @@ var ColorSwatchInputController = /** @class */ (function () {
     };
     return ColorSwatchInputController;
 }());
-exports.default = ColorSwatchInputController;
+exports.ColorSwatchInputController = ColorSwatchInputController;
 
 
 /***/ }),
@@ -2113,10 +2117,10 @@ var HPaletteInputController = /** @class */ (function () {
         this.onPointerMove_ = this.onPointerMove_.bind(this);
         this.onPointerUp_ = this.onPointerUp_.bind(this);
         this.value = config.value;
-        this.view = new h_palette_1.default(document, {
+        this.view = new h_palette_1.HPaletteInputView(document, {
             value: this.value,
         });
-        this.ptHandler_ = new pointer_handler_1.default(document, this.view.canvasElement);
+        this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.canvasElement);
         this.ptHandler_.emitter.on('down', this.onPointerDown_);
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
@@ -2125,10 +2129,10 @@ var HPaletteInputController = /** @class */ (function () {
         this.view.dispose();
     };
     HPaletteInputController.prototype.handlePointerEvent_ = function (d) {
-        var hue = number_util_1.default.map(d.py, 0, 1, 0, 360);
+        var hue = number_util_1.NumberUtil.map(d.py, 0, 1, 0, 360);
         var c = this.value.rawValue;
         var _a = c.getComponents('hsv'), s = _a[1], v = _a[2];
-        this.value.rawValue = new color_1.default([hue, s, v], 'hsv');
+        this.value.rawValue = new color_1.Color([hue, s, v], 'hsv');
         this.view.update();
     };
     HPaletteInputController.prototype.onPointerDown_ = function (d) {
@@ -2142,7 +2146,7 @@ var HPaletteInputController = /** @class */ (function () {
     };
     return HPaletteInputController;
 }());
-exports.default = HPaletteInputController;
+exports.HPaletteInputController = HPaletteInputController;
 
 
 /***/ }),
@@ -2163,7 +2167,7 @@ var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js
 var list_2 = __webpack_require__(/*! ../../view/input/list */ "./src/main/js/view/input/list.ts");
 function findListItems(value) {
     var c = value.constraint
-        ? util_1.default.findConstraint(value.constraint, list_1.default)
+        ? util_1.ConstraintUtil.findConstraint(value.constraint, list_1.ListConstraint)
         : null;
     if (!c) {
         return null;
@@ -2178,7 +2182,7 @@ var ListInputController = /** @class */ (function () {
         this.onSelectChange_ = this.onSelectChange_.bind(this);
         this.value_ = config.value;
         this.listItems_ = findListItems(this.value_) || [];
-        this.view_ = new list_2.default(document, {
+        this.view_ = new list_2.ListInputView(document, {
             options: this.listItems_,
             stringifyValue: config.stringifyValue,
             value: this.value_,
@@ -2203,7 +2207,7 @@ var ListInputController = /** @class */ (function () {
         this.view.dispose();
     };
     ListInputController.prototype.onSelectChange_ = function (e) {
-        var selectElem = type_util_1.default.forceCast(e.currentTarget);
+        var selectElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
         var optElem = selectElem.selectedOptions.item(0);
         if (!optElem) {
             return;
@@ -2214,7 +2218,7 @@ var ListInputController = /** @class */ (function () {
     };
     return ListInputController;
 }());
-exports.default = ListInputController;
+exports.ListInputController = ListInputController;
 
 
 /***/ }),
@@ -2267,8 +2271,8 @@ var NumberTextInputController = /** @class */ (function (_super) {
         }
     };
     return NumberTextInputController;
-}(text_1.default));
-exports.default = NumberTextInputController;
+}(text_1.TextInputController));
+exports.NumberTextInputController = NumberTextInputController;
 
 
 /***/ }),
@@ -2294,16 +2298,16 @@ var Point2dPadTextInputController = /** @class */ (function () {
         this.onPadButtonBlur_ = this.onPadButtonBlur_.bind(this);
         this.onPadButtonClick_ = this.onPadButtonClick_.bind(this);
         this.value = config.value;
-        this.padIc_ = new point_2d_pad_1.default(document, {
+        this.padIc_ = new point_2d_pad_1.Point2dPadInputController(document, {
             value: this.value,
         });
-        this.textIc_ = new point_2d_text_1.default(document, {
+        this.textIc_ = new point_2d_text_1.Point2dTextInputController(document, {
             parser: config.parser,
             value: this.value,
             xFormatter: config.xFormatter,
             yFormatter: config.yFormatter,
         });
-        this.view = new point_2d_pad_text_1.default(document, {
+        this.view = new point_2d_pad_text_1.Point2dPadTextInputView(document, {
             padInputView: this.padIc_.view,
             textInputView: this.textIc_.view,
         });
@@ -2321,7 +2325,7 @@ var Point2dPadTextInputController = /** @class */ (function () {
     };
     return Point2dPadTextInputController;
 }());
-exports.default = Point2dPadTextInputController;
+exports.Point2dPadTextInputController = Point2dPadTextInputController;
 
 
 /***/ }),
@@ -2351,14 +2355,14 @@ var Point2dPadInputController = /** @class */ (function () {
         this.onPointerMove_ = this.onPointerMove_.bind(this);
         this.onPointerUp_ = this.onPointerUp_.bind(this);
         this.value = config.value;
-        this.foldable = new foldable_1.default();
+        this.foldable = new foldable_1.Foldable();
         this.maxValue_ = UiUtil.getSuitableMaxValueForPoint2dPad(this.value.constraint, this.value.rawValue);
-        this.view = new point_2d_pad_1.default(document, {
+        this.view = new point_2d_pad_1.Point2dPadInputView(document, {
             foldable: this.foldable,
             maxValue: this.maxValue_,
             value: this.value,
         });
-        this.ptHandler_ = new pointer_handler_1.default(document, this.view.padElement);
+        this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.padElement);
         this.ptHandler_.emitter.on('down', this.onPointerDown_);
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
@@ -2368,7 +2372,7 @@ var Point2dPadInputController = /** @class */ (function () {
     };
     Point2dPadInputController.prototype.handlePointerEvent_ = function (d) {
         var max = this.maxValue_;
-        this.value.rawValue = new point_2d_1.default(number_util_1.default.map(d.px, 0, 1, -max, +max), number_util_1.default.map(d.py, 0, 1, -max, +max));
+        this.value.rawValue = new point_2d_1.Point2d(number_util_1.NumberUtil.map(d.px, 0, 1, -max, +max), number_util_1.NumberUtil.map(d.py, 0, 1, -max, +max));
         this.view.update();
     };
     Point2dPadInputController.prototype.onPointerDown_ = function (d) {
@@ -2382,7 +2386,7 @@ var Point2dPadInputController = /** @class */ (function () {
     };
     return Point2dPadInputController;
 }());
-exports.default = Point2dPadInputController;
+exports.Point2dPadInputController = Point2dPadInputController;
 
 
 /***/ }),
@@ -2413,9 +2417,9 @@ var Point2dTextInputController = /** @class */ (function () {
         this.parser_ = config.parser;
         this.value = config.value;
         var c = this.value.constraint;
-        this.xStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.default ? c.xConstraint : undefined);
-        this.yStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.default ? c.yConstraint : undefined);
-        this.view = new point_2d_text_1.default(document, {
+        this.xStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.Point2dConstraint ? c.xConstraint : undefined);
+        this.yStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.Point2dConstraint ? c.yConstraint : undefined);
+        this.view = new point_2d_text_1.Point2dTextInputView(document, {
             value: this.value,
             xFormatter: config.xFormatter,
             yFormatter: config.yFormatter,
@@ -2442,26 +2446,29 @@ var Point2dTextInputController = /** @class */ (function () {
         var newComps = comps.map(function (comp, i) {
             return i === index ? newValue : comp;
         });
-        this.value.rawValue = new point_2d_2.default(newComps[0], newComps[1]);
+        this.value.rawValue = new point_2d_2.Point2d(newComps[0], newComps[1]);
         this.view.update();
     };
     Point2dTextInputController.prototype.onInputChange_ = function (e) {
-        var _this = this;
-        var inputElem = type_util_1.default.forceCast(e.currentTarget);
-        type_util_1.default.ifNotEmpty(this.parser_(inputElem.value), function (parsedValue) {
-            type_util_1.default.ifNotEmpty(_this.findIndexOfInputElem_(inputElem), function (compIndex) {
-                _this.updateComponent_(compIndex, parsedValue);
-            });
-        });
-    };
-    Point2dTextInputController.prototype.onInputKeyDown_ = function (e) {
-        var inputElem = type_util_1.default.forceCast(e.currentTarget);
+        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
         var parsedValue = this.parser_(inputElem.value);
-        if (type_util_1.default.isEmpty(parsedValue)) {
+        if (type_util_1.TypeUtil.isEmpty(parsedValue)) {
             return;
         }
         var compIndex = this.findIndexOfInputElem_(inputElem);
-        if (type_util_1.default.isEmpty(compIndex)) {
+        if (type_util_1.TypeUtil.isEmpty(compIndex)) {
+            return;
+        }
+        this.updateComponent_(compIndex, parsedValue);
+    };
+    Point2dTextInputController.prototype.onInputKeyDown_ = function (e) {
+        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
+        var parsedValue = this.parser_(inputElem.value);
+        if (type_util_1.TypeUtil.isEmpty(parsedValue)) {
+            return;
+        }
+        var compIndex = this.findIndexOfInputElem_(inputElem);
+        if (type_util_1.TypeUtil.isEmpty(compIndex)) {
             return;
         }
         var step = UiUtil.getStepForKey(compIndex === 0 ? this.xStep_ : this.yStep_, e);
@@ -2472,7 +2479,7 @@ var Point2dTextInputController = /** @class */ (function () {
     };
     return Point2dTextInputController;
 }());
-exports.default = Point2dTextInputController;
+exports.Point2dTextInputController = Point2dTextInputController;
 
 
 /***/ }),
@@ -2502,7 +2509,7 @@ var RgbTextInputController = /** @class */ (function () {
         this.onInputKeyDown_ = this.onInputKeyDown_.bind(this);
         this.parser_ = config.parser;
         this.value = config.value;
-        this.view = new rgb_text_1.default(document, {
+        this.view = new rgb_text_1.RgbTextInputView(document, {
             formatter: config.formatter,
             value: this.value,
         });
@@ -2528,34 +2535,40 @@ var RgbTextInputController = /** @class */ (function () {
         var newComps = comps.map(function (comp, i) {
             return i === index ? newValue : comp;
         });
-        this.value.rawValue = new color_1.default([newComps[0], newComps[1], newComps[2]], 'rgb');
+        this.value.rawValue = new color_1.Color([newComps[0], newComps[1], newComps[2]], 'rgb');
         this.view.update();
     };
     RgbTextInputController.prototype.onInputChange_ = function (e) {
-        var _this = this;
-        var inputElem = type_util_1.default.forceCast(e.currentTarget);
-        type_util_1.default.ifNotEmpty(this.parser_(inputElem.value), function (parsedValue) {
-            type_util_1.default.ifNotEmpty(_this.findIndexOfInputElem_(inputElem), function (compIndex) {
-                _this.updateComponent_(compIndex, parsedValue);
-            });
-        });
+        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
+        var parsedValue = this.parser_(inputElem.value);
+        if (type_util_1.TypeUtil.isEmpty(parsedValue)) {
+            return;
+        }
+        var compIndex = this.findIndexOfInputElem_(inputElem);
+        if (type_util_1.TypeUtil.isEmpty(compIndex)) {
+            return;
+        }
+        this.updateComponent_(compIndex, parsedValue);
     };
     RgbTextInputController.prototype.onInputKeyDown_ = function (e) {
-        var _this = this;
         var step = UiUtil.getStepForKey(STEP, e);
         if (step === 0) {
             return;
         }
-        var inputElem = type_util_1.default.forceCast(e.currentTarget);
-        type_util_1.default.ifNotEmpty(this.parser_(inputElem.value), function (parsedValue) {
-            type_util_1.default.ifNotEmpty(_this.findIndexOfInputElem_(inputElem), function (compIndex) {
-                _this.updateComponent_(compIndex, parsedValue + step);
-            });
-        });
+        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
+        var parsedValue = this.parser_(inputElem.value);
+        if (type_util_1.TypeUtil.isEmpty(parsedValue)) {
+            return;
+        }
+        var compIndex = this.findIndexOfInputElem_(inputElem);
+        if (type_util_1.TypeUtil.isEmpty(compIndex)) {
+            return;
+        }
+        this.updateComponent_(compIndex, parsedValue + step);
     };
     return RgbTextInputController;
 }());
-exports.default = RgbTextInputController;
+exports.RgbTextInputController = RgbTextInputController;
 
 
 /***/ }),
@@ -2579,15 +2592,15 @@ var slider_1 = __webpack_require__(/*! ./slider */ "./src/main/js/controller/inp
 var SliderTextInputController = /** @class */ (function () {
     function SliderTextInputController(document, config) {
         this.value_ = config.value;
-        this.sliderIc_ = new slider_1.default(document, {
+        this.sliderIc_ = new slider_1.SliderInputController(document, {
             value: config.value,
         });
-        this.textIc_ = new number_text_1.default(document, {
+        this.textIc_ = new number_text_1.NumberTextInputController(document, {
             formatter: config.formatter,
             parser: config.parser,
             value: config.value,
         });
-        this.view_ = new slider_text_1.default(document, {
+        this.view_ = new slider_text_1.SliderTextInputView(document, {
             sliderInputView: this.sliderIc_.view,
             textInputView: this.textIc_.view,
         });
@@ -2611,7 +2624,7 @@ var SliderTextInputController = /** @class */ (function () {
     };
     return SliderTextInputController;
 }());
-exports.default = SliderTextInputController;
+exports.SliderTextInputController = SliderTextInputController;
 
 
 /***/ }),
@@ -2634,7 +2647,7 @@ var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js
 var slider_1 = __webpack_require__(/*! ../../view/input/slider */ "./src/main/js/view/input/slider.ts");
 function findRange(value) {
     var c = value.constraint
-        ? util_1.default.findConstraint(value.constraint, range_1.default)
+        ? util_1.ConstraintUtil.findConstraint(value.constraint, range_1.RangeConstraint)
         : null;
     if (!c) {
         return [undefined, undefined];
@@ -2644,8 +2657,8 @@ function findRange(value) {
 function estimateSuitableRange(value) {
     var _a = findRange(value), min = _a[0], max = _a[1];
     return [
-        type_util_1.default.getOrDefault(min, 0),
-        type_util_1.default.getOrDefault(max, 100),
+        type_util_1.TypeUtil.getOrDefault(min, 0),
+        type_util_1.TypeUtil.getOrDefault(max, 100),
     ];
 }
 /**
@@ -2660,12 +2673,12 @@ var SliderInputController = /** @class */ (function () {
         var _a = estimateSuitableRange(this.value), min = _a[0], max = _a[1];
         this.minValue_ = min;
         this.maxValue_ = max;
-        this.view = new slider_1.default(document, {
+        this.view = new slider_1.SliderInputView(document, {
             maxValue: this.maxValue_,
             minValue: this.minValue_,
             value: this.value,
         });
-        this.ptHandler_ = new pointer_handler_1.default(document, this.view.outerElement);
+        this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.outerElement);
         this.ptHandler_.emitter.on('down', this.onPointerDown_);
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
@@ -2674,20 +2687,20 @@ var SliderInputController = /** @class */ (function () {
         this.view.dispose();
     };
     SliderInputController.prototype.onPointerDown_ = function (d) {
-        this.value.rawValue = number_util_1.default.map(d.px, 0, 1, this.minValue_, this.maxValue_);
+        this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
     SliderInputController.prototype.onPointerMove_ = function (d) {
-        this.value.rawValue = number_util_1.default.map(d.px, 0, 1, this.minValue_, this.maxValue_);
+        this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
     SliderInputController.prototype.onPointerUp_ = function (d) {
-        this.value.rawValue = number_util_1.default.map(d.px, 0, 1, this.minValue_, this.maxValue_);
+        this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
     return SliderInputController;
 }());
-exports.default = SliderInputController;
+exports.SliderInputController = SliderInputController;
 
 
 /***/ }),
@@ -2715,10 +2728,10 @@ var SvPaletteInputController = /** @class */ (function () {
         this.onPointerMove_ = this.onPointerMove_.bind(this);
         this.onPointerUp_ = this.onPointerUp_.bind(this);
         this.value = config.value;
-        this.view = new sv_palette_1.default(document, {
+        this.view = new sv_palette_1.SvPaletteInputView(document, {
             value: this.value,
         });
-        this.ptHandler_ = new pointer_handler_1.default(document, this.view.canvasElement);
+        this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.canvasElement);
         this.ptHandler_.emitter.on('down', this.onPointerDown_);
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
@@ -2727,10 +2740,10 @@ var SvPaletteInputController = /** @class */ (function () {
         this.view.dispose();
     };
     SvPaletteInputController.prototype.handlePointerEvent_ = function (d) {
-        var saturation = number_util_1.default.map(d.px, 0, 1, 0, 100);
-        var value = number_util_1.default.map(d.py, 0, 1, 100, 0);
+        var saturation = number_util_1.NumberUtil.map(d.px, 0, 1, 0, 100);
+        var value = number_util_1.NumberUtil.map(d.py, 0, 1, 100, 0);
         var h = this.value.rawValue.getComponents('hsv')[0];
-        this.value.rawValue = new color_1.default([h, saturation, value], 'hsv');
+        this.value.rawValue = new color_1.Color([h, saturation, value], 'hsv');
         this.view.update();
     };
     SvPaletteInputController.prototype.onPointerDown_ = function (d) {
@@ -2744,7 +2757,7 @@ var SvPaletteInputController = /** @class */ (function () {
     };
     return SvPaletteInputController;
 }());
-exports.default = SvPaletteInputController;
+exports.SvPaletteInputController = SvPaletteInputController;
 
 
 /***/ }),
@@ -2769,7 +2782,7 @@ var TextInputController = /** @class */ (function () {
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.parser_ = config.parser;
         this.value = config.value;
-        this.view = new text_1.default(document, {
+        this.view = new text_1.TextInputView(document, {
             formatter: config.formatter,
             value: this.value,
         });
@@ -2779,17 +2792,17 @@ var TextInputController = /** @class */ (function () {
         this.view.dispose();
     };
     TextInputController.prototype.onInputChange_ = function (e) {
-        var _this = this;
-        var inputElem = type_util_1.default.forceCast(e.currentTarget);
+        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
         var value = inputElem.value;
-        type_util_1.default.ifNotEmpty(this.parser_(value), function (parsedValue) {
-            _this.value.rawValue = parsedValue;
-        });
+        var parsedValue = this.parser_(value);
+        if (!type_util_1.TypeUtil.isEmpty(parsedValue)) {
+            this.value.rawValue = parsedValue;
+        }
         this.view.update();
     };
     return TextInputController;
 }());
-exports.default = TextInputController;
+exports.TextInputController = TextInputController;
 
 
 /***/ }),
@@ -2812,7 +2825,7 @@ var MonitorBindingController = /** @class */ (function () {
     function MonitorBindingController(document, config) {
         this.binding = config.binding;
         this.controller = config.controller;
-        this.view = new labeled_1.default(document, {
+        this.view = new labeled_1.LabeledView(document, {
             label: config.label,
             view: this.controller.view,
         });
@@ -2824,7 +2837,7 @@ var MonitorBindingController = /** @class */ (function () {
     };
     return MonitorBindingController;
 }());
-exports.default = MonitorBindingController;
+exports.MonitorBindingController = MonitorBindingController;
 
 
 /***/ }),
@@ -2850,8 +2863,8 @@ var GraphMonitorController = /** @class */ (function () {
         this.onGraphMouseLeave_ = this.onGraphMouseLeave_.bind(this);
         this.onGraphMouseMove_ = this.onGraphMouseMove_.bind(this);
         this.value = config.value;
-        this.cursor_ = new graph_cursor_1.default();
-        this.view = new graph_1.default(document, {
+        this.cursor_ = new graph_cursor_1.GraphCursor();
+        this.view = new graph_1.GraphMonitorView(document, {
             cursor: this.cursor_,
             formatter: config.formatter,
             maxValue: config.maxValue,
@@ -2870,11 +2883,11 @@ var GraphMonitorController = /** @class */ (function () {
     GraphMonitorController.prototype.onGraphMouseMove_ = function (e) {
         var bounds = this.view.graphElement.getBoundingClientRect();
         var x = e.offsetX;
-        this.cursor_.index = Math.floor(number_util_1.default.map(x, 0, bounds.width, 0, this.value.totalCount));
+        this.cursor_.index = Math.floor(number_util_1.NumberUtil.map(x, 0, bounds.width, 0, this.value.totalCount));
     };
     return GraphMonitorController;
 }());
-exports.default = GraphMonitorController;
+exports.GraphMonitorController = GraphMonitorController;
 
 
 /***/ }),
@@ -2896,7 +2909,7 @@ var multi_log_1 = __webpack_require__(/*! ../../view/monitor/multi-log */ "./src
 var MultiLogMonitorController = /** @class */ (function () {
     function MultiLogMonitorController(document, config) {
         this.value = config.value;
-        this.view = new multi_log_1.default(document, {
+        this.view = new multi_log_1.MultiLogMonitorView(document, {
             formatter: config.formatter,
             value: this.value,
         });
@@ -2906,7 +2919,7 @@ var MultiLogMonitorController = /** @class */ (function () {
     };
     return MultiLogMonitorController;
 }());
-exports.default = MultiLogMonitorController;
+exports.MultiLogMonitorController = MultiLogMonitorController;
 
 
 /***/ }),
@@ -2928,7 +2941,7 @@ var single_log_1 = __webpack_require__(/*! ../../view/monitor/single-log */ "./s
 var SingleLogMonitorController = /** @class */ (function () {
     function SingleLogMonitorController(document, config) {
         this.value = config.value;
-        this.view = new single_log_1.default(document, {
+        this.view = new single_log_1.SingleLogMonitorView(document, {
             formatter: config.formatter,
             value: this.value,
         });
@@ -2938,7 +2951,7 @@ var SingleLogMonitorController = /** @class */ (function () {
     };
     return SingleLogMonitorController;
 }());
-exports.default = SingleLogMonitorController;
+exports.SingleLogMonitorController = SingleLogMonitorController;
 
 
 /***/ }),
@@ -2965,7 +2978,7 @@ function createFolder(config) {
     if (!config.title) {
         return null;
     }
-    return new folder_1.default(config.title, type_util_1.default.getOrDefault(config.expanded, true));
+    return new folder_1.Folder(config.title, type_util_1.TypeUtil.getOrDefault(config.expanded, true));
 }
 /**
  * @hidden
@@ -2978,12 +2991,12 @@ var RootController = /** @class */ (function () {
         this.onUiControllerListAppend_ = this.onUiControllerListAppend_.bind(this);
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.folder = createFolder(config);
-        this.ucList_ = new list_1.default();
+        this.ucList_ = new list_1.List();
         this.ucList_.emitter.on('append', this.onUiControllerListAppend_);
         this.doc_ = document;
-        this.view = new root_1.default(this.doc_, {
+        this.view = new root_1.RootView(this.doc_, {
             folder: this.folder,
         });
         if (this.view.titleElement) {
@@ -3011,15 +3024,15 @@ var RootController = /** @class */ (function () {
         this.view.dispose();
     };
     RootController.prototype.onUiControllerListAppend_ = function (uc) {
-        if (uc instanceof input_binding_1.default) {
+        if (uc instanceof input_binding_1.InputBindingController) {
             var emitter = uc.binding.value.emitter;
             emitter.on('change', this.onInputChange_);
         }
-        else if (uc instanceof monitor_binding_1.default) {
+        else if (uc instanceof monitor_binding_1.MonitorBindingController) {
             var emitter = uc.binding.value.emitter;
             emitter.on('update', this.onMonitorUpdate_);
         }
-        else if (uc instanceof folder_2.default) {
+        else if (uc instanceof folder_2.FolderController) {
             var emitter = uc.emitter;
             emitter.on('fold', this.onFolderChange_);
             emitter.on('inputchange', this.onInputChange_);
@@ -3046,7 +3059,7 @@ var RootController = /** @class */ (function () {
     };
     return RootController;
 }());
-exports.default = RootController;
+exports.RootController = RootController;
 
 
 /***/ }),
@@ -3067,14 +3080,14 @@ var separator_1 = __webpack_require__(/*! ../view/separator */ "./src/main/js/vi
  */
 var SeparatorController = /** @class */ (function () {
     function SeparatorController(document) {
-        this.view = new separator_1.default(document);
+        this.view = new separator_1.SeparatorView(document);
     }
     SeparatorController.prototype.dispose = function () {
         this.view.dispose();
     };
     return SeparatorController;
 }());
-exports.default = SeparatorController;
+exports.SeparatorController = SeparatorController;
 
 
 /***/ }),
@@ -3123,7 +3136,7 @@ exports.normalizeInputParamsOptions = normalizeInputParamsOptions;
  */
 function findControllers(uiControllers, controllerClass) {
     return uiControllers.reduce(function (results, uc) {
-        if (uc instanceof folder_1.default) {
+        if (uc instanceof folder_1.FolderController) {
             // eslint-disable-next-line no-use-before-define
             results.push.apply(results, findControllers(uc.uiControllerList.items, controllerClass));
         }
@@ -3136,7 +3149,7 @@ function findControllers(uiControllers, controllerClass) {
 exports.findControllers = findControllers;
 function findStep(constraint) {
     var c = constraint
-        ? util_1.default.findConstraint(constraint, step_1.default)
+        ? util_1.ConstraintUtil.findConstraint(constraint, step_1.StepConstraint)
         : null;
     if (!c) {
         return null;
@@ -3148,7 +3161,7 @@ function findStep(constraint) {
  */
 function getStepForTextInput(constraint) {
     var step = findStep(constraint);
-    return type_util_1.default.getOrDefault(step, 1);
+    return type_util_1.TypeUtil.getOrDefault(step, 1);
 }
 exports.getStepForTextInput = getStepForTextInput;
 /**
@@ -3169,18 +3182,18 @@ exports.getStepForKey = getStepForKey;
  * @hidden
  */
 function getSuitableDecimalDigits(constraint, rawValue) {
-    var sc = constraint && util_1.default.findConstraint(constraint, step_1.default);
+    var sc = constraint && util_1.ConstraintUtil.findConstraint(constraint, step_1.StepConstraint);
     if (sc) {
-        return number_util_1.default.getDecimalDigits(sc.step);
+        return number_util_1.NumberUtil.getDecimalDigits(sc.step);
     }
-    return Math.max(number_util_1.default.getDecimalDigits(rawValue), 2);
+    return Math.max(number_util_1.NumberUtil.getDecimalDigits(rawValue), 2);
 }
 exports.getSuitableDecimalDigits = getSuitableDecimalDigits;
 /**
  * @hidden
  */
 function getSuitableMaxDimensionValue(constraint, rawValue) {
-    var rc = constraint && util_1.default.findConstraint(constraint, range_1.default);
+    var rc = constraint && util_1.ConstraintUtil.findConstraint(constraint, range_1.RangeConstraint);
     if (rc) {
         return Math.max(Math.abs(rc.minValue || 0), Math.abs(rc.maxValue || 0));
     }
@@ -3191,10 +3204,10 @@ function getSuitableMaxDimensionValue(constraint, rawValue) {
  * @hidden
  */
 function getSuitableMaxValueForPoint2dPad(constraint, rawValue) {
-    var xc = constraint instanceof point_2d_1.default
+    var xc = constraint instanceof point_2d_1.Point2dConstraint
         ? constraint.xConstraint
         : undefined;
-    var yc = constraint instanceof point_2d_1.default
+    var yc = constraint instanceof point_2d_1.Point2dConstraint
         ? constraint.yConstraint
         : undefined;
     var xr = getSuitableMaxDimensionValue(xc, rawValue.x);
@@ -3255,12 +3268,12 @@ var string_color_1 = __webpack_require__(/*! ../parser/string-color */ "./src/ma
  */
 function fromMixed(value) {
     if (typeof value === 'string') {
-        var cv = string_color_1.default(value);
+        var cv = string_color_1.StringColorParser(value);
         if (cv) {
             return cv;
         }
     }
-    return new color_1.default([0, 0, 0], 'rgb');
+    return new color_1.Color([0, 0, 0], 'rgb');
 }
 exports.fromMixed = fromMixed;
 /**
@@ -3270,7 +3283,7 @@ function toString(value) {
     var hexes = value
         .getComponents('rgb')
         .map(function (comp) {
-        var hex = number_util_1.default.constrain(Math.floor(comp), 0, 255).toString(16);
+        var hex = number_util_1.NumberUtil.constrain(Math.floor(comp), 0, 255).toString(16);
         return hex.length === 1 ? "0" + hex : hex;
     })
         .join('');
@@ -3291,6 +3304,7 @@ exports.toString = toString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var string_number_1 = __webpack_require__(/*! ../parser/string-number */ "./src/main/js/parser/string-number.ts");
 /**
  * @hidden
@@ -3300,8 +3314,8 @@ function fromMixed(value) {
         return value;
     }
     if (typeof value === 'string') {
-        var pv = string_number_1.default(value);
-        if (pv !== null && pv !== undefined) {
+        var pv = string_number_1.StringNumberParser(value);
+        if (!type_util_1.TypeUtil.isEmpty(pv)) {
             return pv;
         }
     }
@@ -3335,7 +3349,7 @@ var any_point_2d_1 = __webpack_require__(/*! ../parser/any-point-2d */ "./src/ma
  * @hidden
  */
 function fromMixed(value) {
-    return any_point_2d_1.default(value) || new point_2d_1.default();
+    return any_point_2d_1.AnyPoint2dParser(value) || new point_2d_1.Point2d();
 }
 exports.fromMixed = fromMixed;
 
@@ -3392,7 +3406,7 @@ var BooleanFormatter = /** @class */ (function () {
     };
     return BooleanFormatter;
 }());
-exports.default = BooleanFormatter;
+exports.BooleanFormatter = BooleanFormatter;
 
 
 /***/ }),
@@ -3417,17 +3431,17 @@ var ColorFormatter = /** @class */ (function () {
     }
     ColorFormatter.rgb = function (r, g, b) {
         var compsText = [
-            number_util_1.default.constrain(Math.floor(r), 0, 255),
-            number_util_1.default.constrain(Math.floor(g), 0, 255),
-            number_util_1.default.constrain(Math.floor(b), 0, 255),
+            number_util_1.NumberUtil.constrain(Math.floor(r), 0, 255),
+            number_util_1.NumberUtil.constrain(Math.floor(g), 0, 255),
+            number_util_1.NumberUtil.constrain(Math.floor(b), 0, 255),
         ].join(', ');
         return "rgb(" + compsText + ")";
     };
     ColorFormatter.hsl = function (h, s, l) {
         var compsText = [
             ((Math.floor(h) % 360) + 360) % 360,
-            number_util_1.default.constrain(Math.floor(s), 0, 100) + "%",
-            number_util_1.default.constrain(Math.floor(l), 0, 100) + "%",
+            number_util_1.NumberUtil.constrain(Math.floor(s), 0, 100) + "%",
+            number_util_1.NumberUtil.constrain(Math.floor(l), 0, 100) + "%",
         ].join(', ');
         return "hsl(" + compsText + ")";
     };
@@ -3436,7 +3450,7 @@ var ColorFormatter = /** @class */ (function () {
     };
     return ColorFormatter;
 }());
-exports.default = ColorFormatter;
+exports.ColorFormatter = ColorFormatter;
 
 
 /***/ }),
@@ -3470,7 +3484,7 @@ var NumberFormatter = /** @class */ (function () {
     };
     return NumberFormatter;
 }());
-exports.default = NumberFormatter;
+exports.NumberFormatter = NumberFormatter;
 
 
 /***/ }),
@@ -3496,7 +3510,7 @@ var StringFormatter = /** @class */ (function () {
     };
     return StringFormatter;
 }());
-exports.default = StringFormatter;
+exports.StringFormatter = StringFormatter;
 
 
 /***/ }),
@@ -3538,6 +3552,7 @@ function embedDefaultStyleIfNeeded(document) {
         document.head.appendChild(styleElem);
     }
 }
+// tslint:disable-next-line: no-default-export
 var Tweakpane = /** @class */ (function (_super) {
     __extends(Tweakpane, _super);
     function Tweakpane(opt_config) {
@@ -3546,7 +3561,7 @@ var Tweakpane = /** @class */ (function (_super) {
         return _this;
     }
     return Tweakpane;
-}(tweakpane_without_style_1.default));
+}(tweakpane_without_style_1.TweakpaneWithoutStyle));
 exports.default = Tweakpane;
 
 
@@ -3568,7 +3583,7 @@ var TYPE_TO_POSTFIX_MAP = {
     input: 'iv',
     monitor: 'mv',
 };
-function className(viewName, opt_viewType) {
+function ClassName(viewName, opt_viewType) {
     var viewType = opt_viewType || '';
     var postfix = TYPE_TO_POSTFIX_MAP[viewType];
     return function (opt_elementName, opt_modifier) {
@@ -3582,7 +3597,7 @@ function className(viewName, opt_viewType) {
         ].join('');
     };
 }
-exports.default = className;
+exports.ClassName = ClassName;
 
 
 /***/ }),
@@ -3599,9 +3614,9 @@ exports.default = className;
 Object.defineProperty(exports, "__esModule", { value: true });
 var number_util_1 = __webpack_require__(/*! ./number-util */ "./src/main/js/misc/number-util.ts");
 function rgbToHsl(r, g, b) {
-    var rp = number_util_1.default.constrain(r / 255, 0, 1);
-    var gp = number_util_1.default.constrain(g / 255, 0, 1);
-    var bp = number_util_1.default.constrain(b / 255, 0, 1);
+    var rp = number_util_1.NumberUtil.constrain(r / 255, 0, 1);
+    var gp = number_util_1.NumberUtil.constrain(g / 255, 0, 1);
+    var bp = number_util_1.NumberUtil.constrain(b / 255, 0, 1);
     var cmax = Math.max(rp, gp, bp);
     var cmin = Math.min(rp, gp, bp);
     var c = cmax - cmin;
@@ -3627,8 +3642,8 @@ exports.rgbToHsl = rgbToHsl;
 function hslToRgb(h, s, l) {
     var _a, _b, _c, _d, _e, _f;
     var hp = ((h % 360) + 360) % 360;
-    var sp = number_util_1.default.constrain(s / 100, 0, 1);
-    var lp = number_util_1.default.constrain(l / 100, 0, 1);
+    var sp = number_util_1.NumberUtil.constrain(s / 100, 0, 1);
+    var lp = number_util_1.NumberUtil.constrain(l / 100, 0, 1);
     var c = (1 - Math.abs(2 * lp - 1)) * sp;
     var x = c * (1 - Math.abs(((hp / 60) % 2) - 1));
     var m = lp - c / 2;
@@ -3655,9 +3670,9 @@ function hslToRgb(h, s, l) {
 }
 exports.hslToRgb = hslToRgb;
 function rgbToHsv(r, g, b) {
-    var rp = number_util_1.default.constrain(r / 255, 0, 1);
-    var gp = number_util_1.default.constrain(g / 255, 0, 1);
-    var bp = number_util_1.default.constrain(b / 255, 0, 1);
+    var rp = number_util_1.NumberUtil.constrain(r / 255, 0, 1);
+    var gp = number_util_1.NumberUtil.constrain(g / 255, 0, 1);
+    var bp = number_util_1.NumberUtil.constrain(b / 255, 0, 1);
     var cmax = Math.max(rp, gp, bp);
     var cmin = Math.min(rp, gp, bp);
     var d = cmax - cmin;
@@ -3681,9 +3696,9 @@ function rgbToHsv(r, g, b) {
 exports.rgbToHsv = rgbToHsv;
 function hsvToRgb(h, s, v) {
     var _a, _b, _c, _d, _e, _f;
-    var hp = number_util_1.default.loop(h, 360);
-    var sp = number_util_1.default.constrain(s / 100, 0, 1);
-    var vp = number_util_1.default.constrain(v / 100, 0, 1);
+    var hp = number_util_1.NumberUtil.loop(h, 360);
+    var sp = number_util_1.NumberUtil.constrain(s / 100, 0, 1);
+    var vp = number_util_1.NumberUtil.constrain(v / 100, 0, 1);
     var c = vp * sp;
     var x = c * (1 - Math.abs(((hp / 60) % 2) - 1));
     var m = vp - c;
@@ -3709,6 +3724,23 @@ function hsvToRgb(h, s, v) {
     return [(rp + m) * 255, (gp + m) * 255, (bp + m) * 255];
 }
 exports.hsvToRgb = hsvToRgb;
+
+
+/***/ }),
+
+/***/ "./src/main/js/misc/constants.ts":
+/*!***************************************!*\
+  !*** ./src/main/js/misc/constants.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Constants = {
+    monitorDefaultInterval: 200,
+};
 
 
 /***/ }),
@@ -3764,7 +3796,7 @@ function supportsTouch(document) {
 exports.supportsTouch = supportsTouch;
 function getWindowDocument() {
     // tslint:disable-next-line:function-constructor
-    var globalObj = type_util_1.default.forceCast(new Function('return this')());
+    var globalObj = type_util_1.TypeUtil.forceCast(new Function('return this')());
     return globalObj.document;
 }
 exports.getWindowDocument = getWindowDocument;
@@ -3842,7 +3874,7 @@ var Emitter = /** @class */ (function () {
     };
     return Emitter;
 }());
-exports.default = Emitter;
+exports.Emitter = Emitter;
 
 
 /***/ }),
@@ -3857,7 +3889,7 @@ exports.default = Emitter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var NumberUtil = {
+exports.NumberUtil = {
     map: function (value, start1, end1, start2, end2) {
         var p = (value - start1) / (end1 - start1);
         return start2 + p * (end2 - start2);
@@ -3874,7 +3906,6 @@ var NumberUtil = {
         return ((value % max) + max) % max;
     },
 };
-exports.default = NumberUtil;
 
 
 /***/ }),
@@ -3922,7 +3953,7 @@ var PaneError = /** @class */ (function () {
     };
     return PaneError;
 }());
-exports.default = PaneError;
+exports.PaneError = PaneError;
 PaneError.prototype = Object.create(Error.prototype);
 PaneError.prototype.constructor = PaneError;
 
@@ -3954,7 +3985,7 @@ var PointerHandler = /** @class */ (function () {
         this.onTouchStart_ = this.onTouchStart_.bind(this);
         this.document = document;
         this.element = element;
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.pressed_ = false;
         if (DomUtil.supportsTouch(this.document)) {
             element.addEventListener('touchstart', this.onTouchStart_);
@@ -4018,7 +4049,7 @@ var PointerHandler = /** @class */ (function () {
     };
     return PointerHandler;
 }());
-exports.default = PointerHandler;
+exports.PointerHandler = PointerHandler;
 
 
 /***/ }),
@@ -4045,7 +4076,7 @@ var IntervalTicker = /** @class */ (function () {
         this.onWindowFocus_ = this.onWindowFocus_.bind(this);
         this.active_ = true;
         this.doc_ = document;
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         if (interval <= 0) {
             this.id_ = null;
         }
@@ -4087,7 +4118,7 @@ var IntervalTicker = /** @class */ (function () {
     };
     return IntervalTicker;
 }());
-exports.default = IntervalTicker;
+exports.IntervalTicker = IntervalTicker;
 
 
 /***/ }),
@@ -4102,7 +4133,7 @@ exports.default = IntervalTicker;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var TypeUtil = {
+exports.TypeUtil = {
     forceCast: function (v) {
         return v;
     },
@@ -4110,18 +4141,9 @@ var TypeUtil = {
         return value === null || value === undefined;
     },
     getOrDefault: function (value, defaultValue) {
-        return !TypeUtil.isEmpty(value) ? value : defaultValue;
-    },
-    ifNotEmpty: function (value, thenFn, elseFn) {
-        if (!TypeUtil.isEmpty(value)) {
-            thenFn(value);
-        }
-        else if (elseFn) {
-            elseFn();
-        }
+        return !exports.TypeUtil.isEmpty(value) ? value : defaultValue;
     },
 };
-exports.default = TypeUtil;
 
 
 /***/ }),
@@ -4142,7 +4164,7 @@ var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/e
  */
 var Button = /** @class */ (function () {
     function Button(title) {
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.title = title;
     }
     Button.prototype.click = function () {
@@ -4150,7 +4172,7 @@ var Button = /** @class */ (function () {
     };
     return Button;
 }());
-exports.default = Button;
+exports.Button = Button;
 
 
 /***/ }),
@@ -4171,16 +4193,16 @@ var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/j
 var CONSTRAINT_MAP = {
     hsv: function (comps) {
         return [
-            number_util_1.default.loop(comps[0], 360),
-            number_util_1.default.constrain(comps[1], 0, 100),
-            number_util_1.default.constrain(comps[2], 0, 100),
+            number_util_1.NumberUtil.loop(comps[0], 360),
+            number_util_1.NumberUtil.constrain(comps[1], 0, 100),
+            number_util_1.NumberUtil.constrain(comps[2], 0, 100),
         ];
     },
     rgb: function (comps) {
         return [
-            number_util_1.default.constrain(comps[0], 0, 255),
-            number_util_1.default.constrain(comps[1], 0, 255),
-            number_util_1.default.constrain(comps[2], 0, 255),
+            number_util_1.NumberUtil.constrain(comps[0], 0, 255),
+            number_util_1.NumberUtil.constrain(comps[1], 0, 255),
+            number_util_1.NumberUtil.constrain(comps[2], 0, 255),
         ];
     },
 };
@@ -4189,7 +4211,7 @@ var CONSTRAINT_MAP = {
  */
 var Color = /** @class */ (function () {
     function Color(comps, mode) {
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.mode_ = mode;
         this.comps_ = CONSTRAINT_MAP[mode](comps);
     }
@@ -4221,7 +4243,7 @@ var Color = /** @class */ (function () {
     };
     return Color;
 }());
-exports.default = Color;
+exports.Color = Color;
 
 
 /***/ }),
@@ -4242,7 +4264,7 @@ var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/e
  */
 var Foldable = /** @class */ (function () {
     function Foldable() {
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.expanded_ = false;
     }
     Object.defineProperty(Foldable.prototype, "expanded", {
@@ -4261,7 +4283,7 @@ var Foldable = /** @class */ (function () {
     });
     return Foldable;
 }());
-exports.default = Foldable;
+exports.Foldable = Foldable;
 
 
 /***/ }),
@@ -4282,7 +4304,7 @@ var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/e
  */
 var Folder = /** @class */ (function () {
     function Folder(title, expanded) {
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.expanded_ = expanded;
         this.expandedHeight_ = null;
         this.title = title;
@@ -4317,7 +4339,7 @@ var Folder = /** @class */ (function () {
     });
     return Folder;
 }());
-exports.default = Folder;
+exports.Folder = Folder;
 
 
 /***/ }),
@@ -4338,7 +4360,7 @@ var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/e
  */
 var GraphCursor = /** @class */ (function () {
     function GraphCursor() {
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.index_ = -1;
     }
     Object.defineProperty(GraphCursor.prototype, "index", {
@@ -4357,7 +4379,7 @@ var GraphCursor = /** @class */ (function () {
     });
     return GraphCursor;
 }());
-exports.default = GraphCursor;
+exports.GraphCursor = GraphCursor;
 
 
 /***/ }),
@@ -4379,7 +4401,7 @@ var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/e
 var InputValue = /** @class */ (function () {
     function InputValue(initialValue, constraint) {
         this.constraint_ = constraint;
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.rawValue_ = initialValue;
     }
     InputValue.equalsValue = function (v1, v2) {
@@ -4411,7 +4433,7 @@ var InputValue = /** @class */ (function () {
     });
     return InputValue;
 }());
-exports.default = InputValue;
+exports.InputValue = InputValue;
 
 
 /***/ }),
@@ -4432,7 +4454,7 @@ var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/e
  */
 var List = /** @class */ (function () {
     function List() {
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.items_ = [];
     }
     Object.defineProperty(List.prototype, "items", {
@@ -4448,7 +4470,7 @@ var List = /** @class */ (function () {
     };
     return List;
 }());
-exports.default = List;
+exports.List = List;
 
 
 /***/ }),
@@ -4469,7 +4491,7 @@ var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/e
  */
 var MonitorValue = /** @class */ (function () {
     function MonitorValue(totalCount) {
-        this.emitter = new emitter_1.default();
+        this.emitter = new emitter_1.Emitter();
         this.rawValues_ = [];
         this.totalCount_ = totalCount;
     }
@@ -4496,7 +4518,7 @@ var MonitorValue = /** @class */ (function () {
     };
     return MonitorValue;
 }());
-exports.default = MonitorValue;
+exports.MonitorValue = MonitorValue;
 
 
 /***/ }),
@@ -4529,7 +4551,7 @@ var Point2d = /** @class */ (function () {
     };
     return Point2d;
 }());
-exports.default = Point2d;
+exports.Point2d = Point2d;
 
 
 /***/ }),
@@ -4552,7 +4574,7 @@ var Target = /** @class */ (function () {
     function Target(object, key, opt_id) {
         this.obj_ = object;
         this.key_ = key;
-        this.presetKey_ = type_util_1.default.getOrDefault(opt_id, key);
+        this.presetKey_ = type_util_1.TypeUtil.getOrDefault(opt_id, key);
     }
     Object.defineProperty(Target.prototype, "key", {
         get: function () {
@@ -4576,7 +4598,7 @@ var Target = /** @class */ (function () {
     };
     return Target;
 }());
-exports.default = Target;
+exports.Target = Target;
 
 
 /***/ }),
@@ -4591,12 +4613,13 @@ exports.default = Target;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var point_2d_1 = __webpack_require__(/*! ../model/point-2d */ "./src/main/js/model/point-2d.ts");
 /**
  * @hidden
  */
-var AnyPoint2dParser = function (obj) {
-    if (obj === null || obj === undefined) {
+exports.AnyPoint2dParser = function (obj) {
+    if (type_util_1.TypeUtil.isEmpty(obj)) {
         return null;
     }
     var x = obj.x;
@@ -4604,9 +4627,8 @@ var AnyPoint2dParser = function (obj) {
     if (typeof x !== 'number' || typeof y !== 'number') {
         return null;
     }
-    return new point_2d_1.default(x, y);
+    return new point_2d_1.Point2d(x, y);
 };
-exports.default = AnyPoint2dParser;
 
 
 /***/ }),
@@ -4629,7 +4651,7 @@ var SUB_PARSERS = [
         if (!matches) {
             return null;
         }
-        return new color_1.default([
+        return new color_1.Color([
             parseInt(matches[1], 16),
             parseInt(matches[2], 16),
             parseInt(matches[3], 16),
@@ -4641,7 +4663,7 @@ var SUB_PARSERS = [
         if (!matches) {
             return null;
         }
-        return new color_1.default([
+        return new color_1.Color([
             parseInt(matches[1] + matches[1], 16),
             parseInt(matches[2] + matches[2], 16),
             parseInt(matches[3] + matches[3], 16),
@@ -4651,12 +4673,11 @@ var SUB_PARSERS = [
 /**
  * @hidden
  */
-var StringColorParser = function (text) {
+exports.StringColorParser = function (text) {
     return SUB_PARSERS.reduce(function (result, subparser) {
         return result ? result : subparser(text);
     }, null);
 };
-exports.default = StringColorParser;
 
 
 /***/ }),
@@ -4674,14 +4695,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @hidden
  */
-var StringNumberParser = function (text) {
+exports.StringNumberParser = function (text) {
     var num = parseFloat(text);
     if (isNaN(num)) {
         return null;
     }
     return num;
 };
-exports.default = StringNumberParser;
 
 
 /***/ }),
@@ -4717,7 +4737,7 @@ var pane_error_1 = __webpack_require__(/*! ./misc/pane-error */ "./src/main/js/m
 var type_util_1 = __webpack_require__(/*! ./misc/type-util */ "./src/main/js/misc/type-util.ts");
 function createDefaultWrapperElement(document) {
     var elem = document.createElement('div');
-    elem.classList.add(class_name_1.default('dfw')());
+    elem.classList.add(class_name_1.ClassName('dfw')());
     if (document.body) {
         document.body.appendChild(elem);
     }
@@ -4728,8 +4748,8 @@ var TweakpaneWithoutStyle = /** @class */ (function (_super) {
     function TweakpaneWithoutStyle(opt_config) {
         var _this = this;
         var config = opt_config || {};
-        var document = type_util_1.default.getOrDefault(config.document, DomUtil.getWindowDocument());
-        var rootController = new root_2.default(document, {
+        var document = type_util_1.TypeUtil.getOrDefault(config.document, DomUtil.getWindowDocument());
+        var rootController = new root_2.RootController(document, {
             title: config.title,
         });
         _this = _super.call(this, rootController) || this;
@@ -4743,7 +4763,7 @@ var TweakpaneWithoutStyle = /** @class */ (function (_super) {
     TweakpaneWithoutStyle.prototype.dispose = function () {
         var containerElem = this.containerElem_;
         if (!containerElem) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         if (this.usesDefaultWrapper_) {
             var parentElem = containerElem.parentElement;
@@ -4758,7 +4778,7 @@ var TweakpaneWithoutStyle = /** @class */ (function (_super) {
     Object.defineProperty(TweakpaneWithoutStyle.prototype, "document", {
         get: function () {
             if (!this.doc_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.doc_;
         },
@@ -4766,8 +4786,8 @@ var TweakpaneWithoutStyle = /** @class */ (function (_super) {
         configurable: true
     });
     return TweakpaneWithoutStyle;
-}(root_1.default));
-exports.default = TweakpaneWithoutStyle;
+}(root_1.RootApi));
+exports.TweakpaneWithoutStyle = TweakpaneWithoutStyle;
 
 
 /***/ }),
@@ -4799,7 +4819,7 @@ var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/
 var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('btn');
+var className = class_name_1.ClassName('btn');
 /**
  * @hidden
  */
@@ -4819,7 +4839,7 @@ var ButtonView = /** @class */ (function (_super) {
     Object.defineProperty(ButtonView.prototype, "buttonElement", {
         get: function () {
             if (!this.buttonElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.buttonElem_;
         },
@@ -4831,8 +4851,8 @@ var ButtonView = /** @class */ (function (_super) {
         _super.prototype.dispose.call(this);
     };
     return ButtonView;
-}(view_1.default));
-exports.default = ButtonView;
+}(view_1.View));
+exports.ButtonView = ButtonView;
 
 
 /***/ }),
@@ -4865,7 +4885,7 @@ var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/mai
 var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('fld');
+var className = class_name_1.ClassName('fld');
 /**
  * @hidden
  */
@@ -4895,7 +4915,7 @@ var FolderView = /** @class */ (function (_super) {
     Object.defineProperty(FolderView.prototype, "titleElement", {
         get: function () {
             if (!this.titleElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.titleElem_;
         },
@@ -4905,7 +4925,7 @@ var FolderView = /** @class */ (function (_super) {
     Object.defineProperty(FolderView.prototype, "containerElement", {
         get: function () {
             if (!this.containerElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.containerElem_;
         },
@@ -4920,7 +4940,7 @@ var FolderView = /** @class */ (function (_super) {
     FolderView.prototype.applyModel_ = function () {
         var containerElem = this.containerElem_;
         if (!containerElem) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var expanded = this.folder_.expanded;
         var expandedClass = className(undefined, 'expanded');
@@ -4930,19 +4950,21 @@ var FolderView = /** @class */ (function (_super) {
         else {
             this.element.classList.remove(expandedClass);
         }
-        type_util_1.default.ifNotEmpty(this.folder_.expandedHeight, function (expandedHeight) {
+        var expandedHeight = this.folder_.expandedHeight;
+        if (!type_util_1.TypeUtil.isEmpty(expandedHeight)) {
             var containerHeight = expanded ? expandedHeight : 0;
             containerElem.style.height = containerHeight + "px";
-        }, function () {
+        }
+        else {
             containerElem.style.height = expanded ? 'auto' : '0px';
-        });
+        }
     };
     FolderView.prototype.onFolderChange_ = function () {
         this.applyModel_();
     };
     return FolderView;
-}(view_1.default));
-exports.default = FolderView;
+}(view_1.View));
+exports.FolderView = FolderView;
 
 
 /***/ }),
@@ -4974,7 +4996,7 @@ var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('ckb', 'input');
+var className = class_name_1.ClassName('ckb', 'input');
 /**
  * @hidden
  */
@@ -5003,7 +5025,7 @@ var CheckboxInputView = /** @class */ (function (_super) {
     Object.defineProperty(CheckboxInputView.prototype, "inputElement", {
         get: function () {
             if (!this.inputElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.inputElem_;
         },
@@ -5016,7 +5038,7 @@ var CheckboxInputView = /** @class */ (function (_super) {
     };
     CheckboxInputView.prototype.update = function () {
         if (!this.inputElem_) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         this.inputElem_.checked = this.value.rawValue;
     };
@@ -5024,8 +5046,8 @@ var CheckboxInputView = /** @class */ (function (_super) {
         this.update();
     };
     return CheckboxInputView;
-}(view_1.default));
-exports.default = CheckboxInputView;
+}(view_1.View));
+exports.CheckboxInputView = CheckboxInputView;
 
 
 /***/ }),
@@ -5055,7 +5077,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('clp', 'input');
+var className = class_name_1.ClassName('clp', 'input');
 /**
  * @hidden
  */
@@ -5119,8 +5141,8 @@ var ColorPickerInputView = /** @class */ (function (_super) {
         this.update();
     };
     return ColorPickerInputView;
-}(view_1.default));
-exports.default = ColorPickerInputView;
+}(view_1.View));
+exports.ColorPickerInputView = ColorPickerInputView;
 
 
 /***/ }),
@@ -5150,7 +5172,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('cswtxt', 'input');
+var className = class_name_1.ClassName('cswtxt', 'input');
 /**
  * @hidden
  */
@@ -5188,8 +5210,8 @@ var ColorSwatchTextInputView = /** @class */ (function (_super) {
         this.textInputView_.update();
     };
     return ColorSwatchTextInputView;
-}(view_1.default));
-exports.default = ColorSwatchTextInputView;
+}(view_1.View));
+exports.ColorSwatchTextInputView = ColorSwatchTextInputView;
 
 
 /***/ }),
@@ -5222,7 +5244,7 @@ var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('csw', 'input');
+var className = class_name_1.ClassName('csw', 'input');
 /**
  * @hidden
  */
@@ -5231,7 +5253,7 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
     function ColorSwatchInputView(document, config) {
         var _this = _super.call(this, document) || this;
         if (_this.element === null) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         config.value.emitter.on('change', _this.onValueChange_);
@@ -5256,7 +5278,7 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
     Object.defineProperty(ColorSwatchInputView.prototype, "buttonElement", {
         get: function () {
             if (this.buttonElem_ === null) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.buttonElem_;
         },
@@ -5271,7 +5293,7 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
     };
     ColorSwatchInputView.prototype.update = function () {
         if (!this.swatchElem_) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var value = this.value.rawValue;
         this.swatchElem_.style.backgroundColor = ColorConverter.toString(value);
@@ -5280,8 +5302,8 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
         this.update();
     };
     return ColorSwatchInputView;
-}(view_1.default));
-exports.default = ColorSwatchInputView;
+}(view_1.View));
+exports.ColorSwatchInputView = ColorSwatchInputView;
 
 
 /***/ }),
@@ -5317,7 +5339,7 @@ var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('hpl', 'input');
+var className = class_name_1.ClassName('hpl', 'input');
 /**
  * @hidden
  */
@@ -5344,7 +5366,7 @@ var HPaletteInputView = /** @class */ (function (_super) {
     Object.defineProperty(HPaletteInputView.prototype, "canvasElement", {
         get: function () {
             if (!this.canvasElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.canvasElem_;
         },
@@ -5358,7 +5380,7 @@ var HPaletteInputView = /** @class */ (function (_super) {
     };
     HPaletteInputView.prototype.update = function () {
         if (!this.markerElem_) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var ctx = DomUtil.getCanvasContext(this.canvasElement);
         if (!ctx) {
@@ -5369,23 +5391,23 @@ var HPaletteInputView = /** @class */ (function (_super) {
         var cellCount = 64;
         var ch = Math.ceil(height / cellCount);
         for (var iy = 0; iy < cellCount; iy++) {
-            var hue = number_util_1.default.map(iy, 0, cellCount - 1, 0, 360);
+            var hue = number_util_1.NumberUtil.map(iy, 0, cellCount - 1, 0, 360);
             var rgbComps = ColorModel.hsvToRgb(hue, 100, 100);
-            ctx.fillStyle = color_1.default.rgb.apply(color_1.default, rgbComps);
-            var y = Math.floor(number_util_1.default.map(iy, 0, cellCount - 1, 0, height - ch));
+            ctx.fillStyle = color_1.ColorFormatter.rgb.apply(color_1.ColorFormatter, rgbComps);
+            var y = Math.floor(number_util_1.NumberUtil.map(iy, 0, cellCount - 1, 0, height - ch));
             ctx.fillRect(0, y, width, ch);
         }
         var c = this.value.rawValue;
         var hsvComps = c.getComponents('hsv');
-        var top = number_util_1.default.map(hsvComps[0], 0, 360, 0, 100);
+        var top = number_util_1.NumberUtil.map(hsvComps[0], 0, 360, 0, 100);
         this.markerElem_.style.top = top + "%";
     };
     HPaletteInputView.prototype.onValueChange_ = function () {
         this.update();
     };
     return HPaletteInputView;
-}(view_1.default));
-exports.default = HPaletteInputView;
+}(view_1.View));
+exports.HPaletteInputView = HPaletteInputView;
 
 
 /***/ }),
@@ -5417,7 +5439,7 @@ var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('lst', 'input');
+var className = class_name_1.ClassName('lst', 'input');
 /**
  * @hidden
  */
@@ -5450,7 +5472,7 @@ var ListInputView = /** @class */ (function (_super) {
     Object.defineProperty(ListInputView.prototype, "selectElement", {
         get: function () {
             if (!this.selectElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.selectElem_;
         },
@@ -5463,7 +5485,7 @@ var ListInputView = /** @class */ (function (_super) {
     };
     ListInputView.prototype.update = function () {
         if (!this.selectElem_) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         this.selectElem_.value = this.stringifyValue_(this.value.rawValue);
     };
@@ -5471,8 +5493,8 @@ var ListInputView = /** @class */ (function (_super) {
         this.update();
     };
     return ListInputView;
-}(view_1.default));
-exports.default = ListInputView;
+}(view_1.View));
+exports.ListInputView = ListInputView;
 
 
 /***/ }),
@@ -5503,7 +5525,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('p2dpadtxt', 'input');
+var className = class_name_1.ClassName('p2dpadtxt', 'input');
 /**
  * @hidden
  */
@@ -5556,8 +5578,8 @@ var Point2dPadTextInputView = /** @class */ (function (_super) {
         this.textInputView_.update();
     };
     return Point2dPadTextInputView;
-}(view_1.default));
-exports.default = Point2dPadTextInputView;
+}(view_1.View));
+exports.Point2dPadTextInputView = Point2dPadTextInputView;
 
 
 /***/ }),
@@ -5592,7 +5614,7 @@ var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/mai
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var SVG_NS = DomUtil.SVG_NS;
-var className = class_name_1.default('p2dpad', 'input');
+var className = class_name_1.ClassName('p2dpad', 'input');
 /**
  * @hidden
  */
@@ -5651,7 +5673,7 @@ var Point2dPadInputView = /** @class */ (function (_super) {
     Object.defineProperty(Point2dPadInputView.prototype, "padElement", {
         get: function () {
             if (!this.padElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.padElem_;
         },
@@ -5668,12 +5690,12 @@ var Point2dPadInputView = /** @class */ (function (_super) {
         var lineElem = this.lineElem_;
         var markerElem = this.markerElem_;
         if (!lineElem || !markerElem) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var _a = this.value.rawValue.getComponents(), x = _a[0], y = _a[1];
         var max = this.maxValue_;
-        var px = number_util_1.default.map(x, -max, +max, 0, 100);
-        var py = number_util_1.default.map(y, -max, +max, 0, 100);
+        var px = number_util_1.NumberUtil.map(x, -max, +max, 0, 100);
+        var py = number_util_1.NumberUtil.map(y, -max, +max, 0, 100);
         lineElem.setAttributeNS(null, 'x2', px + "%");
         lineElem.setAttributeNS(null, 'y2', py + "%");
         markerElem.setAttributeNS(null, 'cx', px + "%");
@@ -5686,8 +5708,8 @@ var Point2dPadInputView = /** @class */ (function (_super) {
         this.update();
     };
     return Point2dPadInputView;
-}(view_1.default));
-exports.default = Point2dPadInputView;
+}(view_1.View));
+exports.Point2dPadInputView = Point2dPadInputView;
 
 
 /***/ }),
@@ -5720,7 +5742,7 @@ var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var COMPONENT_LABELS = ['X', 'Y'];
-var className = class_name_1.default('p2dtxt', 'input');
+var className = class_name_1.ClassName('p2dtxt', 'input');
 /**
  * @hidden
  */
@@ -5761,7 +5783,7 @@ var Point2dTextInputView = /** @class */ (function (_super) {
     Object.defineProperty(Point2dTextInputView.prototype, "inputElements", {
         get: function () {
             if (!this.inputElems_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.inputElems_;
         },
@@ -5772,7 +5794,7 @@ var Point2dTextInputView = /** @class */ (function (_super) {
         var _this = this;
         var inputElems = this.inputElems_;
         if (!inputElems) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var xyComps = this.value.rawValue.getComponents();
         xyComps.forEach(function (comp, index) {
@@ -5784,8 +5806,8 @@ var Point2dTextInputView = /** @class */ (function (_super) {
         this.update();
     };
     return Point2dTextInputView;
-}(view_1.default));
-exports.default = Point2dTextInputView;
+}(view_1.View));
+exports.Point2dTextInputView = Point2dTextInputView;
 
 
 /***/ }),
@@ -5818,7 +5840,7 @@ var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var COMPONENT_LABELS = ['R', 'G', 'B'];
-var className = class_name_1.default('rgbtxt', 'input');
+var className = class_name_1.ClassName('rgbtxt', 'input');
 /**
  * @hidden
  */
@@ -5866,7 +5888,7 @@ var RgbTextInputView = /** @class */ (function (_super) {
     Object.defineProperty(RgbTextInputView.prototype, "inputElements", {
         get: function () {
             if (!this.inputElems_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.inputElems_;
         },
@@ -5877,7 +5899,7 @@ var RgbTextInputView = /** @class */ (function (_super) {
         var _this = this;
         var inputElems = this.inputElems_;
         if (!inputElems) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var rgbComps = this.value.rawValue.getComponents('rgb');
         rgbComps.forEach(function (comp, index) {
@@ -5889,8 +5911,8 @@ var RgbTextInputView = /** @class */ (function (_super) {
         this.update();
     };
     return RgbTextInputView;
-}(view_1.default));
-exports.default = RgbTextInputView;
+}(view_1.View));
+exports.RgbTextInputView = RgbTextInputView;
 
 
 /***/ }),
@@ -5920,7 +5942,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('sldtxt', 'input');
+var className = class_name_1.ClassName('sldtxt', 'input');
 /**
  * @hidden
  */
@@ -5958,8 +5980,8 @@ var SliderTextInputView = /** @class */ (function (_super) {
         this.textInputView_.update();
     };
     return SliderTextInputView;
-}(view_1.default));
-exports.default = SliderTextInputView;
+}(view_1.View));
+exports.SliderTextInputView = SliderTextInputView;
 
 
 /***/ }),
@@ -5992,7 +6014,7 @@ var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('sld', 'input');
+var className = class_name_1.ClassName('sld', 'input');
 /**
  * @hidden
  */
@@ -6020,7 +6042,7 @@ var SliderInputView = /** @class */ (function (_super) {
     Object.defineProperty(SliderInputView.prototype, "outerElement", {
         get: function () {
             if (!this.outerElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.outerElem_;
         },
@@ -6030,7 +6052,7 @@ var SliderInputView = /** @class */ (function (_super) {
     Object.defineProperty(SliderInputView.prototype, "innerElement", {
         get: function () {
             if (!this.innerElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.innerElem_;
         },
@@ -6044,17 +6066,17 @@ var SliderInputView = /** @class */ (function (_super) {
     };
     SliderInputView.prototype.update = function () {
         if (!this.innerElem_) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
-        var p = number_util_1.default.map(this.value.rawValue, this.minValue_, this.maxValue_, 0, 100);
+        var p = number_util_1.NumberUtil.map(this.value.rawValue, this.minValue_, this.maxValue_, 0, 100);
         this.innerElem_.style.width = p + "%";
     };
     SliderInputView.prototype.onValueChange_ = function () {
         this.update();
     };
     return SliderInputView;
-}(view_1.default));
-exports.default = SliderInputView;
+}(view_1.View));
+exports.SliderInputView = SliderInputView;
 
 
 /***/ }),
@@ -6090,7 +6112,7 @@ var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('svp', 'input');
+var className = class_name_1.ClassName('svp', 'input');
 /**
  * @hidden
  */
@@ -6117,7 +6139,7 @@ var SvPaletteInputView = /** @class */ (function (_super) {
     Object.defineProperty(SvPaletteInputView.prototype, "canvasElement", {
         get: function () {
             if (!this.canvasElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.canvasElem_;
         },
@@ -6131,7 +6153,7 @@ var SvPaletteInputView = /** @class */ (function (_super) {
     };
     SvPaletteInputView.prototype.update = function () {
         if (!this.markerElem_) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var ctx = DomUtil.getCanvasContext(this.canvasElement);
         if (!ctx) {
@@ -6146,26 +6168,26 @@ var SvPaletteInputView = /** @class */ (function (_super) {
         var ch = Math.ceil(height / cellCount);
         for (var iy = 0; iy < cellCount; iy++) {
             for (var ix = 0; ix < cellCount; ix++) {
-                var s = number_util_1.default.map(ix, 0, cellCount - 1, 0, 100);
-                var v = number_util_1.default.map(iy, 0, cellCount - 1, 100, 0);
+                var s = number_util_1.NumberUtil.map(ix, 0, cellCount - 1, 0, 100);
+                var v = number_util_1.NumberUtil.map(iy, 0, cellCount - 1, 100, 0);
                 var rgbComps = ColorModel.hsvToRgb(hsvComps[0], s, v);
-                ctx.fillStyle = color_1.default.rgb.apply(color_1.default, rgbComps);
-                var x = Math.floor(number_util_1.default.map(ix, 0, cellCount - 1, 0, width - cw));
-                var y = Math.floor(number_util_1.default.map(iy, 0, cellCount - 1, 0, height - ch));
+                ctx.fillStyle = color_1.ColorFormatter.rgb.apply(color_1.ColorFormatter, rgbComps);
+                var x = Math.floor(number_util_1.NumberUtil.map(ix, 0, cellCount - 1, 0, width - cw));
+                var y = Math.floor(number_util_1.NumberUtil.map(iy, 0, cellCount - 1, 0, height - ch));
                 ctx.fillRect(x, y, cw, ch);
             }
         }
-        var left = number_util_1.default.map(hsvComps[1], 0, 100, 0, 100);
+        var left = number_util_1.NumberUtil.map(hsvComps[1], 0, 100, 0, 100);
         this.markerElem_.style.left = left + "%";
-        var top = number_util_1.default.map(hsvComps[2], 0, 100, 100, 0);
+        var top = number_util_1.NumberUtil.map(hsvComps[2], 0, 100, 100, 0);
         this.markerElem_.style.top = top + "%";
     };
     SvPaletteInputView.prototype.onValueChange_ = function () {
         this.update();
     };
     return SvPaletteInputView;
-}(view_1.default));
-exports.default = SvPaletteInputView;
+}(view_1.View));
+exports.SvPaletteInputView = SvPaletteInputView;
 
 
 /***/ }),
@@ -6197,7 +6219,7 @@ var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('txt', 'input');
+var className = class_name_1.ClassName('txt', 'input');
 /**
  * @hidden
  */
@@ -6221,7 +6243,7 @@ var TextInputView = /** @class */ (function (_super) {
     Object.defineProperty(TextInputView.prototype, "inputElement", {
         get: function () {
             if (!this.inputElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.inputElem_;
         },
@@ -6234,7 +6256,7 @@ var TextInputView = /** @class */ (function (_super) {
     };
     TextInputView.prototype.update = function () {
         if (!this.inputElem_) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         this.inputElem_.value = this.formatter_.format(this.value.rawValue);
     };
@@ -6242,8 +6264,8 @@ var TextInputView = /** @class */ (function (_super) {
         this.update();
     };
     return TextInputView;
-}(view_1.default));
-exports.default = TextInputView;
+}(view_1.View));
+exports.TextInputView = TextInputView;
 
 
 /***/ }),
@@ -6273,7 +6295,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('lbl');
+var className = class_name_1.ClassName('lbl');
 /**
  * @hidden
  */
@@ -6294,8 +6316,8 @@ var LabeledView = /** @class */ (function (_super) {
         return _this;
     }
     return LabeledView;
-}(view_1.default));
-exports.default = LabeledView;
+}(view_1.View));
+exports.LabeledView = LabeledView;
 
 
 /***/ }),
@@ -6330,7 +6352,7 @@ var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/mai
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var SVG_NS = DomUtil.SVG_NS;
-var className = class_name_1.default('grp', 'monitor');
+var className = class_name_1.ClassName('grp', 'monitor');
 /**
  * @hidden
  */
@@ -6365,7 +6387,7 @@ var GraphMonitorView = /** @class */ (function (_super) {
     Object.defineProperty(GraphMonitorView.prototype, "graphElement", {
         get: function () {
             if (!this.svgElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.svgElem_;
         },
@@ -6381,7 +6403,7 @@ var GraphMonitorView = /** @class */ (function (_super) {
     GraphMonitorView.prototype.update = function () {
         var tooltipElem = this.tooltipElem_;
         if (!this.lineElem_ || !this.svgElem_ || !tooltipElem) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var bounds = this.svgElem_.getBoundingClientRect();
         // Graph
@@ -6390,8 +6412,8 @@ var GraphMonitorView = /** @class */ (function (_super) {
         var max = this.maxValue_;
         this.lineElem_.setAttributeNS(null, 'points', this.value.rawValues
             .map(function (v, index) {
-            var x = number_util_1.default.map(index, 0, maxIndex, 0, bounds.width);
-            var y = number_util_1.default.map(v, min, max, bounds.height, 0);
+            var x = number_util_1.NumberUtil.map(index, 0, maxIndex, 0, bounds.width);
+            var y = number_util_1.NumberUtil.map(v, min, max, bounds.height, 0);
             return [x, y].join(',');
         })
             .join(' '));
@@ -6402,8 +6424,8 @@ var GraphMonitorView = /** @class */ (function (_super) {
             return;
         }
         tooltipElem.classList.add(className('t', 'valid'));
-        var tx = number_util_1.default.map(this.cursor_.index, 0, maxIndex, 0, bounds.width);
-        var ty = number_util_1.default.map(value, min, max, bounds.height, 0);
+        var tx = number_util_1.NumberUtil.map(this.cursor_.index, 0, maxIndex, 0, bounds.width);
+        var ty = number_util_1.NumberUtil.map(value, min, max, bounds.height, 0);
         tooltipElem.style.left = tx + "px";
         tooltipElem.style.top = ty + "px";
         tooltipElem.textContent = "" + this.formatter_.format(value);
@@ -6415,8 +6437,8 @@ var GraphMonitorView = /** @class */ (function (_super) {
         this.update();
     };
     return GraphMonitorView;
-}(view_1.default));
-exports.default = GraphMonitorView;
+}(view_1.View));
+exports.GraphMonitorView = GraphMonitorView;
 
 
 /***/ }),
@@ -6448,7 +6470,7 @@ var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('mll', 'monitor');
+var className = class_name_1.ClassName('mll', 'monitor');
 /**
  * @hidden
  */
@@ -6477,7 +6499,7 @@ var MultiLogMonitorView = /** @class */ (function (_super) {
         var _this = this;
         var elem = this.textareaElem_;
         if (!elem) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var shouldScroll = elem.scrollTop === elem.scrollHeight - elem.clientHeight;
         elem.textContent = this.value.rawValues
@@ -6493,8 +6515,8 @@ var MultiLogMonitorView = /** @class */ (function (_super) {
         this.update();
     };
     return MultiLogMonitorView;
-}(view_1.default));
-exports.default = MultiLogMonitorView;
+}(view_1.View));
+exports.MultiLogMonitorView = MultiLogMonitorView;
 
 
 /***/ }),
@@ -6526,7 +6548,7 @@ var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('sgl', 'monitor');
+var className = class_name_1.ClassName('sgl', 'monitor');
 /**
  * @hidden
  */
@@ -6554,7 +6576,7 @@ var SingleLogMonitorView = /** @class */ (function (_super) {
     };
     SingleLogMonitorView.prototype.update = function () {
         if (!this.inputElem_) {
-            throw pane_error_1.default.alreadyDisposed();
+            throw pane_error_1.PaneError.alreadyDisposed();
         }
         var values = this.value.rawValues;
         this.inputElem_.value =
@@ -6566,8 +6588,8 @@ var SingleLogMonitorView = /** @class */ (function (_super) {
         this.update();
     };
     return SingleLogMonitorView;
-}(view_1.default));
-exports.default = SingleLogMonitorView;
+}(view_1.View));
+exports.SingleLogMonitorView = SingleLogMonitorView;
 
 
 /***/ }),
@@ -6599,7 +6621,7 @@ var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/
 var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('rot');
+var className = class_name_1.ClassName('rot');
 /**
  * @hidden
  */
@@ -6641,7 +6663,7 @@ var RootView = /** @class */ (function (_super) {
     Object.defineProperty(RootView.prototype, "containerElement", {
         get: function () {
             if (!this.containerElem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.containerElem_;
         },
@@ -6669,8 +6691,8 @@ var RootView = /** @class */ (function (_super) {
         this.applyModel_();
     };
     return RootView;
-}(view_1.default));
-exports.default = RootView;
+}(view_1.View));
+exports.RootView = RootView;
 
 
 /***/ }),
@@ -6700,7 +6722,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
-var className = class_name_1.default('spt');
+var className = class_name_1.ClassName('spt');
 /**
  * @hidden
  */
@@ -6715,8 +6737,8 @@ var SeparatorView = /** @class */ (function (_super) {
         return _this;
     }
     return SeparatorView;
-}(view_1.default));
-exports.default = SeparatorView;
+}(view_1.View));
+exports.SeparatorView = SeparatorView;
 
 
 /***/ }),
@@ -6752,7 +6774,7 @@ var View = /** @class */ (function () {
     Object.defineProperty(View.prototype, "document", {
         get: function () {
             if (!this.doc_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.doc_;
         },
@@ -6762,7 +6784,7 @@ var View = /** @class */ (function () {
     Object.defineProperty(View.prototype, "element", {
         get: function () {
             if (!this.elem_) {
-                throw pane_error_1.default.alreadyDisposed();
+                throw pane_error_1.PaneError.alreadyDisposed();
             }
             return this.elem_;
         },
@@ -6776,7 +6798,7 @@ var View = /** @class */ (function () {
     };
     return View;
 }());
-exports.default = View;
+exports.View = View;
 
 
 /***/ }),

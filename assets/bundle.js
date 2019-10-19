@@ -102,11 +102,11 @@ var misc_1 = __webpack_require__(/*! ./route/misc */ "./src/doc/js/route/misc.ts
 var monitor_1 = __webpack_require__(/*! ./route/monitor */ "./src/doc/js/route/monitor.ts");
 var simple_router_1 = __webpack_require__(/*! ./simple-router */ "./src/doc/js/simple-router.ts");
 (function () {
-    var router = new simple_router_1.default();
-    router.add(index_1.default);
-    router.add(input_1.default);
-    router.add(misc_1.default);
-    router.add(monitor_1.default);
+    var router = new simple_router_1.SimpleRouter();
+    router.add(index_1.IndexRoute);
+    router.add(input_1.InputRoute);
+    router.add(misc_1.MiscRoute);
+    router.add(monitor_1.MonitorRoute);
     router.route(location.pathname);
     var markElem = document.querySelector('.common-logo_symbol');
     if (markElem) {
@@ -133,7 +133,7 @@ var simple_router_1 = __webpack_require__(/*! ./simple-router */ "./src/doc/js/s
 Object.defineProperty(exports, "__esModule", { value: true });
 var sketch_1 = __webpack_require__(/*! ../sketch */ "./src/doc/js/sketch.ts");
 var Util = __webpack_require__(/*! ../util */ "./src/doc/js/util.ts");
-exports.default = {
+exports.IndexRoute = {
     pathname: /^(\/tweakpane)?\/$/,
     init: function () {
         var ENV = {
@@ -189,7 +189,7 @@ exports.default = {
         if (!sketchElem) {
             return;
         }
-        var sketch = new sketch_1.default(sketchElem, ENV);
+        var sketch = new sketch_1.Sketch(sketchElem, ENV);
         var markerToFnMap = {
             index: function (container) {
                 var pane = new Tweakpane({
@@ -299,7 +299,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", { value: true });
 // tslint:disable:object-literal-sort-keys
 var Util = __webpack_require__(/*! ../util */ "./src/doc/js/util.ts");
-exports.default = {
+exports.InputRoute = {
     pathname: /^(\/tweakpane)?\/input.html$/,
     init: function () {
         var markerToFnMap = {
@@ -509,7 +509,7 @@ exports.default = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Util = __webpack_require__(/*! ../util */ "./src/doc/js/util.ts");
-exports.default = {
+exports.MiscRoute = {
     pathname: /^(\/tweakpane)?\/misc.html$/,
     init: function () {
         var IMEX_PARAMS = {
@@ -770,7 +770,7 @@ exports.default = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Util = __webpack_require__(/*! ../util */ "./src/doc/js/util.ts");
-exports.default = {
+exports.MonitorRoute = {
     pathname: /^(\/tweakpane)?\/monitor.html$/,
     init: function () {
         var SHARED_PARAMS = {
@@ -897,7 +897,7 @@ var SimpleRouter = /** @class */ (function () {
     };
     return SimpleRouter;
 }());
-exports.default = SimpleRouter;
+exports.SimpleRouter = SimpleRouter;
 
 
 /***/ }),
@@ -1005,7 +1005,7 @@ var Sketch = /** @class */ (function () {
     };
     return Sketch;
 }());
-exports.default = Sketch;
+exports.Sketch = Sketch;
 
 
 /***/ }),
