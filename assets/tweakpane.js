@@ -1353,12 +1353,13 @@ var slider_text_1 = __webpack_require__(/*! ../input/slider-text */ "./src/main/
 var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
 function createConstraint(params) {
     var constraints = [];
-    if (!type_util_1.TypeUtil.isEmpty(params.step)) {
+    if ('step' in params && !type_util_1.TypeUtil.isEmpty(params.step)) {
         constraints.push(new step_1.StepConstraint({
             step: params.step,
         }));
     }
-    if (!type_util_1.TypeUtil.isEmpty(params.max) || !type_util_1.TypeUtil.isEmpty(params.min)) {
+    if (('max' in params && !type_util_1.TypeUtil.isEmpty(params.max)) ||
+        ('min' in params && !type_util_1.TypeUtil.isEmpty(params.min))) {
         constraints.push(new range_1.RangeConstraint({
             max: params.max,
             min: params.min,
@@ -1480,8 +1481,8 @@ function createGraphMonitor(document, target, params) {
         }),
         controller: new graph_1.GraphMonitorController(document, {
             formatter: createFormatter(),
-            maxValue: type_util_1.TypeUtil.getOrDefault(params.max, 100),
-            minValue: type_util_1.TypeUtil.getOrDefault(params.min, 0),
+            maxValue: type_util_1.TypeUtil.getOrDefault('max' in params ? params.max : null, 100),
+            minValue: type_util_1.TypeUtil.getOrDefault('min' in params ? params.min : null, 0),
             value: value,
         }),
         label: params.label || target.key,
@@ -1492,7 +1493,7 @@ function create(document, target, params) {
     if (typeof initialValue !== 'number') {
         return null;
     }
-    if (params.type === 'graph') {
+    if ('type' in params && params.type === 'graph') {
         return createGraphMonitor(document, target, params);
     }
     return createTextMonitor(document, target, params);
@@ -1549,8 +1550,8 @@ function createDimensionConstraint(params) {
 }
 function createConstraint(params) {
     return new point_2d_1.Point2dConstraint({
-        x: createDimensionConstraint(params.x),
-        y: createDimensionConstraint(params.y),
+        x: createDimensionConstraint('x' in params ? params.x : undefined),
+        y: createDimensionConstraint('y' in params ? params.y : undefined),
     });
 }
 function createController(document, value) {
@@ -1693,7 +1694,7 @@ function create(document, target, params) {
         return null;
     }
     var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 1));
-    var multiline = value.totalCount > 1 || params.multiline;
+    var multiline = value.totalCount > 1 || ('multiline' in params && params.multiline);
     var controller = multiline
         ? new multi_log_1.MultiLogMonitorController(document, {
             formatter: new string_1.StringFormatter(),
