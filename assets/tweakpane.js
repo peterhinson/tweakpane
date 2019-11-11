@@ -3481,7 +3481,7 @@ var NumberFormatter = /** @class */ (function () {
         configurable: true
     });
     NumberFormatter.prototype.format = function (value) {
-        return value.toFixed(this.digits_);
+        return value.toFixed(Math.max(Math.min(this.digits_, 20), 0));
     };
     return NumberFormatter;
 }());
