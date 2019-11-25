@@ -457,13 +457,31 @@ exports.InputRoute = {
                     label: 'hidden',
                 });
             },
-            color: function (container) {
-                var PARAMS = { value: '#ff8800' };
+            objectColor: function (container) {
+                var PARAMS = { tint: { r: 255, g: 127, b: 0 } };
                 var pane = new Tweakpane({
                     container: container,
                 });
-                pane.addInput(PARAMS, 'value', {
-                    label: 'color',
+                pane.addInput(PARAMS, 'tint');
+            },
+            stringColor: function (container) {
+                var PARAMS = {
+                    tint: '#8df',
+                };
+                var pane = new Tweakpane({
+                    container: container,
+                });
+                pane.addInput(PARAMS, 'tint');
+            },
+            numberColor: function (container) {
+                var PARAMS = {
+                    tint: 0x0088ff,
+                };
+                var pane = new Tweakpane({
+                    container: container,
+                });
+                pane.addInput(PARAMS, 'tint', {
+                    input: 'color',
                 });
             },
             point2d: function (container) {
@@ -814,7 +832,7 @@ exports.MonitorRoute = {
                     label: 'graph',
                     max: +1,
                     min: -1,
-                    type: 'graph',
+                    view: 'graph',
                 });
                 nf.addMonitor(SHARED_PARAMS, 'positive', {
                     label: 'positive',
@@ -856,7 +874,7 @@ exports.MonitorRoute = {
                 pane.addMonitor(SHARED_PARAMS, 'wave', {
                     max: +1,
                     min: -1,
-                    type: 'graph',
+                    view: 'graph',
                 });
             },
         };
