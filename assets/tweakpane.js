@@ -1893,7 +1893,7 @@ var FolderController = /** @class */ (function () {
             _this.folder.expanded = true;
             DomUtil.forceReflow(elem);
             // Compute height
-            height = elem.getBoundingClientRect().height;
+            height = elem.clientHeight;
             // Restore expanded
             _this.folder.expanded = expanded;
             DomUtil.forceReflow(elem);
