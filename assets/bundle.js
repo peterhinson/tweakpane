@@ -466,12 +466,14 @@ exports.InputRoute = {
             },
             stringColor: function (container) {
                 var PARAMS = {
-                    tint: '#8df',
+                    primary: '#8df',
+                    secondary: 'rgb(255, 136, 221)',
                 };
                 var pane = new Tweakpane({
                     container: container,
                 });
-                pane.addInput(PARAMS, 'tint');
+                pane.addInput(PARAMS, 'primary');
+                pane.addInput(PARAMS, 'secondary');
             },
             numberColor: function (container) {
                 var PARAMS = {

@@ -1187,7 +1187,7 @@ var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/fo
 var color_2 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var number_color_1 = __webpack_require__(/*! ../../parser/number-color */ "./src/main/js/parser/number-color.ts");
-var string_color_1 = __webpack_require__(/*! ../../parser/string-color */ "./src/main/js/parser/string-color.ts");
+var StringColorParser = __webpack_require__(/*! ../../parser/string-color */ "./src/main/js/parser/string-color.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var color_swatch_text_1 = __webpack_require__(/*! ../input/color-swatch-text */ "./src/main/js/controller/input/color-swatch-text.ts");
 /**
@@ -1198,21 +1198,24 @@ function createWithString(document, target, params) {
     if (typeof initialValue !== 'string') {
         return null;
     }
-    var color = string_color_1.StringColorParser(initialValue);
-    if (!color) {
+    var notation = StringColorParser.getNotation(initialValue);
+    if (!notation) {
         return null;
     }
+    var converter = ColorConverter.fromMixed;
+    var color = converter(initialValue);
     var value = new input_value_1.InputValue(color);
+    var writer = ColorConverter.getStringifier(notation);
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
-            reader: ColorConverter.fromMixed,
+            reader: converter,
             target: target,
             value: value,
-            writer: ColorConverter.toString,
+            writer: writer,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
-            formatter: new color_1.ColorFormatter(),
-            parser: string_color_1.StringColorParser,
+            formatter: new color_1.ColorFormatter(writer),
+            parser: StringColorParser.CompositeParser,
             value: value,
         }),
         label: params.label || target.key,
@@ -1246,8 +1249,8 @@ function createWithNumber(document, target, params) {
             writer: ColorConverter.toNumber,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
-            formatter: new color_1.ColorFormatter(),
-            parser: string_color_1.StringColorParser,
+            formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
+            parser: StringColorParser.CompositeParser,
             value: value,
         }),
         label: params.label || target.key,
@@ -1272,8 +1275,8 @@ function createWithObject(document, target, params) {
             writer: color_2.Color.toRgbObject,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
-            formatter: new color_1.ColorFormatter(),
-            parser: string_color_1.StringColorParser,
+            formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
+            parser: StringColorParser.CompositeParser,
             value: value,
         }),
         label: params.label || target.key,
@@ -3326,16 +3329,17 @@ exports.toString = toString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var number_1 = __webpack_require__(/*! ../formatter/number */ "./src/main/js/formatter/number.ts");
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
 var number_color_1 = __webpack_require__(/*! ../parser/number-color */ "./src/main/js/parser/number-color.ts");
-var string_color_1 = __webpack_require__(/*! ../parser/string-color */ "./src/main/js/parser/string-color.ts");
+var StringColorParser = __webpack_require__(/*! ../parser/string-color */ "./src/main/js/parser/string-color.ts");
 /**
  * @hidden
  */
 function fromMixed(value) {
     if (typeof value === 'string') {
-        var cv = string_color_1.StringColorParser(value);
+        var cv = StringColorParser.CompositeParser(value);
         if (cv) {
             return cv;
         }
@@ -3355,7 +3359,7 @@ exports.fromMixed = fromMixed;
 /**
  * @hidden
  */
-function toString(value) {
+function toHexRgbString(value) {
     var hexes = value
         .getComponents('rgb')
         .map(function (comp) {
@@ -3365,7 +3369,26 @@ function toString(value) {
         .join('');
     return "#" + hexes;
 }
-exports.toString = toString;
+exports.toHexRgbString = toHexRgbString;
+/**
+ * @hidden
+ */
+function toFunctionalRgbString(value) {
+    var formatter = new number_1.NumberFormatter(0);
+    var comps = value
+        .getComponents('rgb')
+        .map(function (comp) { return formatter.format(comp); });
+    return "rgb(" + comps.join(', ') + ")";
+}
+exports.toFunctionalRgbString = toFunctionalRgbString;
+var NOTATION_TO_STRINGIFIER_MAP = {
+    'func.rgb': toFunctionalRgbString,
+    'hex.rgb': toHexRgbString,
+};
+function getStringifier(notation) {
+    return NOTATION_TO_STRINGIFIER_MAP[notation];
+}
+exports.getStringifier = getStringifier;
 /**
  * @hidden
  */
@@ -3506,13 +3529,13 @@ exports.BooleanFormatter = BooleanFormatter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ColorConverter = __webpack_require__(/*! ../converter/color */ "./src/main/js/converter/color.ts");
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 /**
  * @hidden
  */
 var ColorFormatter = /** @class */ (function () {
-    function ColorFormatter() {
+    function ColorFormatter(stringifier) {
+        this.stringifier_ = stringifier;
     }
     ColorFormatter.rgb = function (r, g, b) {
         var compsText = [
@@ -3531,7 +3554,7 @@ var ColorFormatter = /** @class */ (function () {
         return "hsl(" + compsText + ")";
     };
     ColorFormatter.prototype.format = function (value) {
-        return ColorConverter.toString(value);
+        return this.stringifier_(value);
     };
     return ColorFormatter;
 }());
@@ -4768,40 +4791,66 @@ exports.NumberColorParser = function (num) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
-var SUB_PARSERS = [
-    // #aabbcc
-    function (text) {
-        var matches = text.match(/^#?([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})$/);
-        if (!matches) {
+function parseCssNumberOrPercentage(text, maxValue) {
+    var m = text.match(/^(.+)%$/);
+    if (!m) {
+        return Math.min(parseFloat(text), maxValue);
+    }
+    return Math.min(parseFloat(m[1]) * 0.01 * maxValue, maxValue);
+}
+var NOTATION_TO_PARSER_MAP = {
+    'func.rgb': function (text) {
+        var m = text.match(/^rgb\(\s*([0-9A-Fa-f.]+%?)\s*,\s*([0-9A-Fa-f.]+%?)\s*,\s*([0-9A-Fa-f.]+%?)\s*\)$/);
+        if (!m) {
             return null;
         }
-        return new color_1.Color([
-            parseInt(matches[1], 16),
-            parseInt(matches[2], 16),
-            parseInt(matches[3], 16),
-        ], 'rgb');
-    },
-    // #abc
-    function (text) {
-        var matches = text.match(/^#?([0-9A-Fa-f])([0-9A-Fa-f])([0-9A-Fa-f])$/);
-        if (!matches) {
+        var comps = [
+            parseCssNumberOrPercentage(m[1], 255),
+            parseCssNumberOrPercentage(m[2], 255),
+            parseCssNumberOrPercentage(m[3], 255),
+        ];
+        if (isNaN(comps[0]) || isNaN(comps[1]) || isNaN(comps[2])) {
             return null;
         }
-        return new color_1.Color([
-            parseInt(matches[1] + matches[1], 16),
-            parseInt(matches[2] + matches[2], 16),
-            parseInt(matches[3] + matches[3], 16),
-        ], 'rgb');
+        return new color_1.Color(comps, 'rgb');
     },
-];
+    'hex.rgb': function (text) {
+        var mRrggbb = text.match(/^#?([0-9A-Fa-f])([0-9A-Fa-f])([0-9A-Fa-f])$/);
+        if (mRrggbb) {
+            return new color_1.Color([
+                parseInt(mRrggbb[1] + mRrggbb[1], 16),
+                parseInt(mRrggbb[2] + mRrggbb[2], 16),
+                parseInt(mRrggbb[3] + mRrggbb[3], 16),
+            ], 'rgb');
+        }
+        var mRgb = text.match(/^#?([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})$/);
+        if (mRgb) {
+            return new color_1.Color([parseInt(mRgb[1], 16), parseInt(mRgb[2], 16), parseInt(mRgb[3], 16)], 'rgb');
+        }
+        return null;
+    },
+};
 /**
  * @hidden
  */
-exports.StringColorParser = function (text) {
-    return SUB_PARSERS.reduce(function (result, subparser) {
+exports.CompositeParser = function (text) {
+    var notations = Object.keys(NOTATION_TO_PARSER_MAP);
+    return notations.reduce(function (result, notation) {
+        var subparser = NOTATION_TO_PARSER_MAP[notation];
         return result ? result : subparser(text);
     }, null);
 };
+function getNotation(text) {
+    var notations = Object.keys(NOTATION_TO_PARSER_MAP);
+    return notations.reduce(function (result, notation) {
+        if (result) {
+            return result;
+        }
+        var subparser = NOTATION_TO_PARSER_MAP[notation];
+        return subparser(text) ? notation : null;
+    }, null);
+}
+exports.getNotation = getNotation;
 
 
 /***/ }),
@@ -5312,26 +5361,26 @@ var ColorSwatchTextInputView = /** @class */ (function (_super) {
         _this.element.appendChild(swatchElem);
         var textElem = document.createElement('div');
         textElem.classList.add(className('t'));
-        _this.textInputView_ = config.textInputView;
-        textElem.appendChild(_this.textInputView_.element);
+        _this.textInputView = config.textInputView;
+        textElem.appendChild(_this.textInputView.element);
         _this.element.appendChild(textElem);
         return _this;
     }
     Object.defineProperty(ColorSwatchTextInputView.prototype, "value", {
         get: function () {
-            return this.textInputView_.value;
+            return this.textInputView.value;
         },
         enumerable: true,
         configurable: true
     });
     ColorSwatchTextInputView.prototype.dispose = function () {
         this.swatchInputView_.dispose();
-        this.textInputView_.dispose();
+        this.textInputView.dispose();
         _super.prototype.dispose.call(this);
     };
     ColorSwatchTextInputView.prototype.update = function () {
         this.swatchInputView_.update();
-        this.textInputView_.update();
+        this.textInputView.update();
     };
     return ColorSwatchTextInputView;
 }(view_1.View));
@@ -5422,7 +5471,7 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
             throw pane_error_1.PaneError.alreadyDisposed();
         }
         var value = this.value.rawValue;
-        this.swatchElem_.style.backgroundColor = ColorConverter.toString(value);
+        this.swatchElem_.style.backgroundColor = ColorConverter.toHexRgbString(value);
     };
     ColorSwatchInputView.prototype.onValueChange_ = function () {
         this.update();
