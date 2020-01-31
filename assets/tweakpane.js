@@ -401,6 +401,7 @@ var ButtonApi = /** @class */ (function () {
     ButtonApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.button.emitter;
         emitter.on(eventName, handler);
+        return this;
     };
     return ButtonApi;
 }());
