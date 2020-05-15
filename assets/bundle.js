@@ -131,6 +131,7 @@ var simple_router_1 = __webpack_require__(/*! ./simple-router */ "./src/doc/js/s
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.IndexRoute = void 0;
 var sketch_1 = __webpack_require__(/*! ../sketch */ "./src/doc/js/sketch.ts");
 var Util = __webpack_require__(/*! ../util */ "./src/doc/js/util.ts");
 exports.IndexRoute = {
@@ -297,6 +298,7 @@ exports.IndexRoute = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InputRoute = void 0;
 // tslint:disable:object-literal-sort-keys
 var Util = __webpack_require__(/*! ../util */ "./src/doc/js/util.ts");
 exports.InputRoute = {
@@ -528,6 +530,7 @@ exports.InputRoute = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MiscRoute = void 0;
 var Util = __webpack_require__(/*! ../util */ "./src/doc/js/util.ts");
 exports.MiscRoute = {
     pathname: /^(\/tweakpane)?\/misc.html$/,
@@ -970,6 +973,7 @@ exports.MiscRoute = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MonitorRoute = void 0;
 var Util = __webpack_require__(/*! ../util */ "./src/doc/js/util.ts");
 exports.MonitorRoute = {
     pathname: /^(\/tweakpane)?\/monitor.html$/,
@@ -1082,6 +1086,7 @@ exports.MonitorRoute = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SimpleRouter = void 0;
 var SimpleRouter = /** @class */ (function () {
     function SimpleRouter() {
         this.routes_ = [];
@@ -1113,6 +1118,7 @@ exports.SimpleRouter = SimpleRouter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Sketch = void 0;
 function map(v, s1, e1, s2, e2) {
     return s2 + ((v - s1) / (e1 - s1)) * (e2 - s2);
 }
@@ -1221,6 +1227,7 @@ exports.Sketch = Sketch;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.selectContainer = void 0;
 function selectContainer(marker) {
     return document.querySelector(".common-paneContainer-" + marker);
 }

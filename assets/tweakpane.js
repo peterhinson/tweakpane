@@ -388,6 +388,7 @@ process.umask = function() { return 0; };
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ButtonApi = void 0;
 var ButtonApi = /** @class */ (function () {
     /**
      * @hidden
@@ -396,7 +397,7 @@ var ButtonApi = /** @class */ (function () {
         this.controller = buttonController;
     }
     ButtonApi.prototype.dispose = function () {
-        this.controller.dispose();
+        this.controller.disposable.dispose();
     };
     ButtonApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.button.emitter;
@@ -419,11 +420,24 @@ exports.ButtonApi = ButtonApi;
 
 "use strict";
 
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FolderApi = void 0;
 var InputBindingControllerCreators = __webpack_require__(/*! ../controller/binding-creators/input */ "./src/main/js/controller/binding-creators/input.ts");
 var MonitorBindingControllerCreators = __webpack_require__(/*! ../controller/binding-creators/monitor */ "./src/main/js/controller/binding-creators/monitor.ts");
 var button_1 = __webpack_require__(/*! ../controller/button */ "./src/main/js/controller/button.ts");
 var separator_1 = __webpack_require__(/*! ../controller/separator */ "./src/main/js/controller/separator.ts");
+var disposable_1 = __webpack_require__(/*! ../model/disposable */ "./src/main/js/model/disposable.ts");
 var target_1 = __webpack_require__(/*! ../model/target */ "./src/main/js/model/target.ts");
 var button_2 = __webpack_require__(/*! ./button */ "./src/main/js/api/button.ts");
 var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/api/input-binding.ts");
@@ -447,11 +461,11 @@ var FolderApi = /** @class */ (function () {
         set: function (expanded) {
             this.controller.folder.expanded = expanded;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     FolderApi.prototype.dispose = function () {
-        this.controller.dispose();
+        this.controller.disposable.dispose();
     };
     FolderApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
@@ -466,12 +480,14 @@ var FolderApi = /** @class */ (function () {
         return new monitor_binding_1.MonitorBindingApi(uc);
     };
     FolderApi.prototype.addButton = function (params) {
-        var uc = new button_1.ButtonController(this.controller.document, params);
+        var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
         this.controller.uiControllerList.append(uc);
         return new button_2.ButtonApi(uc);
     };
     FolderApi.prototype.addSeparator = function () {
-        var uc = new separator_1.SeparatorController(this.controller.document);
+        var uc = new separator_1.SeparatorController(this.controller.document, {
+            disposable: new disposable_1.Disposable(),
+        });
         this.controller.uiControllerList.append(uc);
     };
     FolderApi.prototype.on = function (eventName, handler) {
@@ -499,6 +515,7 @@ exports.FolderApi = FolderApi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InputBindingApi = void 0;
 /**
  * The API for the input binding between the parameter and the pane.
  * @param In The type inner Tweakpane.
@@ -511,9 +528,6 @@ var InputBindingApi = /** @class */ (function () {
     function InputBindingApi(bindingController) {
         this.controller = bindingController;
     }
-    InputBindingApi.prototype.dispose = function () {
-        this.controller.dispose();
-    };
     InputBindingApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.binding.value.emitter;
         emitter.on(eventName, handler);
@@ -539,6 +553,7 @@ exports.InputBindingApi = InputBindingApi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MonitorBindingApi = void 0;
 /**
  * The API for the monitor binding between the parameter and the pane.
  */
@@ -550,7 +565,7 @@ var MonitorBindingApi = /** @class */ (function () {
         this.controller = bindingController;
     }
     MonitorBindingApi.prototype.dispose = function () {
-        this.controller.dispose();
+        this.controller.controller.disposable.dispose();
     };
     MonitorBindingApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.binding.value.emitter;
@@ -577,6 +592,7 @@ exports.MonitorBindingApi = MonitorBindingApi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.importJson = exports.exportJson = void 0;
 /**
  * @hidden
  */
@@ -614,7 +630,19 @@ exports.importJson = importJson;
 
 "use strict";
 
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RootApi = void 0;
 var InputBindingControllerCreators = __webpack_require__(/*! ../controller/binding-creators/input */ "./src/main/js/controller/binding-creators/input.ts");
 var MonitorBindingControllerCreators = __webpack_require__(/*! ../controller/binding-creators/monitor */ "./src/main/js/controller/binding-creators/monitor.ts");
 var button_1 = __webpack_require__(/*! ../controller/button */ "./src/main/js/controller/button.ts");
@@ -623,6 +651,7 @@ var input_binding_1 = __webpack_require__(/*! ../controller/input-binding */ "./
 var monitor_binding_1 = __webpack_require__(/*! ../controller/monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var separator_1 = __webpack_require__(/*! ../controller/separator */ "./src/main/js/controller/separator.ts");
 var UiUtil = __webpack_require__(/*! ../controller/ui-util */ "./src/main/js/controller/ui-util.ts");
+var disposable_1 = __webpack_require__(/*! ../model/disposable */ "./src/main/js/model/disposable.ts");
 var target_1 = __webpack_require__(/*! ../model/target */ "./src/main/js/model/target.ts");
 var button_2 = __webpack_require__(/*! ./button */ "./src/main/js/api/button.ts");
 var folder_2 = __webpack_require__(/*! ./folder */ "./src/main/js/api/folder.ts");
@@ -654,7 +683,7 @@ var RootApi = /** @class */ (function () {
         get: function () {
             return this.controller.view.element;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(RootApi.prototype, "expanded", {
@@ -668,11 +697,11 @@ var RootApi = /** @class */ (function () {
                 folder.expanded = expanded;
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     RootApi.prototype.dispose = function () {
-        this.controller.dispose();
+        this.controller.disposable.dispose();
     };
     RootApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
@@ -687,17 +716,19 @@ var RootApi = /** @class */ (function () {
         return new monitor_binding_2.MonitorBindingApi(uc);
     };
     RootApi.prototype.addButton = function (params) {
-        var uc = new button_1.ButtonController(this.controller.document, params);
+        var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
         this.controller.uiControllerList.append(uc);
         return new button_2.ButtonApi(uc);
     };
     RootApi.prototype.addFolder = function (params) {
-        var uc = new folder_1.FolderController(this.controller.document, params);
+        var uc = new folder_1.FolderController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
         this.controller.uiControllerList.append(uc);
         return new folder_2.FolderApi(uc);
     };
     RootApi.prototype.addSeparator = function () {
-        var uc = new separator_1.SeparatorController(this.controller.document);
+        var uc = new separator_1.SeparatorController(this.controller.document, {
+            disposable: new disposable_1.Disposable(),
+        });
         this.controller.uiControllerList.append(uc);
     };
     /**
@@ -764,6 +795,7 @@ exports.RootApi = RootApi;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InputBinding = void 0;
 /**
  * @hidden
  */
@@ -807,6 +839,7 @@ exports.InputBinding = InputBinding;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MonitorBinding = void 0;
 /**
  * @hidden
  */
@@ -849,6 +882,7 @@ exports.MonitorBinding = MonitorBinding;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CompositeConstraint = void 0;
 /**
  * @hidden
  */
@@ -860,7 +894,7 @@ var CompositeConstraint = /** @class */ (function () {
         get: function () {
             return this.constraints_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     CompositeConstraint.prototype.constrain = function (value) {
@@ -885,6 +919,7 @@ exports.CompositeConstraint = CompositeConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ListConstraint = void 0;
 /**
  * @hidden
  */
@@ -896,7 +931,7 @@ var ListConstraint = /** @class */ (function () {
         get: function () {
             return this.opts_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     ListConstraint.prototype.constrain = function (value) {
@@ -926,6 +961,7 @@ exports.ListConstraint = ListConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Point2dConstraint = void 0;
 var point_2d_1 = __webpack_require__(/*! ../model/point-2d */ "./src/main/js/model/point-2d.ts");
 /**
  * @hidden
@@ -955,6 +991,7 @@ exports.Point2dConstraint = Point2dConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RangeConstraint = void 0;
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 /**
  * @hidden
@@ -991,6 +1028,7 @@ exports.RangeConstraint = RangeConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StepConstraint = void 0;
 /**
  * @hidden
  */
@@ -1021,6 +1059,7 @@ exports.StepConstraint = StepConstraint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConstraintUtil = void 0;
 var composite_1 = __webpack_require__(/*! ./composite */ "./src/main/js/constraint/composite.ts");
 /**
  * @hidden
@@ -1058,11 +1097,13 @@ exports.ConstraintUtil = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var input_1 = __webpack_require__(/*! ../../binding/input */ "./src/main/js/binding/input.ts");
 var composite_1 = __webpack_require__(/*! ../../constraint/composite */ "./src/main/js/constraint/composite.ts");
 var list_1 = __webpack_require__(/*! ../../constraint/list */ "./src/main/js/constraint/list.ts");
 var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
 var BooleanConverter = __webpack_require__(/*! ../../converter/boolean */ "./src/main/js/converter/boolean.ts");
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var checkbox_1 = __webpack_require__(/*! ../input/checkbox */ "./src/main/js/controller/input/checkbox.ts");
@@ -1083,11 +1124,13 @@ function createController(document, value) {
     var c = value.constraint;
     if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
         return new list_2.ListInputController(document, {
+            disposable: new disposable_1.Disposable(),
             stringifyValue: BooleanConverter.toString,
             value: value,
         });
     }
     return new checkbox_1.CheckboxInputController(document, {
+        disposable: new disposable_1.Disposable(),
         value: value,
     });
 }
@@ -1109,6 +1152,7 @@ function create(document, target, params) {
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: createController(document, value),
+        disposable: new disposable_1.Disposable(),
         label: params.label || target.key,
     });
 }
@@ -1127,12 +1171,14 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var monitor_1 = __webpack_require__(/*! ../../binding/monitor */ "./src/main/js/binding/monitor.ts");
 var BooleanConverter = __webpack_require__(/*! ../../converter/boolean */ "./src/main/js/converter/boolean.ts");
 var boolean_1 = __webpack_require__(/*! ../../formatter/boolean */ "./src/main/js/formatter/boolean.ts");
 var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
 var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js/controller/monitor/multi-log.ts");
@@ -1148,10 +1194,12 @@ function create(document, target, params) {
     var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
         ? new single_log_1.SingleLogMonitorController(document, {
+            disposable: new disposable_1.Disposable(),
             formatter: new boolean_1.BooleanFormatter(),
             value: value,
         })
         : new multi_log_1.MultiLogMonitorController(document, {
+            disposable: new disposable_1.Disposable(),
             formatter: new boolean_1.BooleanFormatter(),
             value: value,
         });
@@ -1164,6 +1212,7 @@ function create(document, target, params) {
             value: value,
         }),
         controller: controller,
+        disposable: controller.disposable,
         label: params.label || target.key,
     });
 }
@@ -1182,10 +1231,12 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.createWithObject = exports.createWithNumber = exports.createWithString = void 0;
 var input_1 = __webpack_require__(/*! ../../binding/input */ "./src/main/js/binding/input.ts");
 var ColorConverter = __webpack_require__(/*! ../../converter/color */ "./src/main/js/converter/color.ts");
 var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/formatter/color.ts");
 var color_2 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var number_color_1 = __webpack_require__(/*! ../../parser/number-color */ "./src/main/js/parser/number-color.ts");
 var StringColorParser = __webpack_require__(/*! ../../parser/string-color */ "./src/main/js/parser/string-color.ts");
@@ -1205,9 +1256,11 @@ function createWithString(document, target, params) {
     }
     var converter = ColorConverter.fromMixed;
     var color = converter(initialValue);
+    var disposable = new disposable_1.Disposable();
     var value = new input_value_1.InputValue(color);
     var writer = ColorConverter.getStringifier(notation);
     return new input_binding_1.InputBindingController(document, {
+        disposable: disposable,
         binding: new input_1.InputBinding({
             reader: converter,
             target: target,
@@ -1215,6 +1268,7 @@ function createWithString(document, target, params) {
             writer: writer,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
+            disposable: disposable,
             formatter: new color_1.ColorFormatter(writer),
             parser: StringColorParser.CompositeParser,
             value: value,
@@ -1242,6 +1296,7 @@ function createWithNumber(document, target, params) {
         return null;
     }
     var value = new input_value_1.InputValue(color);
+    var disposable = new disposable_1.Disposable();
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
             reader: ColorConverter.fromMixed,
@@ -1250,10 +1305,12 @@ function createWithNumber(document, target, params) {
             writer: ColorConverter.toNumber,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
+            disposable: disposable,
             formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
             parser: StringColorParser.CompositeParser,
             value: value,
         }),
+        disposable: disposable,
         label: params.label || target.key,
     });
 }
@@ -1267,6 +1324,7 @@ function createWithObject(document, target, params) {
         return null;
     }
     var color = color_2.Color.fromRgbObject(initialValue);
+    var disposable = new disposable_1.Disposable();
     var value = new input_value_1.InputValue(color);
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
@@ -1276,10 +1334,12 @@ function createWithObject(document, target, params) {
             writer: color_2.Color.toRgbObject,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
+            disposable: disposable,
             formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
             parser: StringColorParser.CompositeParser,
             value: value,
         }),
+        disposable: disposable,
         label: params.label || target.key,
     });
 }
@@ -1298,6 +1358,7 @@ exports.createWithObject = createWithObject;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var BooleanInputBindingControllerCreators = __webpack_require__(/*! ./boolean-input */ "./src/main/js/controller/binding-creators/boolean-input.ts");
@@ -1354,6 +1415,7 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var BooleanMonitorBindingControllerCreators = __webpack_require__(/*! ./boolean-monitor */ "./src/main/js/controller/binding-creators/boolean-monitor.ts");
@@ -1404,6 +1466,7 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var input_1 = __webpack_require__(/*! ../../binding/input */ "./src/main/js/binding/input.ts");
 var composite_1 = __webpack_require__(/*! ../../constraint/composite */ "./src/main/js/constraint/composite.ts");
 var list_1 = __webpack_require__(/*! ../../constraint/list */ "./src/main/js/constraint/list.ts");
@@ -1413,6 +1476,7 @@ var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/con
 var NumberConverter = __webpack_require__(/*! ../../converter/number */ "./src/main/js/converter/number.ts");
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
@@ -1447,18 +1511,21 @@ function createController(document, value) {
     var c = value.constraint;
     if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
         return new list_2.ListInputController(document, {
+            disposable: new disposable_1.Disposable(),
             stringifyValue: NumberConverter.toString,
             value: value,
         });
     }
     if (c && util_1.ConstraintUtil.findConstraint(c, range_1.RangeConstraint)) {
         return new slider_text_1.SliderTextInputController(document, {
+            disposable: new disposable_1.Disposable(),
             formatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
             parser: string_number_1.StringNumberParser,
             value: value,
         });
     }
     return new number_text_1.NumberTextInputController(document, {
+        disposable: new disposable_1.Disposable(),
         formatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
         parser: string_number_1.StringNumberParser,
         value: value,
@@ -1479,9 +1546,11 @@ function create(document, target, params) {
         value: value,
         writer: function (v) { return v; },
     });
+    var controller = createController(document, value);
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
-        controller: createController(document, value),
+        controller: controller,
+        disposable: controller.disposable,
         label: params.label || target.key,
     });
 }
@@ -1500,12 +1569,14 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var monitor_1 = __webpack_require__(/*! ../../binding/monitor */ "./src/main/js/binding/monitor.ts");
 var NumberConverter = __webpack_require__(/*! ../../converter/number */ "./src/main/js/converter/number.ts");
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
 var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var graph_1 = __webpack_require__(/*! ../monitor/graph */ "./src/main/js/controller/monitor/graph.ts");
@@ -1519,10 +1590,12 @@ function createTextMonitor(document, target, params) {
     var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
         ? new single_log_1.SingleLogMonitorController(document, {
+            disposable: new disposable_1.Disposable(),
             formatter: createFormatter(),
             value: value,
         })
         : new multi_log_1.MultiLogMonitorController(document, {
+            disposable: new disposable_1.Disposable(),
             formatter: createFormatter(),
             value: value,
         });
@@ -1535,12 +1608,20 @@ function createTextMonitor(document, target, params) {
             value: value,
         }),
         controller: controller,
+        disposable: controller.disposable,
         label: params.label || target.key,
     });
 }
 function createGraphMonitor(document, target, params) {
     var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 64));
     var ticker = new interval_1.IntervalTicker(document, type_util_1.TypeUtil.getOrDefault(params.interval, constants_1.Constants.monitorDefaultInterval));
+    var controller = new graph_1.GraphMonitorController(document, {
+        disposable: new disposable_1.Disposable(),
+        formatter: createFormatter(),
+        maxValue: type_util_1.TypeUtil.getOrDefault('max' in params ? params.max : null, 100),
+        minValue: type_util_1.TypeUtil.getOrDefault('min' in params ? params.min : null, 0),
+        value: value,
+    });
     return new monitor_binding_1.MonitorBindingController(document, {
         binding: new monitor_1.MonitorBinding({
             reader: NumberConverter.fromMixed,
@@ -1548,12 +1629,8 @@ function createGraphMonitor(document, target, params) {
             ticker: ticker,
             value: value,
         }),
-        controller: new graph_1.GraphMonitorController(document, {
-            formatter: createFormatter(),
-            maxValue: type_util_1.TypeUtil.getOrDefault('max' in params ? params.max : null, 100),
-            minValue: type_util_1.TypeUtil.getOrDefault('min' in params ? params.min : null, 0),
-            value: value,
-        }),
+        controller: controller,
+        disposable: controller.disposable,
         label: params.label || target.key,
     });
 }
@@ -1582,6 +1659,7 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var input_1 = __webpack_require__(/*! ../../binding/input */ "./src/main/js/binding/input.ts");
 var composite_1 = __webpack_require__(/*! ../../constraint/composite */ "./src/main/js/constraint/composite.ts");
 var point_2d_1 = __webpack_require__(/*! ../../constraint/point-2d */ "./src/main/js/constraint/point-2d.ts");
@@ -1591,6 +1669,7 @@ var Point2dConverter = __webpack_require__(/*! ../../converter/point-2d */ "./sr
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var any_point_2d_1 = __webpack_require__(/*! ../../parser/any-point-2d */ "./src/main/js/parser/any-point-2d.ts");
 var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
@@ -1629,6 +1708,7 @@ function createController(document, value) {
         throw pane_error_1.PaneError.shouldNeverHappen();
     }
     return new point_2d_pad_text_1.Point2dPadTextInputController(document, {
+        disposable: new disposable_1.Disposable(),
         parser: string_number_1.StringNumberParser,
         value: value,
         xFormatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(c.xConstraint, value.rawValue.x)),
@@ -1651,9 +1731,11 @@ function create(document, target, params) {
         value: value,
         writer: function (v) { return v.toObject(); },
     });
+    var controller = createController(document, value);
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
-        controller: createController(document, value),
+        controller: controller,
+        disposable: controller.disposable,
         label: params.label || target.key,
     });
 }
@@ -1672,12 +1754,14 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var input_1 = __webpack_require__(/*! ../../binding/input */ "./src/main/js/binding/input.ts");
 var composite_1 = __webpack_require__(/*! ../../constraint/composite */ "./src/main/js/constraint/composite.ts");
 var list_1 = __webpack_require__(/*! ../../constraint/list */ "./src/main/js/constraint/list.ts");
 var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
 var StringConverter = __webpack_require__(/*! ../../converter/string */ "./src/main/js/converter/string.ts");
 var string_1 = __webpack_require__(/*! ../../formatter/string */ "./src/main/js/formatter/string.ts");
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/input/list.ts");
@@ -1698,11 +1782,13 @@ function createController(document, value) {
     var c = value.constraint;
     if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
         return new list_2.ListInputController(document, {
+            disposable: new disposable_1.Disposable(),
             stringifyValue: StringConverter.toString,
             value: value,
         });
     }
     return new text_1.TextInputController(document, {
+        disposable: new disposable_1.Disposable(),
         formatter: new string_1.StringFormatter(),
         parser: StringConverter.toString,
         value: value,
@@ -1723,9 +1809,11 @@ function create(document, target, params) {
         value: value,
         writer: function (v) { return v; },
     });
+    var controller = createController(document, value);
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
-        controller: createController(document, value),
+        controller: controller,
+        disposable: controller.disposable,
         label: params.label || target.key,
     });
 }
@@ -1744,12 +1832,14 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.create = void 0;
 var monitor_1 = __webpack_require__(/*! ../../binding/monitor */ "./src/main/js/binding/monitor.ts");
 var StringConverter = __webpack_require__(/*! ../../converter/string */ "./src/main/js/converter/string.ts");
 var string_1 = __webpack_require__(/*! ../../formatter/string */ "./src/main/js/formatter/string.ts");
 var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
 var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js/controller/monitor/multi-log.ts");
@@ -1766,10 +1856,12 @@ function create(document, target, params) {
     var multiline = value.totalCount > 1 || ('multiline' in params && params.multiline);
     var controller = multiline
         ? new multi_log_1.MultiLogMonitorController(document, {
+            disposable: new disposable_1.Disposable(),
             formatter: new string_1.StringFormatter(),
             value: value,
         })
         : new single_log_1.SingleLogMonitorController(document, {
+            disposable: new disposable_1.Disposable(),
             formatter: new string_1.StringFormatter(),
             value: value,
         });
@@ -1782,6 +1874,7 @@ function create(document, target, params) {
             value: value,
         }),
         controller: controller,
+        disposable: controller.disposable,
         label: params.label || target.key,
     });
 }
@@ -1800,6 +1893,7 @@ exports.create = create;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ButtonController = void 0;
 var button_1 = __webpack_require__(/*! ../model/button */ "./src/main/js/model/button.ts");
 var button_2 = __webpack_require__(/*! ../view/button */ "./src/main/js/view/button.ts");
 /**
@@ -1809,14 +1903,13 @@ var ButtonController = /** @class */ (function () {
     function ButtonController(document, config) {
         this.onButtonClick_ = this.onButtonClick_.bind(this);
         this.button = new button_1.Button(config.title);
+        this.disposable = config.disposable;
         this.view = new button_2.ButtonView(document, {
             button: this.button,
+            disposable: this.disposable,
         });
         this.view.buttonElement.addEventListener('click', this.onButtonClick_);
     }
-    ButtonController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     ButtonController.prototype.onButtonClick_ = function () {
         this.button.click();
     };
@@ -1837,11 +1930,12 @@ exports.ButtonController = ButtonController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FolderController = void 0;
 var DomUtil = __webpack_require__(/*! ../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
-var list_1 = __webpack_require__(/*! ../model/list */ "./src/main/js/model/list.ts");
+var ui_controller_list_1 = __webpack_require__(/*! ../model/ui-controller-list */ "./src/main/js/model/ui-controller-list.ts");
 var folder_2 = __webpack_require__(/*! ../view/folder */ "./src/main/js/view/folder.ts");
 var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/controller/input-binding.ts");
 var monitor_binding_1 = __webpack_require__(/*! ./monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
@@ -1855,13 +1949,17 @@ var FolderController = /** @class */ (function () {
         this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
         this.onTitleClick_ = this.onTitleClick_.bind(this);
         this.onUiControllerListAppend_ = this.onUiControllerListAppend_.bind(this);
+        this.onUiControllerListRemove_ = this.onUiControllerListRemove_.bind(this);
         this.emitter = new emitter_1.Emitter();
+        this.disposable = config.disposable;
         this.folder = new folder_1.Folder(config.title, type_util_1.TypeUtil.getOrDefault(config.expanded, true));
         this.folder.emitter.on('change', this.onFolderChange_);
-        this.ucList_ = new list_1.List();
+        this.ucList_ = new ui_controller_list_1.UiControllerList();
         this.ucList_.emitter.on('append', this.onUiControllerListAppend_);
+        this.ucList_.emitter.on('remove', this.onUiControllerListRemove_);
         this.doc_ = document;
         this.view = new folder_2.FolderView(this.doc_, {
+            disposable: this.disposable,
             folder: this.folder,
         });
         this.view.titleElement.addEventListener('click', this.onTitleClick_);
@@ -1870,19 +1968,16 @@ var FolderController = /** @class */ (function () {
         get: function () {
             return this.doc_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(FolderController.prototype, "uiControllerList", {
         get: function () {
             return this.ucList_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    FolderController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     FolderController.prototype.computeExpandedHeight_ = function () {
         var _this = this;
         var elem = this.view.containerElement;
@@ -1916,6 +2011,9 @@ var FolderController = /** @class */ (function () {
         this.view.containerElement.appendChild(uc.view.element);
         this.folder.expandedHeight = this.computeExpandedHeight_();
     };
+    FolderController.prototype.onUiControllerListRemove_ = function () {
+        this.folder.expandedHeight = this.computeExpandedHeight_();
+    };
     FolderController.prototype.onInputChange_ = function (value) {
         this.emitter.emit('inputchange', [value]);
     };
@@ -1942,6 +2040,7 @@ exports.FolderController = FolderController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InputBindingController = void 0;
 var labeled_1 = __webpack_require__(/*! ../view/labeled */ "./src/main/js/view/labeled.ts");
 /**
  * @hidden
@@ -1950,15 +2049,13 @@ var InputBindingController = /** @class */ (function () {
     function InputBindingController(document, config) {
         this.binding = config.binding;
         this.controller = config.controller;
+        this.disposable = config.disposable;
         this.view = new labeled_1.LabeledView(document, {
+            disposable: this.disposable,
             label: config.label,
             view: this.controller.view,
         });
     }
-    InputBindingController.prototype.dispose = function () {
-        this.controller.dispose();
-        this.view.dispose();
-    };
     return InputBindingController;
 }());
 exports.InputBindingController = InputBindingController;
@@ -1976,6 +2073,7 @@ exports.InputBindingController = InputBindingController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CheckboxInputController = void 0;
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var checkbox_1 = __webpack_require__(/*! ../../view/input/checkbox */ "./src/main/js/view/input/checkbox.ts");
 /**
@@ -1985,14 +2083,13 @@ var CheckboxInputController = /** @class */ (function () {
     function CheckboxInputController(document, config) {
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.value = config.value;
+        this.disposable = config.disposable;
         this.view = new checkbox_1.CheckboxInputView(document, {
+            disposable: this.disposable,
             value: this.value,
         });
         this.view.inputElement.addEventListener('change', this.onInputChange_);
     }
-    CheckboxInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     CheckboxInputController.prototype.onInputChange_ = function (e) {
         var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
         this.value.rawValue = inputElem.checked;
@@ -2015,6 +2112,7 @@ exports.CheckboxInputController = CheckboxInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorPickerInputController = void 0;
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/model/foldable.ts");
@@ -2032,18 +2130,23 @@ var ColorPickerInputController = /** @class */ (function () {
         this.onInputBlur_ = this.onInputBlur_.bind(this);
         this.value = config.value;
         this.foldable = new foldable_1.Foldable();
+        this.disposable = config.disposable;
         this.hPaletteIc_ = new h_palette_1.HPaletteInputController(document, {
+            disposable: this.disposable,
             value: this.value,
         });
         this.svPaletteIc_ = new sv_palette_1.SvPaletteInputController(document, {
+            disposable: this.disposable,
             value: this.value,
         });
         this.rgbTextIc_ = new rgb_text_1.RgbTextInputController(document, {
+            disposable: this.disposable,
             formatter: new number_1.NumberFormatter(0),
             parser: string_number_1.StringNumberParser,
             value: this.value,
         });
         this.view = new color_picker_1.ColorPickerInputView(document, {
+            disposable: this.disposable,
             foldable: this.foldable,
             hPaletteInputView: this.hPaletteIc_.view,
             rgbTextView: this.rgbTextIc_.view,
@@ -2054,9 +2157,6 @@ var ColorPickerInputController = /** @class */ (function () {
             elem.addEventListener('blur', _this.onInputBlur_);
         });
     }
-    ColorPickerInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     ColorPickerInputController.prototype.onInputBlur_ = function (e) {
         var elem = this.view.element;
         var nextTarget = type_util_1.TypeUtil.forceCast(e.relatedTarget);
@@ -2081,6 +2181,7 @@ exports.ColorPickerInputController = ColorPickerInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorSwatchTextInputController = void 0;
 var color_swatch_text_1 = __webpack_require__(/*! ../../view/input/color-swatch-text */ "./src/main/js/view/input/color-swatch-text.ts");
 var color_swatch_1 = __webpack_require__(/*! ../input/color-swatch */ "./src/main/js/controller/input/color-swatch.ts");
 var text_1 = __webpack_require__(/*! ./text */ "./src/main/js/controller/input/text.ts");
@@ -2090,22 +2191,25 @@ var text_1 = __webpack_require__(/*! ./text */ "./src/main/js/controller/input/t
 var ColorSwatchTextInputController = /** @class */ (function () {
     function ColorSwatchTextInputController(document, config) {
         this.value = config.value;
+        this.disposable = config.disposable;
         this.swatchIc_ = new color_swatch_1.ColorSwatchInputController(document, {
+            disposable: this.disposable,
             value: this.value,
         });
+        this.disposable = config.disposable;
         this.textIc_ = new text_1.TextInputController(document, {
+            disposable: this.disposable,
             formatter: config.formatter,
             parser: config.parser,
             value: this.value,
         });
+        this.disposable = config.disposable;
         this.view = new color_swatch_text_1.ColorSwatchTextInputView(document, {
+            disposable: this.disposable,
             swatchInputView: this.swatchIc_.view,
             textInputView: this.textIc_.view,
         });
     }
-    ColorSwatchTextInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     return ColorSwatchTextInputController;
 }());
 exports.ColorSwatchTextInputController = ColorSwatchTextInputController;
@@ -2123,6 +2227,7 @@ exports.ColorSwatchTextInputController = ColorSwatchTextInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorSwatchInputController = void 0;
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var color_swatch_1 = __webpack_require__(/*! ../../view/input/color-swatch */ "./src/main/js/view/input/color-swatch.ts");
 var color_picker_1 = __webpack_require__(/*! ./color-picker */ "./src/main/js/controller/input/color-picker.ts");
@@ -2134,19 +2239,19 @@ var ColorSwatchInputController = /** @class */ (function () {
         this.onButtonBlur_ = this.onButtonBlur_.bind(this);
         this.onButtonClick_ = this.onButtonClick_.bind(this);
         this.value = config.value;
+        this.disposable = config.disposable;
         this.pickerIc_ = new color_picker_1.ColorPickerInputController(document, {
+            disposable: this.disposable,
             value: this.value,
         });
         this.view = new color_swatch_1.ColorSwatchInputView(document, {
+            disposable: this.disposable,
             pickerInputView: this.pickerIc_.view,
             value: this.value,
         });
         this.view.buttonElement.addEventListener('blur', this.onButtonBlur_);
         this.view.buttonElement.addEventListener('click', this.onButtonClick_);
     }
-    ColorSwatchInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     ColorSwatchInputController.prototype.onButtonBlur_ = function (e) {
         var elem = this.view.element;
         var nextTarget = type_util_1.TypeUtil.forceCast(e.relatedTarget);
@@ -2174,6 +2279,7 @@ exports.ColorSwatchInputController = ColorSwatchInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HPaletteInputController = void 0;
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
 var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
@@ -2187,7 +2293,9 @@ var HPaletteInputController = /** @class */ (function () {
         this.onPointerMove_ = this.onPointerMove_.bind(this);
         this.onPointerUp_ = this.onPointerUp_.bind(this);
         this.value = config.value;
+        this.disposable = config.disposable;
         this.view = new h_palette_1.HPaletteInputView(document, {
+            disposable: this.disposable,
             value: this.value,
         });
         this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.canvasElement);
@@ -2195,9 +2303,6 @@ var HPaletteInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
-    HPaletteInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     HPaletteInputController.prototype.handlePointerEvent_ = function (d) {
         var hue = number_util_1.NumberUtil.map(d.py, 0, 1, 0, 360);
         var c = this.value.rawValue;
@@ -2231,6 +2336,7 @@ exports.HPaletteInputController = HPaletteInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ListInputController = void 0;
 var list_1 = __webpack_require__(/*! ../../constraint/list */ "./src/main/js/constraint/list.ts");
 var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
@@ -2252,7 +2358,9 @@ var ListInputController = /** @class */ (function () {
         this.onSelectChange_ = this.onSelectChange_.bind(this);
         this.value_ = config.value;
         this.listItems_ = findListItems(this.value_) || [];
+        this.disposable = config.disposable;
         this.view_ = new list_2.ListInputView(document, {
+            disposable: this.disposable,
             options: this.listItems_,
             stringifyValue: config.stringifyValue,
             value: this.value_,
@@ -2263,19 +2371,16 @@ var ListInputController = /** @class */ (function () {
         get: function () {
             return this.value_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(ListInputController.prototype, "view", {
         get: function () {
             return this.view_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    ListInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     ListInputController.prototype.onSelectChange_ = function (e) {
         var selectElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
         var optElem = selectElem.selectedOptions.item(0);
@@ -2316,6 +2421,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NumberTextInputController = void 0;
 var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
 var text_1 = __webpack_require__(/*! ./text */ "./src/main/js/controller/input/text.ts");
 /**
@@ -2330,9 +2436,6 @@ var NumberTextInputController = /** @class */ (function (_super) {
         _this.view.inputElement.addEventListener('keydown', _this.onInputKeyDown_);
         return _this;
     }
-    NumberTextInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     NumberTextInputController.prototype.onInputKeyDown_ = function (e) {
         var step = UiUtil.getStepForKey(this.step_, e);
         if (step !== 0) {
@@ -2357,6 +2460,7 @@ exports.NumberTextInputController = NumberTextInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Point2dPadTextInputController = void 0;
 var point_2d_pad_text_1 = __webpack_require__(/*! ../../view/input/point-2d-pad-text */ "./src/main/js/view/input/point-2d-pad-text.ts");
 var point_2d_pad_1 = __webpack_require__(/*! ./point-2d-pad */ "./src/main/js/controller/input/point-2d-pad.ts");
 var point_2d_text_1 = __webpack_require__(/*! ./point-2d-text */ "./src/main/js/controller/input/point-2d-text.ts");
@@ -2368,25 +2472,26 @@ var Point2dPadTextInputController = /** @class */ (function () {
         this.onPadButtonBlur_ = this.onPadButtonBlur_.bind(this);
         this.onPadButtonClick_ = this.onPadButtonClick_.bind(this);
         this.value = config.value;
+        this.disposable = config.disposable;
         this.padIc_ = new point_2d_pad_1.Point2dPadInputController(document, {
+            disposable: this.disposable,
             value: this.value,
         });
         this.textIc_ = new point_2d_text_1.Point2dTextInputController(document, {
+            disposable: this.disposable,
             parser: config.parser,
             value: this.value,
             xFormatter: config.xFormatter,
             yFormatter: config.yFormatter,
         });
         this.view = new point_2d_pad_text_1.Point2dPadTextInputView(document, {
+            disposable: this.disposable,
             padInputView: this.padIc_.view,
             textInputView: this.textIc_.view,
         });
         this.view.padButtonElement.addEventListener('blur', this.onPadButtonBlur_);
         this.view.padButtonElement.addEventListener('click', this.onPadButtonClick_);
     }
-    Point2dPadTextInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     Point2dPadTextInputController.prototype.onPadButtonBlur_ = function () {
         this.padIc_.foldable.expanded = false;
     };
@@ -2410,6 +2515,7 @@ exports.Point2dPadTextInputController = Point2dPadTextInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Point2dPadInputController = void 0;
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
 var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/model/foldable.ts");
@@ -2427,7 +2533,9 @@ var Point2dPadInputController = /** @class */ (function () {
         this.value = config.value;
         this.foldable = new foldable_1.Foldable();
         this.maxValue_ = UiUtil.getSuitableMaxValueForPoint2dPad(this.value.constraint, this.value.rawValue);
+        this.disposable = config.disposable;
         this.view = new point_2d_pad_1.Point2dPadInputView(document, {
+            disposable: this.disposable,
             foldable: this.foldable,
             maxValue: this.maxValue_,
             value: this.value,
@@ -2437,9 +2545,6 @@ var Point2dPadInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
-    Point2dPadInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     Point2dPadInputController.prototype.handlePointerEvent_ = function (d) {
         var max = this.maxValue_;
         this.value.rawValue = new point_2d_1.Point2d(number_util_1.NumberUtil.map(d.px, 0, 1, -max, +max), number_util_1.NumberUtil.map(d.py, 0, 1, -max, +max));
@@ -2471,6 +2576,7 @@ exports.Point2dPadInputController = Point2dPadInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Point2dTextInputController = void 0;
 var point_2d_1 = __webpack_require__(/*! ../../constraint/point-2d */ "./src/main/js/constraint/point-2d.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var point_2d_2 = __webpack_require__(/*! ../../model/point-2d */ "./src/main/js/model/point-2d.ts");
@@ -2489,7 +2595,9 @@ var Point2dTextInputController = /** @class */ (function () {
         var c = this.value.constraint;
         this.xStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.Point2dConstraint ? c.xConstraint : undefined);
         this.yStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.Point2dConstraint ? c.yConstraint : undefined);
+        this.disposable = config.disposable;
         this.view = new point_2d_text_1.Point2dTextInputView(document, {
+            disposable: this.disposable,
             value: this.value,
             xFormatter: config.xFormatter,
             yFormatter: config.yFormatter,
@@ -2499,9 +2607,6 @@ var Point2dTextInputController = /** @class */ (function () {
             inputElem.addEventListener('keydown', _this.onInputKeyDown_);
         });
     }
-    Point2dTextInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     Point2dTextInputController.prototype.findIndexOfInputElem_ = function (inputElem) {
         var inputElems = this.view.inputElements;
         for (var i = 0; i < inputElems.length; i++) {
@@ -2564,6 +2669,7 @@ exports.Point2dTextInputController = Point2dTextInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RgbTextInputController = void 0;
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
 var rgb_text_1 = __webpack_require__(/*! ../../view/input/rgb-text */ "./src/main/js/view/input/rgb-text.ts");
@@ -2579,7 +2685,9 @@ var RgbTextInputController = /** @class */ (function () {
         this.onInputKeyDown_ = this.onInputKeyDown_.bind(this);
         this.parser_ = config.parser;
         this.value = config.value;
+        this.disposable = config.disposable;
         this.view = new rgb_text_1.RgbTextInputView(document, {
+            disposable: this.disposable,
             formatter: config.formatter,
             value: this.value,
         });
@@ -2588,9 +2696,6 @@ var RgbTextInputController = /** @class */ (function () {
             inputElem.addEventListener('keydown', _this.onInputKeyDown_);
         });
     }
-    RgbTextInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     RgbTextInputController.prototype.findIndexOfInputElem_ = function (inputElem) {
         var inputElems = this.view.inputElements;
         for (var i = 0; i < inputElems.length; i++) {
@@ -2653,6 +2758,7 @@ exports.RgbTextInputController = RgbTextInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SliderTextInputController = void 0;
 var slider_text_1 = __webpack_require__(/*! ../../view/input/slider-text */ "./src/main/js/view/input/slider-text.ts");
 var number_text_1 = __webpack_require__(/*! ./number-text */ "./src/main/js/controller/input/number-text.ts");
 var slider_1 = __webpack_require__(/*! ./slider */ "./src/main/js/controller/input/slider.ts");
@@ -2662,15 +2768,19 @@ var slider_1 = __webpack_require__(/*! ./slider */ "./src/main/js/controller/inp
 var SliderTextInputController = /** @class */ (function () {
     function SliderTextInputController(document, config) {
         this.value_ = config.value;
+        this.disposable = config.disposable;
         this.sliderIc_ = new slider_1.SliderInputController(document, {
+            disposable: this.disposable,
             value: config.value,
         });
         this.textIc_ = new number_text_1.NumberTextInputController(document, {
+            disposable: this.disposable,
             formatter: config.formatter,
             parser: config.parser,
             value: config.value,
         });
         this.view_ = new slider_text_1.SliderTextInputView(document, {
+            disposable: this.disposable,
             sliderInputView: this.sliderIc_.view,
             textInputView: this.textIc_.view,
         });
@@ -2679,19 +2789,16 @@ var SliderTextInputController = /** @class */ (function () {
         get: function () {
             return this.value_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(SliderTextInputController.prototype, "view", {
         get: function () {
             return this.view_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    SliderTextInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     return SliderTextInputController;
 }());
 exports.SliderTextInputController = SliderTextInputController;
@@ -2709,6 +2816,7 @@ exports.SliderTextInputController = SliderTextInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SliderInputController = void 0;
 var range_1 = __webpack_require__(/*! ../../constraint/range */ "./src/main/js/constraint/range.ts");
 var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
@@ -2743,7 +2851,9 @@ var SliderInputController = /** @class */ (function () {
         var _a = estimateSuitableRange(this.value), min = _a[0], max = _a[1];
         this.minValue_ = min;
         this.maxValue_ = max;
+        this.disposable = config.disposable;
         this.view = new slider_1.SliderInputView(document, {
+            disposable: this.disposable,
             maxValue: this.maxValue_,
             minValue: this.minValue_,
             value: this.value,
@@ -2753,9 +2863,6 @@ var SliderInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
-    SliderInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     SliderInputController.prototype.onPointerDown_ = function (d) {
         this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
@@ -2785,6 +2892,7 @@ exports.SliderInputController = SliderInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SvPaletteInputController = void 0;
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
 var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
@@ -2798,7 +2906,9 @@ var SvPaletteInputController = /** @class */ (function () {
         this.onPointerMove_ = this.onPointerMove_.bind(this);
         this.onPointerUp_ = this.onPointerUp_.bind(this);
         this.value = config.value;
+        this.disposable = config.disposable;
         this.view = new sv_palette_1.SvPaletteInputView(document, {
+            disposable: this.disposable,
             value: this.value,
         });
         this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.canvasElement);
@@ -2806,9 +2916,6 @@ var SvPaletteInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
-    SvPaletteInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     SvPaletteInputController.prototype.handlePointerEvent_ = function (d) {
         var saturation = number_util_1.NumberUtil.map(d.px, 0, 1, 0, 100);
         var value = number_util_1.NumberUtil.map(d.py, 0, 1, 100, 0);
@@ -2842,6 +2949,7 @@ exports.SvPaletteInputController = SvPaletteInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TextInputController = void 0;
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var text_1 = __webpack_require__(/*! ../../view/input/text */ "./src/main/js/view/input/text.ts");
 /**
@@ -2852,15 +2960,14 @@ var TextInputController = /** @class */ (function () {
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.parser_ = config.parser;
         this.value = config.value;
+        this.disposable = config.disposable;
         this.view = new text_1.TextInputView(document, {
+            disposable: this.disposable,
             formatter: config.formatter,
             value: this.value,
         });
         this.view.inputElement.addEventListener('change', this.onInputChange_);
     }
-    TextInputController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     TextInputController.prototype.onInputChange_ = function (e) {
         var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
         var value = inputElem.value;
@@ -2887,24 +2994,26 @@ exports.TextInputController = TextInputController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MonitorBindingController = void 0;
 var labeled_1 = __webpack_require__(/*! ../view/labeled */ "./src/main/js/view/labeled.ts");
 /**
  * @hidden
  */
 var MonitorBindingController = /** @class */ (function () {
     function MonitorBindingController(document, config) {
+        var _this = this;
         this.binding = config.binding;
         this.controller = config.controller;
+        this.disposable = config.disposable;
         this.view = new labeled_1.LabeledView(document, {
+            disposable: this.disposable,
             label: config.label,
             view: this.controller.view,
         });
+        this.controller.disposable.emitter.on('dispose', function () {
+            _this.binding.dispose();
+        });
     }
-    MonitorBindingController.prototype.dispose = function () {
-        this.binding.dispose();
-        this.controller.dispose();
-        this.view.dispose();
-    };
     return MonitorBindingController;
 }());
 exports.MonitorBindingController = MonitorBindingController;
@@ -2922,6 +3031,7 @@ exports.MonitorBindingController = MonitorBindingController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GraphMonitorController = void 0;
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var graph_cursor_1 = __webpack_require__(/*! ../../model/graph-cursor */ "./src/main/js/model/graph-cursor.ts");
 var graph_1 = __webpack_require__(/*! ../../view/monitor/graph */ "./src/main/js/view/monitor/graph.ts");
@@ -2934,8 +3044,10 @@ var GraphMonitorController = /** @class */ (function () {
         this.onGraphMouseMove_ = this.onGraphMouseMove_.bind(this);
         this.value = config.value;
         this.cursor_ = new graph_cursor_1.GraphCursor();
+        this.disposable = config.disposable;
         this.view = new graph_1.GraphMonitorView(document, {
             cursor: this.cursor_,
+            disposable: this.disposable,
             formatter: config.formatter,
             maxValue: config.maxValue,
             minValue: config.minValue,
@@ -2944,9 +3056,6 @@ var GraphMonitorController = /** @class */ (function () {
         this.view.graphElement.addEventListener('mouseleave', this.onGraphMouseLeave_);
         this.view.graphElement.addEventListener('mousemove', this.onGraphMouseMove_);
     }
-    GraphMonitorController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     GraphMonitorController.prototype.onGraphMouseLeave_ = function () {
         this.cursor_.index = -1;
     };
@@ -2972,6 +3081,7 @@ exports.GraphMonitorController = GraphMonitorController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MultiLogMonitorController = void 0;
 var multi_log_1 = __webpack_require__(/*! ../../view/monitor/multi-log */ "./src/main/js/view/monitor/multi-log.ts");
 /**
  * @hidden
@@ -2979,14 +3089,13 @@ var multi_log_1 = __webpack_require__(/*! ../../view/monitor/multi-log */ "./src
 var MultiLogMonitorController = /** @class */ (function () {
     function MultiLogMonitorController(document, config) {
         this.value = config.value;
+        this.disposable = config.disposable;
         this.view = new multi_log_1.MultiLogMonitorView(document, {
+            disposable: this.disposable,
             formatter: config.formatter,
             value: this.value,
         });
     }
-    MultiLogMonitorController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     return MultiLogMonitorController;
 }());
 exports.MultiLogMonitorController = MultiLogMonitorController;
@@ -3004,6 +3113,7 @@ exports.MultiLogMonitorController = MultiLogMonitorController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SingleLogMonitorController = void 0;
 var single_log_1 = __webpack_require__(/*! ../../view/monitor/single-log */ "./src/main/js/view/monitor/single-log.ts");
 /**
  * @hidden
@@ -3011,14 +3121,13 @@ var single_log_1 = __webpack_require__(/*! ../../view/monitor/single-log */ "./s
 var SingleLogMonitorController = /** @class */ (function () {
     function SingleLogMonitorController(document, config) {
         this.value = config.value;
+        this.disposable = config.disposable;
         this.view = new single_log_1.SingleLogMonitorView(document, {
+            disposable: this.disposable,
             formatter: config.formatter,
             value: this.value,
         });
     }
-    SingleLogMonitorController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     return SingleLogMonitorController;
 }());
 exports.SingleLogMonitorController = SingleLogMonitorController;
@@ -3036,6 +3145,7 @@ exports.SingleLogMonitorController = SingleLogMonitorController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RootController = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
@@ -3066,7 +3176,9 @@ var RootController = /** @class */ (function () {
         this.ucList_ = new list_1.List();
         this.ucList_.emitter.on('append', this.onUiControllerListAppend_);
         this.doc_ = document;
+        this.disposable = config.disposable;
         this.view = new root_1.RootView(this.doc_, {
+            disposable: this.disposable,
             folder: this.folder,
         });
         if (this.view.titleElement) {
@@ -3080,19 +3192,16 @@ var RootController = /** @class */ (function () {
         get: function () {
             return this.doc_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(RootController.prototype, "uiControllerList", {
         get: function () {
             return this.ucList_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    RootController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     RootController.prototype.onUiControllerListAppend_ = function (uc) {
         if (uc instanceof input_binding_1.InputBindingController) {
             var emitter = uc.binding.value.emitter;
@@ -3144,17 +3253,18 @@ exports.RootController = RootController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SeparatorController = void 0;
 var separator_1 = __webpack_require__(/*! ../view/separator */ "./src/main/js/view/separator.ts");
 /**
  * @hidden
  */
 var SeparatorController = /** @class */ (function () {
-    function SeparatorController(document) {
-        this.view = new separator_1.SeparatorView(document);
+    function SeparatorController(document, config) {
+        this.disposable = config.disposable;
+        this.view = new separator_1.SeparatorView(document, {
+            disposable: this.disposable,
+        });
     }
-    SeparatorController.prototype.dispose = function () {
-        this.view.dispose();
-    };
     return SeparatorController;
 }());
 exports.SeparatorController = SeparatorController;
@@ -3172,6 +3282,7 @@ exports.SeparatorController = SeparatorController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getSuitableMaxValueForPoint2dPad = exports.getSuitableDecimalDigits = exports.getStepForKey = exports.getStepForTextInput = exports.findControllers = exports.normalizeInputParamsOptions = void 0;
 var point_2d_1 = __webpack_require__(/*! ../constraint/point-2d */ "./src/main/js/constraint/point-2d.ts");
 var range_1 = __webpack_require__(/*! ../constraint/range */ "./src/main/js/constraint/range.ts");
 var step_1 = __webpack_require__(/*! ../constraint/step */ "./src/main/js/constraint/step.ts");
@@ -3299,6 +3410,7 @@ exports.getSuitableMaxValueForPoint2dPad = getSuitableMaxValueForPoint2dPad;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.toString = exports.fromMixed = void 0;
 /**
  * @hidden
  */
@@ -3330,6 +3442,7 @@ exports.toString = toString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.toNumber = exports.getStringifier = exports.toFunctionalRgbString = exports.toHexRgbString = exports.fromMixed = void 0;
 var number_1 = __webpack_require__(/*! ../formatter/number */ "./src/main/js/formatter/number.ts");
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
@@ -3413,6 +3526,7 @@ exports.toNumber = toNumber;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.toString = exports.fromMixed = void 0;
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var string_number_1 = __webpack_require__(/*! ../parser/string-number */ "./src/main/js/parser/string-number.ts");
 /**
@@ -3452,6 +3566,7 @@ exports.toString = toString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.fromMixed = void 0;
 var point_2d_1 = __webpack_require__(/*! ../model/point-2d */ "./src/main/js/model/point-2d.ts");
 var any_point_2d_1 = __webpack_require__(/*! ../parser/any-point-2d */ "./src/main/js/parser/any-point-2d.ts");
 /**
@@ -3475,6 +3590,7 @@ exports.fromMixed = fromMixed;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.toString = exports.fromMixed = void 0;
 /**
  * @hidden
  */
@@ -3503,6 +3619,7 @@ exports.toString = toString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BooleanFormatter = void 0;
 var BooleanConverter = __webpack_require__(/*! ../converter/boolean */ "./src/main/js/converter/boolean.ts");
 /**
  * @hidden
@@ -3530,6 +3647,7 @@ exports.BooleanFormatter = BooleanFormatter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorFormatter = void 0;
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 /**
  * @hidden
@@ -3574,6 +3692,7 @@ exports.ColorFormatter = ColorFormatter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NumberFormatter = void 0;
 /**
  * @hidden
  */
@@ -3585,7 +3704,7 @@ var NumberFormatter = /** @class */ (function () {
         get: function () {
             return this.digits_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     NumberFormatter.prototype.format = function (value) {
@@ -3608,6 +3727,7 @@ exports.NumberFormatter = NumberFormatter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StringFormatter = void 0;
 /**
  * @hidden
  */
@@ -3686,6 +3806,7 @@ exports.default = Tweakpane;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ClassName = void 0;
 var PREFIX = 'tp';
 var TYPE_TO_POSTFIX_MAP = {
     '': 'v',
@@ -3721,6 +3842,7 @@ exports.ClassName = ClassName;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.hsvToRgb = exports.rgbToHsv = exports.hslToRgb = exports.rgbToHsl = void 0;
 var number_util_1 = __webpack_require__(/*! ./number-util */ "./src/main/js/misc/number-util.ts");
 function rgbToHsl(r, g, b) {
     var rp = number_util_1.NumberUtil.constrain(r / 255, 0, 1);
@@ -3847,6 +3969,7 @@ exports.hsvToRgb = hsvToRgb;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Constants = void 0;
 exports.Constants = {
     monitorDefaultInterval: 200,
 };
@@ -3864,6 +3987,7 @@ exports.Constants = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.disposeElement = void 0;
 function disposeElement(elem) {
     if (elem && elem.parentElement) {
         elem.parentElement.removeChild(elem);
@@ -3885,6 +4009,7 @@ exports.disposeElement = disposeElement;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.createSvgIconElement = exports.getCanvasContext = exports.getWindowDocument = exports.supportsTouch = exports.disableTransitionTemporarily = exports.forceReflow = exports.SVG_NS = void 0;
 var type_util_1 = __webpack_require__(/*! ./type-util */ "./src/main/js/misc/type-util.ts");
 exports.SVG_NS = 'http://www.w3.org/2000/svg';
 function forceReflow(element) {
@@ -3945,6 +4070,7 @@ exports.createSvgIconElement = createSvgIconElement;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Emitter = void 0;
 /**
  * @hidden
  */
@@ -3998,6 +4124,7 @@ exports.Emitter = Emitter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NumberUtil = void 0;
 exports.NumberUtil = {
     map: function (value, start1, end1, start2, end2) {
         var p = (value - start1) / (end1 - start1);
@@ -4029,6 +4156,7 @@ exports.NumberUtil = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PaneError = void 0;
 function createMessage(config) {
     if (config.type === 'alreadydisposed') {
         return 'View has been already disposed';
@@ -4079,6 +4207,7 @@ PaneError.prototype.constructor = PaneError;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PointerHandler = void 0;
 var DomUtil = __webpack_require__(/*! ./dom-util */ "./src/main/js/misc/dom-util.ts");
 var emitter_1 = __webpack_require__(/*! ./emitter */ "./src/main/js/misc/emitter.ts");
 /**
@@ -4173,6 +4302,7 @@ exports.PointerHandler = PointerHandler;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.IntervalTicker = void 0;
 var emitter_1 = __webpack_require__(/*! ../emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4242,6 +4372,7 @@ exports.IntervalTicker = IntervalTicker;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TypeUtil = void 0;
 exports.TypeUtil = {
     forceCast: function (v) {
         return v;
@@ -4267,6 +4398,7 @@ exports.TypeUtil = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Button = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4296,6 +4428,7 @@ exports.Button = Button;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Color = void 0;
 var ColorModel = __webpack_require__(/*! ../misc/color-model */ "./src/main/js/misc/color-model.ts");
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
@@ -4346,7 +4479,7 @@ var Color = /** @class */ (function () {
         get: function () {
             return this.mode_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Color.prototype.getComponents = function (mode) {
@@ -4375,6 +4508,48 @@ exports.Color = Color;
 
 /***/ }),
 
+/***/ "./src/main/js/model/disposable.ts":
+/*!*****************************************!*\
+  !*** ./src/main/js/model/disposable.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Disposable = void 0;
+var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+/**
+ * @hidden
+ */
+var Disposable = /** @class */ (function () {
+    function Disposable() {
+        this.emitter = new emitter_1.Emitter();
+        this.disposed_ = false;
+    }
+    Object.defineProperty(Disposable.prototype, "disposed", {
+        get: function () {
+            return this.disposed_;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Disposable.prototype.dispose = function () {
+        if (this.disposed_) {
+            return false;
+        }
+        this.disposed_ = true;
+        this.emitter.emit('dispose');
+        return true;
+    };
+    return Disposable;
+}());
+exports.Disposable = Disposable;
+
+
+/***/ }),
+
 /***/ "./src/main/js/model/foldable.ts":
 /*!***************************************!*\
   !*** ./src/main/js/model/foldable.ts ***!
@@ -4385,6 +4560,7 @@ exports.Color = Color;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Foldable = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4405,7 +4581,7 @@ var Foldable = /** @class */ (function () {
                 this.emitter.emit('change');
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return Foldable;
@@ -4425,6 +4601,7 @@ exports.Foldable = Foldable;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Folder = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4447,7 +4624,7 @@ var Folder = /** @class */ (function () {
                 this.emitter.emit('change');
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Folder.prototype, "expandedHeight", {
@@ -4461,7 +4638,7 @@ var Folder = /** @class */ (function () {
                 this.emitter.emit('change');
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return Folder;
@@ -4481,6 +4658,7 @@ exports.Folder = Folder;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GraphCursor = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4501,7 +4679,7 @@ var GraphCursor = /** @class */ (function () {
                 this.emitter.emit('change', [index]);
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return GraphCursor;
@@ -4521,6 +4699,7 @@ exports.GraphCursor = GraphCursor;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InputValue = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4538,7 +4717,7 @@ var InputValue = /** @class */ (function () {
         get: function () {
             return this.constraint_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(InputValue.prototype, "rawValue", {
@@ -4555,7 +4734,7 @@ var InputValue = /** @class */ (function () {
                 this.emitter.emit('change', [constrainedValue]);
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return InputValue;
@@ -4575,6 +4754,7 @@ exports.InputValue = InputValue;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.List = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4588,12 +4768,20 @@ var List = /** @class */ (function () {
         get: function () {
             return this.items_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     List.prototype.append = function (item) {
         this.items_.push(item);
         this.emitter.emit('append', [item]);
+    };
+    List.prototype.remove = function (item) {
+        var index = this.items_.indexOf(item);
+        if (index < 0) {
+            return;
+        }
+        this.items_.splice(index, 1);
+        this.emitter.emit('remove');
     };
     return List;
 }());
@@ -4612,6 +4800,7 @@ exports.List = List;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MonitorValue = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4626,14 +4815,14 @@ var MonitorValue = /** @class */ (function () {
         get: function () {
             return this.rawValues_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(MonitorValue.prototype, "totalCount", {
         get: function () {
             return this.totalCount_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     MonitorValue.prototype.append = function (rawValue) {
@@ -4660,6 +4849,7 @@ exports.MonitorValue = MonitorValue;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Point2d = void 0;
 var Point2d = /** @class */ (function () {
     function Point2d(x, y) {
         if (x === void 0) { x = 0; }
@@ -4693,6 +4883,7 @@ exports.Point2d = Point2d;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Target = void 0;
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 /**
  * @hidden
@@ -4707,14 +4898,14 @@ var Target = /** @class */ (function () {
         get: function () {
             return this.key_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Target.prototype, "presetKey", {
         get: function () {
             return this.presetKey_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Target.prototype.read = function () {
@@ -4730,6 +4921,65 @@ exports.Target = Target;
 
 /***/ }),
 
+/***/ "./src/main/js/model/ui-controller-list.ts":
+/*!*************************************************!*\
+  !*** ./src/main/js/model/ui-controller-list.ts ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UiControllerList = void 0;
+var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+var list_1 = __webpack_require__(/*! ./list */ "./src/main/js/model/list.ts");
+/**
+ * @hidden
+ */
+var UiControllerList = /** @class */ (function () {
+    function UiControllerList() {
+        this.onListAppend_ = this.onListAppend_.bind(this);
+        this.onListRemove_ = this.onListRemove_.bind(this);
+        this.onListItemDispose_ = this.onListItemDispose_.bind(this);
+        this.ucList_ = new list_1.List();
+        this.emitter = new emitter_1.Emitter();
+        this.ucList_.emitter.on('append', this.onListAppend_);
+        this.ucList_.emitter.on('remove', this.onListRemove_);
+    }
+    Object.defineProperty(UiControllerList.prototype, "items", {
+        get: function () {
+            return this.ucList_.items;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    UiControllerList.prototype.append = function (uc) {
+        this.ucList_.append(uc);
+    };
+    UiControllerList.prototype.onListAppend_ = function (uc) {
+        this.emitter.emit('append', [uc]);
+        uc.disposable.emitter.on('dispose', this.onListItemDispose_);
+    };
+    UiControllerList.prototype.onListRemove_ = function () {
+        this.emitter.emit('remove');
+    };
+    UiControllerList.prototype.onListItemDispose_ = function () {
+        var _this = this;
+        var disposedUcs = this.ucList_.items.filter(function (uc) {
+            return uc.disposable.disposed;
+        });
+        disposedUcs.forEach(function (uc) {
+            _this.ucList_.remove(uc);
+        });
+    };
+    return UiControllerList;
+}());
+exports.UiControllerList = UiControllerList;
+
+
+/***/ }),
+
 /***/ "./src/main/js/parser/any-point-2d.ts":
 /*!********************************************!*\
   !*** ./src/main/js/parser/any-point-2d.ts ***!
@@ -4740,6 +4990,7 @@ exports.Target = Target;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AnyPoint2dParser = void 0;
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var point_2d_1 = __webpack_require__(/*! ../model/point-2d */ "./src/main/js/model/point-2d.ts");
 /**
@@ -4770,6 +5021,7 @@ exports.AnyPoint2dParser = function (obj) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NumberColorParser = void 0;
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
 /**
  * @hidden
@@ -4791,6 +5043,7 @@ exports.NumberColorParser = function (num) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getNotation = exports.CompositeParser = void 0;
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
 function parseCssNumberOrPercentage(text, maxValue) {
     var m = text.match(/^(.+)%$/);
@@ -4866,6 +5119,7 @@ exports.getNotation = getNotation;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StringNumberParser = void 0;
 /**
  * @hidden
  */
@@ -4903,12 +5157,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TweakpaneWithoutStyle = void 0;
 var root_1 = __webpack_require__(/*! ./api/root */ "./src/main/js/api/root.ts");
 var root_2 = __webpack_require__(/*! ./controller/root */ "./src/main/js/controller/root.ts");
 var class_name_1 = __webpack_require__(/*! ./misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DomUtil = __webpack_require__(/*! ./misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var pane_error_1 = __webpack_require__(/*! ./misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ./misc/type-util */ "./src/main/js/misc/type-util.ts");
+var disposable_1 = __webpack_require__(/*! ./model/disposable */ "./src/main/js/model/disposable.ts");
 function createDefaultWrapperElement(document) {
     var elem = document.createElement('div');
     elem.classList.add(class_name_1.ClassName('dfw')());
@@ -4924,6 +5180,7 @@ var TweakpaneWithoutStyle = /** @class */ (function (_super) {
         var config = opt_config || {};
         var document = type_util_1.TypeUtil.getOrDefault(config.document, DomUtil.getWindowDocument());
         var rootController = new root_2.RootController(document, {
+            disposable: new disposable_1.Disposable(),
             title: config.title,
         });
         _this = _super.call(this, rootController) || this;
@@ -4956,7 +5213,7 @@ var TweakpaneWithoutStyle = /** @class */ (function (_super) {
             }
             return this.doc_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return TweakpaneWithoutStyle;
@@ -4989,6 +5246,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ButtonView = void 0;
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -5000,7 +5258,7 @@ var className = class_name_1.ClassName('btn');
 var ButtonView = /** @class */ (function (_super) {
     __extends(ButtonView, _super);
     function ButtonView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.button = config.button;
         _this.element.classList.add(className());
         var buttonElem = document.createElement('button');
@@ -5008,6 +5266,9 @@ var ButtonView = /** @class */ (function (_super) {
         buttonElem.textContent = _this.button.title;
         _this.element.appendChild(buttonElem);
         _this.buttonElem_ = buttonElem;
+        config.disposable.emitter.on('dispose', function () {
+            _this.buttonElem_ = DisposingUtil.disposeElement(_this.buttonElem_);
+        });
         return _this;
     }
     Object.defineProperty(ButtonView.prototype, "buttonElement", {
@@ -5017,13 +5278,9 @@ var ButtonView = /** @class */ (function (_super) {
             }
             return this.buttonElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    ButtonView.prototype.dispose = function () {
-        this.buttonElem_ = DisposingUtil.disposeElement(this.buttonElem_);
-        _super.prototype.dispose.call(this);
-    };
     return ButtonView;
 }(view_1.View));
 exports.ButtonView = ButtonView;
@@ -5054,6 +5311,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FolderView = void 0;
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -5066,7 +5324,7 @@ var className = class_name_1.ClassName('fld');
 var FolderView = /** @class */ (function (_super) {
     __extends(FolderView, _super);
     function FolderView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onFolderChange_ = _this.onFolderChange_.bind(_this);
         _this.folder_ = config.folder;
         _this.folder_.emitter.on('change', _this.onFolderChange_);
@@ -5084,6 +5342,10 @@ var FolderView = /** @class */ (function (_super) {
         _this.element.appendChild(containerElem);
         _this.containerElem_ = containerElem;
         _this.applyModel_();
+        config.disposable.emitter.on('dispose', function () {
+            _this.containerElem_ = DisposingUtil.disposeElement(_this.containerElem_);
+            _this.titleElem_ = DisposingUtil.disposeElement(_this.titleElem_);
+        });
         return _this;
     }
     Object.defineProperty(FolderView.prototype, "titleElement", {
@@ -5093,7 +5355,7 @@ var FolderView = /** @class */ (function (_super) {
             }
             return this.titleElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(FolderView.prototype, "containerElement", {
@@ -5103,14 +5365,9 @@ var FolderView = /** @class */ (function (_super) {
             }
             return this.containerElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    FolderView.prototype.dispose = function () {
-        this.containerElem_ = DisposingUtil.disposeElement(this.containerElem_);
-        this.titleElem_ = DisposingUtil.disposeElement(this.titleElem_);
-        _super.prototype.dispose.call(this);
-    };
     FolderView.prototype.applyModel_ = function () {
         var containerElem = this.containerElem_;
         if (!containerElem) {
@@ -5166,6 +5423,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CheckboxInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -5177,7 +5435,7 @@ var className = class_name_1.ClassName('ckb', 'input');
 var CheckboxInputView = /** @class */ (function (_super) {
     __extends(CheckboxInputView, _super);
     function CheckboxInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.element.classList.add(className());
         var labelElem = document.createElement('label');
@@ -5194,6 +5452,9 @@ var CheckboxInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.inputElem_ = DisposingUtil.disposeElement(_this.inputElem_);
+        });
         return _this;
     }
     Object.defineProperty(CheckboxInputView.prototype, "inputElement", {
@@ -5203,13 +5464,9 @@ var CheckboxInputView = /** @class */ (function (_super) {
             }
             return this.inputElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    CheckboxInputView.prototype.dispose = function () {
-        this.inputElem_ = DisposingUtil.disposeElement(this.inputElem_);
-        _super.prototype.dispose.call(this);
-    };
     CheckboxInputView.prototype.update = function () {
         if (!this.inputElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
@@ -5249,6 +5506,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorPickerInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.ClassName('clp', 'input');
@@ -5258,7 +5516,7 @@ var className = class_name_1.ClassName('clp', 'input');
 var ColorPickerInputView = /** @class */ (function (_super) {
     __extends(ColorPickerInputView, _super);
     function ColorPickerInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onFoldableChange_ = _this.onFoldableChange_.bind(_this);
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.value = config.value;
@@ -5291,15 +5549,9 @@ var ColorPickerInputView = /** @class */ (function (_super) {
         get: function () {
             return [].concat(this.hPaletteView_.canvasElement, this.rgbTextView_.inputElements, this.svPaletteView_.canvasElement);
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    ColorPickerInputView.prototype.dispose = function () {
-        this.hPaletteView_.dispose();
-        this.rgbTextView_.dispose();
-        this.svPaletteView_.dispose();
-        _super.prototype.dispose.call(this);
-    };
     ColorPickerInputView.prototype.update = function () {
         if (this.foldable.expanded) {
             this.element.classList.add(className(undefined, 'expanded'));
@@ -5344,6 +5596,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorSwatchTextInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.ClassName('cswtxt', 'input');
@@ -5353,7 +5606,7 @@ var className = class_name_1.ClassName('cswtxt', 'input');
 var ColorSwatchTextInputView = /** @class */ (function (_super) {
     __extends(ColorSwatchTextInputView, _super);
     function ColorSwatchTextInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.element.classList.add(className());
         var swatchElem = document.createElement('div');
         swatchElem.classList.add(className('s'));
@@ -5371,14 +5624,9 @@ var ColorSwatchTextInputView = /** @class */ (function (_super) {
         get: function () {
             return this.textInputView.value;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    ColorSwatchTextInputView.prototype.dispose = function () {
-        this.swatchInputView_.dispose();
-        this.textInputView.dispose();
-        _super.prototype.dispose.call(this);
-    };
     ColorSwatchTextInputView.prototype.update = function () {
         this.swatchInputView_.update();
         this.textInputView.update();
@@ -5413,6 +5661,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorSwatchInputView = void 0;
 var ColorConverter = __webpack_require__(/*! ../../converter/color */ "./src/main/js/converter/color.ts");
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
@@ -5427,7 +5676,7 @@ a.substr(1, 2);
 var ColorSwatchInputView = /** @class */ (function (_super) {
     __extends(ColorSwatchInputView, _super);
     function ColorSwatchInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         if (_this.element === null) {
             throw pane_error_1.PaneError.alreadyDisposed();
         }
@@ -5449,6 +5698,10 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
         pickerElem.appendChild(_this.pickerView_.element);
         _this.element.appendChild(pickerElem);
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.buttonElem_ = DisposingUtil.disposeElement(_this.buttonElem_);
+            _this.swatchElem_ = DisposingUtil.disposeElement(_this.swatchElem_);
+        });
         return _this;
     }
     Object.defineProperty(ColorSwatchInputView.prototype, "buttonElement", {
@@ -5458,15 +5711,9 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
             }
             return this.buttonElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    ColorSwatchInputView.prototype.dispose = function () {
-        this.pickerView_.dispose();
-        this.buttonElem_ = DisposingUtil.disposeElement(this.buttonElem_);
-        this.swatchElem_ = DisposingUtil.disposeElement(this.swatchElem_);
-        _super.prototype.dispose.call(this);
-    };
     ColorSwatchInputView.prototype.update = function () {
         if (!this.swatchElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
@@ -5507,6 +5754,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HPaletteInputView = void 0;
 var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/formatter/color.ts");
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var ColorModel = __webpack_require__(/*! ../../misc/color-model */ "./src/main/js/misc/color-model.ts");
@@ -5522,7 +5770,7 @@ var className = class_name_1.ClassName('hpl', 'input');
 var HPaletteInputView = /** @class */ (function (_super) {
     __extends(HPaletteInputView, _super);
     function HPaletteInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.value = config.value;
         _this.value.emitter.on('change', _this.onValueChange_);
@@ -5537,6 +5785,10 @@ var HPaletteInputView = /** @class */ (function (_super) {
         _this.element.appendChild(markerElem);
         _this.markerElem_ = markerElem;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.canvasElem_ = DisposingUtil.disposeElement(_this.canvasElem_);
+            _this.markerElem_ = DisposingUtil.disposeElement(_this.markerElem_);
+        });
         return _this;
     }
     Object.defineProperty(HPaletteInputView.prototype, "canvasElement", {
@@ -5546,14 +5798,9 @@ var HPaletteInputView = /** @class */ (function (_super) {
             }
             return this.canvasElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    HPaletteInputView.prototype.dispose = function () {
-        this.canvasElem_ = DisposingUtil.disposeElement(this.canvasElem_);
-        this.markerElem_ = DisposingUtil.disposeElement(this.markerElem_);
-        _super.prototype.dispose.call(this);
-    };
     HPaletteInputView.prototype.update = function () {
         if (!this.markerElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
@@ -5611,6 +5858,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ListInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -5622,7 +5870,7 @@ var className = class_name_1.ClassName('lst', 'input');
 var ListInputView = /** @class */ (function (_super) {
     __extends(ListInputView, _super);
     function ListInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.element.classList.add(className());
         _this.stringifyValue_ = config.stringifyValue;
@@ -5643,6 +5891,9 @@ var ListInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.selectElem_ = DisposingUtil.disposeElement(_this.selectElem_);
+        });
         return _this;
     }
     Object.defineProperty(ListInputView.prototype, "selectElement", {
@@ -5652,13 +5903,9 @@ var ListInputView = /** @class */ (function (_super) {
             }
             return this.selectElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    ListInputView.prototype.dispose = function () {
-        this.selectElem_ = DisposingUtil.disposeElement(this.selectElem_);
-        _super.prototype.dispose.call(this);
-    };
     ListInputView.prototype.update = function () {
         if (!this.selectElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
@@ -5698,6 +5945,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Point2dPadTextInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
@@ -5708,7 +5956,7 @@ var className = class_name_1.ClassName('p2dpadtxt', 'input');
 var Point2dPadTextInputView = /** @class */ (function (_super) {
     __extends(Point2dPadTextInputView, _super);
     function Point2dPadTextInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.element.classList.add(className());
         var padWrapperElem = document.createElement('div');
         padWrapperElem.classList.add(className('w'));
@@ -5734,21 +5982,16 @@ var Point2dPadTextInputView = /** @class */ (function (_super) {
         get: function () {
             return this.textInputView_.value;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Point2dPadTextInputView.prototype, "padButtonElement", {
         get: function () {
             return this.padButtonElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    Point2dPadTextInputView.prototype.dispose = function () {
-        this.padInputView_.dispose();
-        this.textInputView_.dispose();
-        _super.prototype.dispose.call(this);
-    };
     Point2dPadTextInputView.prototype.update = function () {
         this.padInputView_.update();
         this.textInputView_.update();
@@ -5783,6 +6026,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Point2dPadInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
@@ -5797,7 +6041,7 @@ var className = class_name_1.ClassName('p2dpad', 'input');
 var Point2dPadInputView = /** @class */ (function (_super) {
     __extends(Point2dPadInputView, _super);
     function Point2dPadInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onFoldableChange_ = _this.onFoldableChange_.bind(_this);
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.foldable = config.foldable;
@@ -5840,12 +6084,11 @@ var Point2dPadInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.padElem_ = DisposingUtil.disposeElement(_this.padElem_);
+        });
         return _this;
     }
-    Point2dPadInputView.prototype.dispose = function () {
-        this.padElem_ = DisposingUtil.disposeElement(this.padElem_);
-        _super.prototype.dispose.call(this);
-    };
     Object.defineProperty(Point2dPadInputView.prototype, "padElement", {
         get: function () {
             if (!this.padElem_) {
@@ -5853,7 +6096,7 @@ var Point2dPadInputView = /** @class */ (function (_super) {
             }
             return this.padElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Point2dPadInputView.prototype.update = function () {
@@ -5913,6 +6156,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Point2dTextInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -5925,7 +6169,7 @@ var className = class_name_1.ClassName('p2dtxt', 'input');
 var Point2dTextInputView = /** @class */ (function (_super) {
     __extends(Point2dTextInputView, _super);
     function Point2dTextInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.formatters_ = [config.xFormatter, config.yFormatter];
         _this.element.classList.add(className());
@@ -5945,17 +6189,16 @@ var Point2dTextInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            if (_this.inputElems_) {
+                _this.inputElems_.forEach(function (elem) {
+                    DisposingUtil.disposeElement(elem);
+                });
+                _this.inputElems_ = null;
+            }
+        });
         return _this;
     }
-    Point2dTextInputView.prototype.dispose = function () {
-        if (this.inputElems_) {
-            this.inputElems_.forEach(function (elem) {
-                DisposingUtil.disposeElement(elem);
-            });
-            this.inputElems_ = null;
-        }
-        _super.prototype.dispose.call(this);
-    };
     Object.defineProperty(Point2dTextInputView.prototype, "inputElements", {
         get: function () {
             if (!this.inputElems_) {
@@ -5963,7 +6206,7 @@ var Point2dTextInputView = /** @class */ (function (_super) {
             }
             return this.inputElems_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Point2dTextInputView.prototype.update = function () {
@@ -6011,6 +6254,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RgbTextInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -6022,7 +6266,7 @@ var className = class_name_1.ClassName('rgbtxt', 'input');
 var RgbTextInputView = /** @class */ (function (_super) {
     __extends(RgbTextInputView, _super);
     function RgbTextInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.formatter_ = config.formatter;
         _this.element.classList.add(className());
@@ -6046,17 +6290,16 @@ var RgbTextInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            if (_this.inputElems_) {
+                _this.inputElems_.forEach(function (elem) {
+                    DisposingUtil.disposeElement(elem);
+                });
+                _this.inputElems_ = null;
+            }
+        });
         return _this;
     }
-    RgbTextInputView.prototype.dispose = function () {
-        if (this.inputElems_) {
-            this.inputElems_.forEach(function (elem) {
-                DisposingUtil.disposeElement(elem);
-            });
-            this.inputElems_ = null;
-        }
-        _super.prototype.dispose.call(this);
-    };
     Object.defineProperty(RgbTextInputView.prototype, "inputElements", {
         get: function () {
             if (!this.inputElems_) {
@@ -6064,7 +6307,7 @@ var RgbTextInputView = /** @class */ (function (_super) {
             }
             return this.inputElems_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     RgbTextInputView.prototype.update = function () {
@@ -6112,6 +6355,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SliderTextInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.ClassName('sldtxt', 'input');
@@ -6121,7 +6365,7 @@ var className = class_name_1.ClassName('sldtxt', 'input');
 var SliderTextInputView = /** @class */ (function (_super) {
     __extends(SliderTextInputView, _super);
     function SliderTextInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.element.classList.add(className());
         var sliderElem = document.createElement('div');
         sliderElem.classList.add(className('s'));
@@ -6139,14 +6383,9 @@ var SliderTextInputView = /** @class */ (function (_super) {
         get: function () {
             return this.sliderInputView_.value;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    SliderTextInputView.prototype.dispose = function () {
-        this.sliderInputView_.dispose();
-        this.textInputView_.dispose();
-        _super.prototype.dispose.call(this);
-    };
     SliderTextInputView.prototype.update = function () {
         this.sliderInputView_.update();
         this.textInputView_.update();
@@ -6181,6 +6420,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SliderInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
@@ -6193,7 +6433,7 @@ var className = class_name_1.ClassName('sld', 'input');
 var SliderInputView = /** @class */ (function (_super) {
     __extends(SliderInputView, _super);
     function SliderInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.minValue_ = config.minValue;
         _this.maxValue_ = config.maxValue;
@@ -6209,6 +6449,10 @@ var SliderInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.innerElem_ = DisposingUtil.disposeElement(_this.innerElem_);
+            _this.outerElem_ = DisposingUtil.disposeElement(_this.outerElem_);
+        });
         return _this;
     }
     Object.defineProperty(SliderInputView.prototype, "outerElement", {
@@ -6218,7 +6462,7 @@ var SliderInputView = /** @class */ (function (_super) {
             }
             return this.outerElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(SliderInputView.prototype, "innerElement", {
@@ -6228,14 +6472,9 @@ var SliderInputView = /** @class */ (function (_super) {
             }
             return this.innerElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    SliderInputView.prototype.dispose = function () {
-        this.innerElem_ = DisposingUtil.disposeElement(this.innerElem_);
-        this.outerElem_ = DisposingUtil.disposeElement(this.outerElem_);
-        _super.prototype.dispose.call(this);
-    };
     SliderInputView.prototype.update = function () {
         if (!this.innerElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
@@ -6276,6 +6515,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SvPaletteInputView = void 0;
 var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/formatter/color.ts");
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var ColorModel = __webpack_require__(/*! ../../misc/color-model */ "./src/main/js/misc/color-model.ts");
@@ -6291,7 +6531,7 @@ var className = class_name_1.ClassName('svp', 'input');
 var SvPaletteInputView = /** @class */ (function (_super) {
     __extends(SvPaletteInputView, _super);
     function SvPaletteInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.value = config.value;
         _this.value.emitter.on('change', _this.onValueChange_);
@@ -6306,6 +6546,10 @@ var SvPaletteInputView = /** @class */ (function (_super) {
         _this.element.appendChild(markerElem);
         _this.markerElem_ = markerElem;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.canvasElem_ = DisposingUtil.disposeElement(_this.canvasElem_);
+            _this.markerElem_ = DisposingUtil.disposeElement(_this.markerElem_);
+        });
         return _this;
     }
     Object.defineProperty(SvPaletteInputView.prototype, "canvasElement", {
@@ -6315,14 +6559,9 @@ var SvPaletteInputView = /** @class */ (function (_super) {
             }
             return this.canvasElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    SvPaletteInputView.prototype.dispose = function () {
-        this.canvasElem_ = DisposingUtil.disposeElement(this.canvasElem_);
-        this.markerElem_ = DisposingUtil.disposeElement(this.markerElem_);
-        _super.prototype.dispose.call(this);
-    };
     SvPaletteInputView.prototype.update = function () {
         if (!this.markerElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
@@ -6387,6 +6626,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TextInputView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -6398,7 +6638,7 @@ var className = class_name_1.ClassName('txt', 'input');
 var TextInputView = /** @class */ (function (_super) {
     __extends(TextInputView, _super);
     function TextInputView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.formatter_ = config.formatter;
         _this.element.classList.add(className());
@@ -6410,6 +6650,9 @@ var TextInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.inputElem_ = DisposingUtil.disposeElement(_this.inputElem_);
+        });
         return _this;
     }
     Object.defineProperty(TextInputView.prototype, "inputElement", {
@@ -6419,13 +6662,9 @@ var TextInputView = /** @class */ (function (_super) {
             }
             return this.inputElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    TextInputView.prototype.dispose = function () {
-        this.inputElem_ = DisposingUtil.disposeElement(this.inputElem_);
-        _super.prototype.dispose.call(this);
-    };
     TextInputView.prototype.update = function () {
         if (!this.inputElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
@@ -6465,6 +6704,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LabeledView = void 0;
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.ClassName('lbl');
@@ -6474,7 +6714,7 @@ var className = class_name_1.ClassName('lbl');
 var LabeledView = /** @class */ (function (_super) {
     __extends(LabeledView, _super);
     function LabeledView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.label = config.label;
         _this.element.classList.add(className());
         var labelElem = document.createElement('div');
@@ -6517,6 +6757,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GraphMonitorView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
@@ -6531,7 +6772,7 @@ var className = class_name_1.ClassName('grp', 'monitor');
 var GraphMonitorView = /** @class */ (function (_super) {
     __extends(GraphMonitorView, _super);
     function GraphMonitorView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onCursorChange_ = _this.onCursorChange_.bind(_this);
         _this.onValueUpdate_ = _this.onValueUpdate_.bind(_this);
         _this.element.classList.add(className());
@@ -6554,6 +6795,11 @@ var GraphMonitorView = /** @class */ (function (_super) {
         config.value.emitter.on('update', _this.onValueUpdate_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.lineElem_ = DisposingUtil.disposeElement(_this.lineElem_);
+            _this.svgElem_ = DisposingUtil.disposeElement(_this.svgElem_);
+            _this.tooltipElem_ = DisposingUtil.disposeElement(_this.tooltipElem_);
+        });
         return _this;
     }
     Object.defineProperty(GraphMonitorView.prototype, "graphElement", {
@@ -6563,15 +6809,9 @@ var GraphMonitorView = /** @class */ (function (_super) {
             }
             return this.svgElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    GraphMonitorView.prototype.dispose = function () {
-        this.lineElem_ = DisposingUtil.disposeElement(this.lineElem_);
-        this.svgElem_ = DisposingUtil.disposeElement(this.svgElem_);
-        this.tooltipElem_ = DisposingUtil.disposeElement(this.tooltipElem_);
-        _super.prototype.dispose.call(this);
-    };
     GraphMonitorView.prototype.update = function () {
         var tooltipElem = this.tooltipElem_;
         if (!this.lineElem_ || !this.svgElem_ || !tooltipElem) {
@@ -6638,6 +6878,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MultiLogMonitorView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -6649,7 +6890,7 @@ var className = class_name_1.ClassName('mll', 'monitor');
 var MultiLogMonitorView = /** @class */ (function (_super) {
     __extends(MultiLogMonitorView, _super);
     function MultiLogMonitorView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueUpdate_ = _this.onValueUpdate_.bind(_this);
         _this.formatter_ = config.formatter;
         _this.element.classList.add(className());
@@ -6661,12 +6902,11 @@ var MultiLogMonitorView = /** @class */ (function (_super) {
         config.value.emitter.on('update', _this.onValueUpdate_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.textareaElem_ = DisposingUtil.disposeElement(_this.textareaElem_);
+        });
         return _this;
     }
-    MultiLogMonitorView.prototype.dispose = function () {
-        this.textareaElem_ = DisposingUtil.disposeElement(this.textareaElem_);
-        _super.prototype.dispose.call(this);
-    };
     MultiLogMonitorView.prototype.update = function () {
         var _this = this;
         var elem = this.textareaElem_;
@@ -6716,6 +6956,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SingleLogMonitorView = void 0;
 var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -6727,7 +6968,7 @@ var className = class_name_1.ClassName('sgl', 'monitor');
 var SingleLogMonitorView = /** @class */ (function (_super) {
     __extends(SingleLogMonitorView, _super);
     function SingleLogMonitorView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onValueUpdate_ = _this.onValueUpdate_.bind(_this);
         _this.formatter_ = config.formatter;
         _this.element.classList.add(className());
@@ -6740,12 +6981,11 @@ var SingleLogMonitorView = /** @class */ (function (_super) {
         config.value.emitter.on('update', _this.onValueUpdate_);
         _this.value = config.value;
         _this.update();
+        config.disposable.emitter.on('dispose', function () {
+            _this.inputElem_ = DisposingUtil.disposeElement(_this.inputElem_);
+        });
         return _this;
     }
-    SingleLogMonitorView.prototype.dispose = function () {
-        this.inputElem_ = DisposingUtil.disposeElement(this.inputElem_);
-        _super.prototype.dispose.call(this);
-    };
     SingleLogMonitorView.prototype.update = function () {
         if (!this.inputElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
@@ -6789,6 +7029,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RootView = void 0;
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
@@ -6800,7 +7041,7 @@ var className = class_name_1.ClassName('rot');
 var RootView = /** @class */ (function (_super) {
     __extends(RootView, _super);
     function RootView(document, config) {
-        var _this = _super.call(this, document) || this;
+        var _this = _super.call(this, document, config) || this;
         _this.onFolderChange_ = _this.onFolderChange_.bind(_this);
         _this.folder_ = config.folder;
         if (_this.folder_) {
@@ -6823,13 +7064,18 @@ var RootView = /** @class */ (function (_super) {
         _this.element.appendChild(containerElem);
         _this.containerElem_ = containerElem;
         _this.applyModel_();
+        config.disposable.emitter.on('dispose', function () {
+            _this.containerElem_ = DisposingUtil.disposeElement(_this.containerElem_);
+            _this.folder_ = null;
+            _this.titleElem_ = DisposingUtil.disposeElement(_this.titleElem_);
+        });
         return _this;
     }
     Object.defineProperty(RootView.prototype, "titleElement", {
         get: function () {
             return this.titleElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(RootView.prototype, "containerElement", {
@@ -6839,15 +7085,9 @@ var RootView = /** @class */ (function (_super) {
             }
             return this.containerElem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    RootView.prototype.dispose = function () {
-        this.containerElem_ = DisposingUtil.disposeElement(this.containerElem_);
-        this.folder_ = null;
-        this.titleElem_ = DisposingUtil.disposeElement(this.titleElem_);
-        _super.prototype.dispose.call(this);
-    };
     RootView.prototype.applyModel_ = function () {
         var expanded = this.folder_ ? this.folder_.expanded : true;
         var expandedClass = className(undefined, 'expanded');
@@ -6892,6 +7132,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SeparatorView = void 0;
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.ClassName('spt');
@@ -6900,8 +7141,8 @@ var className = class_name_1.ClassName('spt');
  */
 var SeparatorView = /** @class */ (function (_super) {
     __extends(SeparatorView, _super);
-    function SeparatorView(document) {
-        var _this = _super.call(this, document) || this;
+    function SeparatorView(document, config) {
+        var _this = _super.call(this, document, config) || this;
         _this.element.classList.add(className());
         var hrElem = document.createElement('hr');
         hrElem.classList.add(className('r'));
@@ -6925,24 +7166,20 @@ exports.SeparatorView = SeparatorView;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.View = void 0;
 var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 /**
  * @hidden
  */
 var View = /** @class */ (function () {
-    function View(document) {
-        this.disposed_ = false;
+    function View(document, config) {
+        this.onDispose_ = this.onDispose_.bind(this);
+        this.disposable_ = config.disposable;
+        this.disposable_.emitter.on('dispose', this.onDispose_);
         this.doc_ = document;
         this.elem_ = this.doc_.createElement('div');
     }
-    Object.defineProperty(View.prototype, "disposed", {
-        get: function () {
-            return this.disposed_;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(View.prototype, "document", {
         get: function () {
             if (!this.doc_) {
@@ -6950,7 +7187,7 @@ var View = /** @class */ (function () {
             }
             return this.doc_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(View.prototype, "element", {
@@ -6960,13 +7197,12 @@ var View = /** @class */ (function () {
             }
             return this.elem_;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
-    View.prototype.dispose = function () {
+    View.prototype.onDispose_ = function () {
         this.doc_ = null;
         this.elem_ = DisposingUtil.disposeElement(this.elem_);
-        this.disposed_ = true;
     };
     return View;
 }());
@@ -6987,7 +7223,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--folder-background-color);color:var(--folder-foreground-color);cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:var(--folder-background-color-hover)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:var(--folder-background-color-focus)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:var(--folder-background-color-active)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, var(--folder-foreground-color), var(--folder-foreground-color) 2px, transparent 2px, transparent 4px, var(--folder-foreground-color) 4px);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;-webkit-transform:rotate(90deg);transform:rotate(90deg);-webkit-transition:-webkit-transform 0.2s ease-in-out;transition:-webkit-transform 0.2s ease-in-out;transition:transform 0.2s ease-in-out;transition:transform 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{-webkit-transform:none;transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:var(--button-background-color-hover)}.tp-btnv_b:focus{background-color:var(--button-background-color-focus)}.tp-btnv_b:active{background-color:var(--button-background-color-active)}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_t{-webkit-transition:border-radius 0.2s ease-in-out 0.2s;transition:border-radius 0.2s ease-in-out 0.2s}.tp-fldv.tp-fldv-expanded .tp-fldv_t{-webkit-transition:border-radius 0s;transition:border-radius 0s}.tp-fldv_c{border-left:var(--folder-background-color) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;-webkit-transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:var(--folder-background-color-hover)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:var(--folder-background-color-focus)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:var(--folder-background-color-active)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;-webkit-transform:none;transform:none;-webkit-transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:var(--input-background-color);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:var(--input-foreground-color);border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:var(--input-background-color-hover)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:var(--input-background-color-focus)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:var(--input-background-color-active)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:-webkit-box;display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:-webkit-box;display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:var(--button-background-color-hover)}.tp-lstiv_s:focus{background-color:var(--button-background-color-focus)}.tp-lstiv_s:active{background-color:var(--button-background-color-active)}.tp-lstiv_m{border-color:var(--button-foreground-color) transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:-webkit-box;display:flex}.tp-rgbtxtiv_l{color:var(--label-foreground-color);display:inline;line-height:20px;margin-right:8px}.tp-rgbtxtiv_w{display:-webkit-box;display:flex}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;-webkit-box-flex:1;flex:1;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-rgbtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-rgbtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-rgbtxtiv_i:nth-child(1){border-bottom-right-radius:0;border-top-right-radius:0}.tp-rgbtxtiv_i:nth-child(2){border-radius:0}.tp-rgbtxtiv_i:nth-child(3){border-bottom-left-radius:0;border-top-left-radius:0}.tp-rgbtxtiv_i+.tp-rgbtxtiv_i{margin-left:1px}.tp-p2dpadiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:var(--input-background-color-hover)}.tp-p2dpadiv_p:focus{background-color:var(--input-background-color-focus)}.tp-p2dpadiv_p:active{background-color:var(--input-background-color-active)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:var(--input-guide-color)}.tp-p2dpadiv_l{stroke:var(--input-foreground-color);stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:var(--input-foreground-color)}.tp-p2dpadtxtiv{display:-webkit-box;display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:var(--button-background-color-hover)}.tp-p2dpadtxtiv_b:focus{background-color:var(--button-background-color-focus)}.tp-p2dpadtxtiv_b:active{background-color:var(--button-background-color-active)}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:-webkit-box;display:flex}.tp-p2dtxtiv_w{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-p2dtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-p2dtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:var(--input-background-color);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:var(--button-background-color);border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:var(--button-background-color-hover)}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:var(--button-background-color-focus)}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:var(--button-background-color-active)}.tp-txtiv{display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-txtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-txtiv_i:active{background-color:var(--input-background-color-active)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:var(--input-background-color-hover)}.tp-cswiv_sw:focus{background-color:var(--input-background-color-focus)}.tp-cswiv_sw:active{background-color:var(--input-background-color-active)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:-webkit-box;display:flex;position:relative}.tp-cswtxtiv_s{-webkit-box-flex:0;flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{-webkit-box-flex:1;flex:1;margin-left:4px}.tp-sldtxtiv{display:-webkit-box;display:flex}.tp-sldtxtiv_s{-webkit-box-flex:2;flex:2}.tp-sldtxtiv_t{-webkit-box-flex:1;flex:1;margin-left:4px}.tp-lblv{-webkit-box-align:center;align-items:center;display:-webkit-box;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:var(--label-foreground-color);-webkit-box-flex:1;flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{-webkit-box-flex:0;flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:var(--monitor-foreground-color);stroke-linejoin:round}.tp-grpmv_t{color:var(--monitor-foreground-color);font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:var(--monitor-foreground-color);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%}.tp-rotv{--font-family: var(--tp-font-family, Roboto Mono,Source Code Pro,Menlo,Courier,monospace);--base-background-color: var(--tp-base-background-color, #2f3137);--base-shadow-color: var(--tp-base-shadow-color, rgba(0,0,0,0.2));--button-background-color: var(--tp-button-background-color, #adafb8);--button-background-color-active: var(--tp-button-background-color-active, #d6d7db);--button-background-color-focus: var(--tp-button-background-color-focus, #c8cad0);--button-background-color-hover: var(--tp-button-background-color-hover, #bbbcc4);--button-foreground-color: var(--tp-button-foreground-color, #2f3137);--folder-background-color: var(--tp-folder-background-color, rgba(200,202,208,0.1));--folder-background-color-active: var(--tp-folder-background-color-active, rgba(200,202,208,0.25));--folder-background-color-focus: var(--tp-folder-background-color-focus, rgba(200,202,208,0.2));--folder-background-color-hover: var(--tp-folder-background-color-hover, rgba(200,202,208,0.15));--folder-foreground-color: var(--tp-folder-foreground-color, #c8cad0);--input-background-color: var(--tp-input-background-color, rgba(200,202,208,0.15));--input-background-color-active: var(--tp-input-background-color-active, rgba(200,202,208,0.35));--input-background-color-focus: var(--tp-input-background-color-focus, rgba(200,202,208,0.25));--input-background-color-hover: var(--tp-input-background-color-hover, rgba(200,202,208,0.15));--input-foreground-color: var(--tp-input-foreground-color, #c8cad0);--input-guide-color: var(--tp-input-guide-color, rgba(47,49,55,0.5));--label-foreground-color: var(--tp-label-foreground-color, rgba(200,202,208,0.8));--monitor-background-color: var(--tp-monitor-background-color, rgba(24,24,27,0.5));--monitor-foreground-color: var(--tp-monitor-foreground-color, rgba(200,202,208,0.7));--separator-color: var(--tp-separator-color, rgba(24,24,27,0.3));background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);font-family:var(--font-family);font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px;border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_t{border-bottom-left-radius:0;border-bottom-right-radius:0}.tp-rotv_m{-webkit-transition:none;transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:last-child .tp-fldv_c{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:last-child:not(.tp-fldv-expanded) .tp-fldv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:var(--separator-color);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
+exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--folder-background-color);color:var(--folder-foreground-color);cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:var(--folder-background-color-hover)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:var(--folder-background-color-focus)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:var(--folder-background-color-active)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, var(--folder-foreground-color), var(--folder-foreground-color) 2px, transparent 2px, transparent 4px, var(--folder-foreground-color) 4px);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:var(--button-background-color-hover)}.tp-btnv_b:focus{background-color:var(--button-background-color-focus)}.tp-btnv_b:active{background-color:var(--button-background-color-active)}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_t{transition:border-radius 0.2s ease-in-out 0.2s}.tp-fldv.tp-fldv-expanded .tp-fldv_t{transition:border-radius 0s}.tp-fldv_c{border-left:var(--folder-background-color) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:var(--folder-background-color-hover)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:var(--folder-background-color-focus)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:var(--folder-background-color-active)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:var(--input-background-color);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:var(--input-foreground-color);border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:var(--input-background-color-hover)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:var(--input-background-color-focus)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:var(--input-background-color-active)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:var(--button-background-color-hover)}.tp-lstiv_s:focus{background-color:var(--button-background-color-focus)}.tp-lstiv_s:active{background-color:var(--button-background-color-active)}.tp-lstiv_m{border-color:var(--button-foreground-color) transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_l{color:var(--label-foreground-color);display:inline;line-height:20px;margin-right:8px}.tp-rgbtxtiv_w{display:flex}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;flex:1;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-rgbtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-rgbtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-rgbtxtiv_i:nth-child(1){border-bottom-right-radius:0;border-top-right-radius:0}.tp-rgbtxtiv_i:nth-child(2){border-radius:0}.tp-rgbtxtiv_i:nth-child(3){border-bottom-left-radius:0;border-top-left-radius:0}.tp-rgbtxtiv_i+.tp-rgbtxtiv_i{margin-left:1px}.tp-p2dpadiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:var(--input-background-color-hover)}.tp-p2dpadiv_p:focus{background-color:var(--input-background-color-focus)}.tp-p2dpadiv_p:active{background-color:var(--input-background-color-active)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:var(--input-guide-color)}.tp-p2dpadiv_l{stroke:var(--input-foreground-color);stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:var(--input-foreground-color)}.tp-p2dpadtxtiv{display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:var(--button-background-color-hover)}.tp-p2dpadtxtiv_b:focus{background-color:var(--button-background-color-focus)}.tp-p2dpadtxtiv_b:active{background-color:var(--button-background-color-active)}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:flex}.tp-p2dtxtiv_w{align-items:center;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-p2dtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-p2dtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:var(--input-background-color);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:var(--button-background-color);border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:var(--button-background-color-hover)}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:var(--button-background-color-focus)}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:var(--button-background-color-active)}.tp-txtiv{display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-txtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-txtiv_i:active{background-color:var(--input-background-color-active)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:var(--input-background-color-hover)}.tp-cswiv_sw:focus{background-color:var(--input-background-color-focus)}.tp-cswiv_sw:active{background-color:var(--input-background-color-active)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:var(--label-foreground-color);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:var(--monitor-foreground-color);stroke-linejoin:round}.tp-grpmv_t{color:var(--monitor-foreground-color);font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:var(--monitor-foreground-color);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%}.tp-rotv{--font-family: var(--tp-font-family, Roboto Mono,Source Code Pro,Menlo,Courier,monospace);--base-background-color: var(--tp-base-background-color, #2f3137);--base-shadow-color: var(--tp-base-shadow-color, rgba(0,0,0,0.2));--button-background-color: var(--tp-button-background-color, #adafb8);--button-background-color-active: var(--tp-button-background-color-active, #d6d7db);--button-background-color-focus: var(--tp-button-background-color-focus, #c8cad0);--button-background-color-hover: var(--tp-button-background-color-hover, #bbbcc4);--button-foreground-color: var(--tp-button-foreground-color, #2f3137);--folder-background-color: var(--tp-folder-background-color, rgba(200,202,208,0.1));--folder-background-color-active: var(--tp-folder-background-color-active, rgba(200,202,208,0.25));--folder-background-color-focus: var(--tp-folder-background-color-focus, rgba(200,202,208,0.2));--folder-background-color-hover: var(--tp-folder-background-color-hover, rgba(200,202,208,0.15));--folder-foreground-color: var(--tp-folder-foreground-color, #c8cad0);--input-background-color: var(--tp-input-background-color, rgba(200,202,208,0.15));--input-background-color-active: var(--tp-input-background-color-active, rgba(200,202,208,0.35));--input-background-color-focus: var(--tp-input-background-color-focus, rgba(200,202,208,0.25));--input-background-color-hover: var(--tp-input-background-color-hover, rgba(200,202,208,0.15));--input-foreground-color: var(--tp-input-foreground-color, #c8cad0);--input-guide-color: var(--tp-input-guide-color, rgba(47,49,55,0.5));--label-foreground-color: var(--tp-label-foreground-color, rgba(200,202,208,0.8));--monitor-background-color: var(--tp-monitor-background-color, rgba(24,24,27,0.5));--monitor-foreground-color: var(--tp-monitor-foreground-color, rgba(200,202,208,0.7));--separator-color: var(--tp-separator-color, rgba(24,24,27,0.3));background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);font-family:var(--font-family);font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px;border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_t{border-bottom-left-radius:0;border-bottom-right-radius:0}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:last-child .tp-fldv_c{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:last-child:not(.tp-fldv-expanded) .tp-fldv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:var(--separator-color);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
 
 // exports
 
