@@ -470,25 +470,26 @@ var FolderApi = /** @class */ (function () {
     FolderApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key, params.presetKey), params);
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
         return new input_binding_1.InputBindingApi(uc);
     };
     FolderApi.prototype.addMonitor = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = MonitorBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key), params);
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
         return new monitor_binding_1.MonitorBindingApi(uc);
     };
     FolderApi.prototype.addButton = function (params) {
         var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
         return new button_2.ButtonApi(uc);
     };
-    FolderApi.prototype.addSeparator = function () {
+    FolderApi.prototype.addSeparator = function (opt_params) {
+        var params = opt_params || {};
         var uc = new separator_1.SeparatorController(this.controller.document, {
             disposable: new disposable_1.Disposable(),
         });
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
     };
     FolderApi.prototype.on = function (eventName, handler) {
         var internalEventName = TO_INTERNAL_EVENT_NAME_MAP[eventName];
@@ -706,30 +707,31 @@ var RootApi = /** @class */ (function () {
     RootApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key, params.presetKey), params);
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
         return new input_binding_2.InputBindingApi(uc);
     };
     RootApi.prototype.addMonitor = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = MonitorBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key), params);
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
         return new monitor_binding_2.MonitorBindingApi(uc);
     };
     RootApi.prototype.addButton = function (params) {
         var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
         return new button_2.ButtonApi(uc);
     };
     RootApi.prototype.addFolder = function (params) {
         var uc = new folder_1.FolderController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
         return new folder_2.FolderApi(uc);
     };
-    RootApi.prototype.addSeparator = function () {
+    RootApi.prototype.addSeparator = function (opt_params) {
+        var params = opt_params || {};
         var uc = new separator_1.SeparatorController(this.controller.document, {
             disposable: new disposable_1.Disposable(),
         });
-        this.controller.uiControllerList.append(uc);
+        this.controller.uiControllerList.add(uc, params.index);
     };
     /**
      * Import a preset of all inputs.
@@ -1948,14 +1950,14 @@ var FolderController = /** @class */ (function () {
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
         this.onTitleClick_ = this.onTitleClick_.bind(this);
-        this.onUiControllerListAppend_ = this.onUiControllerListAppend_.bind(this);
+        this.onUiControllerListAdd_ = this.onUiControllerListAdd_.bind(this);
         this.onUiControllerListRemove_ = this.onUiControllerListRemove_.bind(this);
         this.emitter = new emitter_1.Emitter();
         this.disposable = config.disposable;
         this.folder = new folder_1.Folder(config.title, type_util_1.TypeUtil.getOrDefault(config.expanded, true));
         this.folder.emitter.on('change', this.onFolderChange_);
         this.ucList_ = new ui_controller_list_1.UiControllerList();
-        this.ucList_.emitter.on('append', this.onUiControllerListAppend_);
+        this.ucList_.emitter.on('add', this.onUiControllerListAdd_);
         this.ucList_.emitter.on('remove', this.onUiControllerListRemove_);
         this.doc_ = document;
         this.view = new folder_2.FolderView(this.doc_, {
@@ -1999,7 +2001,7 @@ var FolderController = /** @class */ (function () {
     FolderController.prototype.onTitleClick_ = function () {
         this.folder.expanded = !this.folder.expanded;
     };
-    FolderController.prototype.onUiControllerListAppend_ = function (uc) {
+    FolderController.prototype.onUiControllerListAdd_ = function (uc, index) {
         if (uc instanceof input_binding_1.InputBindingController) {
             var emitter = uc.binding.value.emitter;
             emitter.on('change', this.onInputChange_);
@@ -2008,7 +2010,7 @@ var FolderController = /** @class */ (function () {
             var emitter = uc.binding.value.emitter;
             emitter.on('update', this.onMonitorUpdate_);
         }
-        this.view.containerElement.appendChild(uc.view.element);
+        this.view.containerElement.insertBefore(uc.view.element, this.view.containerElement.children[index]);
         this.folder.expandedHeight = this.computeExpandedHeight_();
     };
     FolderController.prototype.onUiControllerListRemove_ = function () {
@@ -3149,7 +3151,7 @@ exports.RootController = void 0;
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
-var list_1 = __webpack_require__(/*! ../model/list */ "./src/main/js/model/list.ts");
+var ui_controller_list_1 = __webpack_require__(/*! ../model/ui-controller-list */ "./src/main/js/model/ui-controller-list.ts");
 var root_1 = __webpack_require__(/*! ../view/root */ "./src/main/js/view/root.ts");
 var folder_2 = __webpack_require__(/*! ./folder */ "./src/main/js/controller/folder.ts");
 var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/controller/input-binding.ts");
@@ -3168,13 +3170,13 @@ var RootController = /** @class */ (function () {
         this.onFolderChange_ = this.onFolderChange_.bind(this);
         this.onRootFolderChange_ = this.onRootFolderChange_.bind(this);
         this.onTitleClick_ = this.onTitleClick_.bind(this);
-        this.onUiControllerListAppend_ = this.onUiControllerListAppend_.bind(this);
+        this.onUiControllerListAdd_ = this.onUiControllerListAdd_.bind(this);
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
         this.emitter = new emitter_1.Emitter();
         this.folder = createFolder(config);
-        this.ucList_ = new list_1.List();
-        this.ucList_.emitter.on('append', this.onUiControllerListAppend_);
+        this.ucList_ = new ui_controller_list_1.UiControllerList();
+        this.ucList_.emitter.on('add', this.onUiControllerListAdd_);
         this.doc_ = document;
         this.disposable = config.disposable;
         this.view = new root_1.RootView(this.doc_, {
@@ -3202,7 +3204,7 @@ var RootController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    RootController.prototype.onUiControllerListAppend_ = function (uc) {
+    RootController.prototype.onUiControllerListAdd_ = function (uc, index) {
         if (uc instanceof input_binding_1.InputBindingController) {
             var emitter = uc.binding.value.emitter;
             emitter.on('change', this.onInputChange_);
@@ -3217,7 +3219,7 @@ var RootController = /** @class */ (function () {
             emitter.on('inputchange', this.onInputChange_);
             emitter.on('monitorupdate', this.onMonitorUpdate_);
         }
-        this.view.containerElement.appendChild(uc.view.element);
+        this.view.containerElement.insertBefore(uc.view.element, this.view.containerElement.children[index]);
     };
     RootController.prototype.onTitleClick_ = function () {
         if (this.folder) {
@@ -4771,9 +4773,10 @@ var List = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    List.prototype.append = function (item) {
-        this.items_.push(item);
-        this.emitter.emit('append', [item]);
+    List.prototype.add = function (item, opt_index) {
+        var index = opt_index !== undefined ? opt_index : this.items_.length;
+        this.items_.splice(index, 0, item);
+        this.emitter.emit('add', [item, index]);
     };
     List.prototype.remove = function (item) {
         var index = this.items_.indexOf(item);
@@ -4939,12 +4942,12 @@ var list_1 = __webpack_require__(/*! ./list */ "./src/main/js/model/list.ts");
  */
 var UiControllerList = /** @class */ (function () {
     function UiControllerList() {
-        this.onListAppend_ = this.onListAppend_.bind(this);
+        this.onListAdd_ = this.onListAdd_.bind(this);
         this.onListRemove_ = this.onListRemove_.bind(this);
         this.onListItemDispose_ = this.onListItemDispose_.bind(this);
         this.ucList_ = new list_1.List();
         this.emitter = new emitter_1.Emitter();
-        this.ucList_.emitter.on('append', this.onListAppend_);
+        this.ucList_.emitter.on('add', this.onListAdd_);
         this.ucList_.emitter.on('remove', this.onListRemove_);
     }
     Object.defineProperty(UiControllerList.prototype, "items", {
@@ -4954,11 +4957,11 @@ var UiControllerList = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    UiControllerList.prototype.append = function (uc) {
-        this.ucList_.append(uc);
+    UiControllerList.prototype.add = function (uc, opt_index) {
+        this.ucList_.add(uc, opt_index);
     };
-    UiControllerList.prototype.onListAppend_ = function (uc) {
-        this.emitter.emit('append', [uc]);
+    UiControllerList.prototype.onListAdd_ = function (uc, index) {
+        this.emitter.emit('add', [uc, index]);
         uc.disposable.emitter.on('dispose', this.onListItemDispose_);
     };
     UiControllerList.prototype.onListRemove_ = function () {

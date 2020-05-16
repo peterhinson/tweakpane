@@ -823,6 +823,14 @@ exports.MiscRoute = {
                     label: 'Initial speed',
                 });
             },
+            insert: function (container) {
+                var pane = new Tweakpane({
+                    container: container,
+                });
+                pane.addButton({ title: 'Run' });
+                pane.addButton({ title: 'Stop' });
+                pane.addButton({ title: '**Reset**', index: 1 });
+            },
             defaultTheme: function (container) {
                 return setUpThemedPane(container);
             },
