@@ -74,7 +74,7 @@ pre {
       margin-left: 0.5em;
       margin-right: 0; }
 
-@media screen and (min-width: 961px) {
+@media screen and (min-width: 801px) {
   .common-demo {
     display: flex; } }
 
@@ -87,7 +87,7 @@ pre {
   flex: 2;
   padding: 32px;
   text-align: center; }
-  @media screen and (max-width: 960px) {
+  @media screen and (max-width: 800px) {
     .common-demo_resultLayout {
       padding: 16px; } }
   .common-demo_resultLayout.common-demo_resultLayout-withJson > * + * {
@@ -97,7 +97,7 @@ pre {
   box-sizing: border-box;
   padding-left: 8px;
   padding-right: 8px; }
-  @media screen and (min-width: 961px) {
+  @media screen and (min-width: 801px) {
     .common-demo_resultJsonLayout {
       display: inline-block;
       min-width: 256px;
@@ -116,15 +116,24 @@ pre {
   text-align: left; }
   .common-globalFooter_innerLayout {
     box-sizing: border-box;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
     margin-left: auto;
     margin-right: auto; }
-    @media screen and (min-width: 961px) {
+    @media screen and (min-width: 801px) {
       .common-globalFooter_innerLayout {
-        max-width: 1024px;
-        padding: 64px 128px; } }
-    @media screen and (max-width: 960px) {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 800px; } }
+    @media screen and (min-width: 801px) {
       .common-globalFooter_innerLayout {
-        padding: 32px 16px; } }
+        padding-bottom: 64px;
+        padding-top: 64px; } }
+    @media screen and (max-width: 800px) {
+      .common-globalFooter_innerLayout {
+        padding-bottom: 32px;
+        padding-top: 32px; } }
   .common-globalFooter_titleLayout {
     margin-bottom: 32px; }
   .common-globalFooter_menuLayout a {
@@ -136,7 +145,7 @@ pre {
     font-size: 0.8rem;
     margin-top: 64px;
     opacity: 0.7; }
-    @media screen and (max-width: 960px) {
+    @media screen and (max-width: 800px) {
       .common-globalFooter_copyLayout {
         margin-top: 32px; } }
     .common-globalFooter_copyLayout a {
@@ -145,11 +154,11 @@ pre {
 .common-globalFooterMenu {
   display: flex; }
 
-@media screen and (min-width: 961px) {
+@media screen and (min-width: 801px) {
   .common-globalFooterMenuItem + .common-globalFooterMenuItem {
     margin-left: 8em; } }
 
-@media screen and (max-width: 960px) {
+@media screen and (max-width: 800px) {
   .common-globalFooterMenuItem {
     flex: 1; }
     .common-globalFooterMenuItem + .common-globalFooterMenuItem {
@@ -188,43 +197,42 @@ pre {
   right: 0;
   top: 0;
   z-index: 1002; }
-  @media screen and (min-width: 961px) {
+  @media screen and (min-width: 801px) {
     .common-globalHeader {
       height: 64px; } }
-  @media screen and (max-width: 960px) {
+  @media screen and (max-width: 800px) {
     .common-globalHeader {
       height: 128px; } }
   .common-globalHeader_innerLayout {
     box-sizing: border-box;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
     margin-left: auto;
     margin-right: auto;
     position: relative; }
-    @media screen and (min-width: 961px) {
+    @media screen and (min-width: 801px) {
       .common-globalHeader_innerLayout {
-        max-width: 1024px;
-        padding-left: 128px;
-        padding-right: 128px; } }
-    @media screen and (max-width: 960px) {
-      .common-globalHeader_innerLayout {
-        padding-left: 16px;
-        padding-right: 16px; } }
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 800px; } }
   .common-globalHeader_logoLayout {
     display: inline-block;
     margin-right: 1em; }
-  @media screen and (min-width: 961px) {
+  @media screen and (min-width: 801px) {
     .common-globalHeader_menuLayout {
       display: inline-block; } }
-  @media screen and (max-width: 960px) {
+  @media screen and (max-width: 800px) {
     .common-globalHeader_menuLayout {
       text-align: center; } }
   .common-globalHeader_buttonLayout {
     font-size: 0.9em;
     position: absolute;
     top: 0; }
-    @media screen and (min-width: 961px) {
+    @media screen and (min-width: 801px) {
       .common-globalHeader_buttonLayout {
-        right: 128px; } }
-    @media screen and (max-width: 960px) {
+        right: 16px; } }
+    @media screen and (max-width: 800px) {
       .common-globalHeader_buttonLayout {
         right: 16px; } }
 
@@ -241,10 +249,10 @@ pre {
         text-decoration: underline; }
     .common-globalHeaderMenu_item.common-globalHeaderMenu_item-active a {
       font-weight: bold; }
-      @media screen and (min-width: 961px) {
+      @media screen and (min-width: 801px) {
         .common-globalHeaderMenu_item.common-globalHeaderMenu_item-active a {
           background-color: #f1f2f3; } }
-      @media screen and (max-width: 960px) {
+      @media screen and (max-width: 800px) {
         .common-globalHeaderMenu_item.common-globalHeaderMenu_item-active a {
           background: linear-gradient(to bottom, rgba(241, 242, 243, 0), #f1f2f3); } }
     .common-globalHeaderMenu_item .fa-external-link-square-alt {
@@ -299,10 +307,10 @@ pre {
 
 .common-main {
   overflow: hidden; }
-  @media screen and (min-width: 961px) {
+  @media screen and (min-width: 801px) {
     .common-main_globalHeaderLayout {
       height: 64px; } }
-  @media screen and (max-width: 960px) {
+  @media screen and (max-width: 800px) {
     .common-main_globalHeaderLayout {
       height: 128px; } }
   .common-main_pageHeaderLayout, .common-main_innerLayout {
@@ -310,7 +318,7 @@ pre {
     .common-main_pageHeaderLayout h2, .common-main_innerLayout h2 {
       font-size: 1.5rem;
       margin-top: 2em; }
-      @media screen and (max-width: 960px) {
+      @media screen and (max-width: 800px) {
         .common-main_pageHeaderLayout h2, .common-main_innerLayout h2 {
           font-size: 1.25rem; } }
     .common-main_pageHeaderLayout h3,
@@ -322,7 +330,7 @@ pre {
     .common-main_innerLayout h6 {
       font-size: 1.25rem;
       margin-top: 2em; }
-      @media screen and (max-width: 960px) {
+      @media screen and (max-width: 800px) {
         .common-main_pageHeaderLayout h3,
         .common-main_pageHeaderLayout h4,
         .common-main_pageHeaderLayout h5,
@@ -372,17 +380,21 @@ pre {
       color: #2680d9; }
   .common-main_innerLayout {
     box-sizing: border-box;
-    margin-left: auto;
-    margin-right: auto; }
-    @media screen and (min-width: 961px) {
+    padding-left: 16px;
+    padding-right: 16px; }
+    @media screen and (min-width: 801px) {
       .common-main_innerLayout {
-        max-width: 1024px;
-        padding: 64px 128px; } }
-    @media screen and (max-width: 960px) {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 800px; } }
+    @media screen and (min-width: 801px) {
       .common-main_innerLayout {
-        margin: 32px auto;
-        padding-left: 16px;
-        padding-right: 16px; } }
+        padding-bottom: 64px;
+        padding-top: 64px; } }
+    @media screen and (max-width: 800px) {
+      .common-main_innerLayout {
+        padding-bottom: 32px;
+        padding-top: 32px; } }
   .common-main_mediaLayout {
     border-radius: 6px;
     margin-bottom: 1em;
@@ -401,7 +413,7 @@ pre {
   .common-codeBlock pre {
     overflow: auto;
     padding: 32px; }
-    @media screen and (max-width: 960px) {
+    @media screen and (max-width: 800px) {
       .common-codeBlock pre {
         padding: 16px; } }
     .common-codeBlock pre code {
@@ -420,13 +432,13 @@ pre {
 .common-support {
   background-color: #f7e6d4;
   padding: 32px; }
-  @media screen and (max-width: 960px) {
+  @media screen and (max-width: 800px) {
     .common-support {
       padding: 16px; } }
   .common-support_buttonLayout {
     margin-top: 32px;
     text-align: center; }
-    @media screen and (max-width: 960px) {
+    @media screen and (max-width: 800px) {
       .common-support_buttonLayout {
         margin-top: 16px; } }
 
@@ -479,27 +491,46 @@ pre {
       width: 100%; }
   .common-pageHeader_innerLayout {
     box-sizing: border-box;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
     margin-left: auto;
     margin-right: auto;
     position: relative; }
-    @media screen and (min-width: 961px) {
+    @media screen and (min-width: 801px) {
       .common-pageHeader_innerLayout {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 800px; } }
+    @media screen and (min-width: 801px) {
+      .common-pageHeader_innerLayout {
+        align-items: center;
         display: flex;
         justify-content: space-between;
-        max-width: 1024px;
-        padding: 64px 128px; } }
-    @media screen and (max-width: 960px) {
+        padding: 64px 48px; } }
+    @media screen and (min-width: 481px) and (max-width: 800px) {
       .common-pageHeader_innerLayout {
-        padding: 32px 16px; } }
+        max-width: 480px; } }
+    @media screen and (max-width: 800px) {
+      .common-pageHeader_innerLayout {
+        display: block;
+        padding: 64px 16px; } }
+  @media screen and (min-width: 801px) {
+    .common-pageHeader_titleLayout {
+      padding-bottom: 32px;
+      padding-top: 32px; } }
   .common-pageHeader_title {
     font-size: 2rem;
     font-weight: bold; }
-  @media screen and (min-width: 961px) {
+    @media screen and (max-width: 800px) {
+      .common-pageHeader_title {
+        text-align: center; } }
+  @media screen and (min-width: 801px) {
     .common-pageHeader_paneLayout {
       flex-grow: 0;
       flex-shrink: 0;
       margin-left: 32px; } }
-  @media screen and (max-width: 960px) {
+  @media screen and (max-width: 800px) {
     .common-pageHeader_paneLayout {
       margin-top: 32px;
       text-align: center; } }
