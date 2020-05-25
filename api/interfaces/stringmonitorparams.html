@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ButtonParams | tweakpane</title>
+	<title>StringMonitorParams | tweakpane</title>
 	<meta name="description" content="Documentation for tweakpane">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="buttonparams.html">ButtonParams</a>
+					<a href="stringmonitorparams.html">StringMonitorParams</a>
 				</li>
 			</ul>
-			<h1>Interface ButtonParams</h1>
+			<h1>Interface StringMonitorParams</h1>
 		</div>
 	</div>
 </header>
@@ -68,10 +68,10 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="baseparams.html" class="tsd-signature-type">BaseParams</a>
+						<a href="basemonitorparams.html" class="tsd-signature-type">BaseMonitorParams</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">ButtonParams</span>
+								<span class="target">StringMonitorParams</span>
 							</li>
 						</ul>
 					</li>
@@ -84,8 +84,11 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="buttonparams.html#index" class="tsd-kind-icon">index</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="buttonparams.html#title" class="tsd-kind-icon">title</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="stringmonitorparams.html#count" class="tsd-kind-icon">count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="stringmonitorparams.html#index" class="tsd-kind-icon">index</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="stringmonitorparams.html#interval" class="tsd-kind-icon">interval</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="stringmonitorparams.html#label" class="tsd-kind-icon">label</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="stringmonitorparams.html#multiline" class="tsd-kind-icon">multiline</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,6 +96,17 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+					<a name="count" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> count</h3>
+					<div class="tsd-signature tsd-kind-icon">count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="basemonitorparams.html">BaseMonitorParams</a>.<a href="basemonitorparams.html#count">count</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L59">api/types.ts:59</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
 					<a name="index" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> index</h3>
@@ -104,13 +118,35 @@
 						</ul>
 					</aside>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+					<a name="interval" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> interval</h3>
+					<div class="tsd-signature tsd-kind-icon">interval<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="basemonitorparams.html">BaseMonitorParams</a>.<a href="basemonitorparams.html#interval">interval</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L60">api/types.ts:60</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+					<a name="label" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> label</h3>
+					<div class="tsd-signature tsd-kind-icon">label<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="labelableparams.html">LabelableParams</a>.<a href="labelableparams.html#label">label</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L6">api/types.ts:6</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="title" class="tsd-anchor"></a>
-					<h3>title</h3>
-					<div class="tsd-signature tsd-kind-icon">title<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="multiline" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> multiline</h3>
+					<div class="tsd-signature tsd-kind-icon">multiline<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L83">api/types.ts:83</a></li>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L74">api/types.ts:74</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -129,13 +165,22 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-is-external">
-						<a href="buttonparams.html" class="tsd-kind-icon">Button<wbr>Params</a>
+						<a href="stringmonitorparams.html" class="tsd-kind-icon">String<wbr>Monitor<wbr>Params</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
-								<a href="buttonparams.html#index" class="tsd-kind-icon">index</a>
+								<a href="stringmonitorparams.html#count" class="tsd-kind-icon">count</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+								<a href="stringmonitorparams.html#index" class="tsd-kind-icon">index</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+								<a href="stringmonitorparams.html#interval" class="tsd-kind-icon">interval</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+								<a href="stringmonitorparams.html#label" class="tsd-kind-icon">label</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="buttonparams.html#title" class="tsd-kind-icon">title</a>
+								<a href="stringmonitorparams.html#multiline" class="tsd-kind-icon">multiline</a>
 							</li>
 						</ul>
 					</li>

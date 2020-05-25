@@ -411,6 +411,74 @@ exports.ButtonApi = ButtonApi;
 
 /***/ }),
 
+/***/ "./src/main/js/api/event-handler-adapters.ts":
+/*!***************************************************!*\
+  !*** ./src/main/js/api/event-handler-adapters.ts ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.folder = exports.monitor = exports.input = void 0;
+/**
+ * @hidden
+ */
+function input(_a) {
+    var binding = _a.binding, eventName = _a.eventName, handler = _a.handler;
+    if (eventName === 'change') {
+        var emitter = binding.emitter;
+        emitter.on('change', function (inputBinding, value) {
+            handler(inputBinding.getValueToWrite(value));
+        });
+    }
+}
+exports.input = input;
+/**
+ * @hidden
+ */
+function monitor(_a) {
+    var binding = _a.binding, eventName = _a.eventName, handler = _a.handler;
+    if (eventName === 'update') {
+        var emitter = binding.emitter;
+        emitter.on('update', function (monitorBinding) {
+            handler(monitorBinding.target.read());
+        });
+    }
+}
+exports.monitor = monitor;
+/**
+ * @hidden
+ */
+function folder(_a) {
+    var eventName = _a.eventName, folder = _a.folder, handler = _a.handler, uiControllerList = _a.uiControllerList;
+    if (eventName === 'change') {
+        var emitter = uiControllerList.emitter;
+        emitter.on('inputchange', function (_, inputBinding, value) {
+            handler(inputBinding.getValueToWrite(value));
+        });
+    }
+    if (eventName === 'update') {
+        var emitter = uiControllerList.emitter;
+        emitter.on('monitorupdate', function (_, monitorBinding) {
+            handler(monitorBinding.target.read());
+        });
+    }
+    if (eventName === 'fold') {
+        uiControllerList.emitter.on('fold', function () {
+            handler();
+        });
+        folder === null || folder === void 0 ? void 0 : folder.emitter.on('change', function () {
+            handler();
+        });
+    }
+}
+exports.folder = folder;
+
+
+/***/ }),
+
 /***/ "./src/main/js/api/folder.ts":
 /*!***********************************!*\
   !*** ./src/main/js/api/folder.ts ***!
@@ -440,13 +508,9 @@ var separator_1 = __webpack_require__(/*! ../controller/separator */ "./src/main
 var disposable_1 = __webpack_require__(/*! ../model/disposable */ "./src/main/js/model/disposable.ts");
 var target_1 = __webpack_require__(/*! ../model/target */ "./src/main/js/model/target.ts");
 var button_2 = __webpack_require__(/*! ./button */ "./src/main/js/api/button.ts");
+var EventHandlerAdapters = __webpack_require__(/*! ./event-handler-adapters */ "./src/main/js/api/event-handler-adapters.ts");
 var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/api/input-binding.ts");
 var monitor_binding_1 = __webpack_require__(/*! ./monitor-binding */ "./src/main/js/api/monitor-binding.ts");
-var TO_INTERNAL_EVENT_NAME_MAP = {
-    change: 'inputchange',
-    fold: 'fold',
-    update: 'monitorupdate',
-};
 var FolderApi = /** @class */ (function () {
     /**
      * @hidden
@@ -492,11 +556,12 @@ var FolderApi = /** @class */ (function () {
         this.controller.uiControllerList.add(uc, params.index);
     };
     FolderApi.prototype.on = function (eventName, handler) {
-        var internalEventName = TO_INTERNAL_EVENT_NAME_MAP[eventName];
-        if (internalEventName) {
-            var emitter = this.controller.emitter;
-            emitter.on(internalEventName, handler);
-        }
+        EventHandlerAdapters.folder({
+            eventName: eventName,
+            folder: this.controller.folder,
+            handler: handler,
+            uiControllerList: this.controller.uiControllerList,
+        });
         return this;
     };
     return FolderApi;
@@ -517,6 +582,7 @@ exports.FolderApi = FolderApi;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InputBindingApi = void 0;
+var HandlerAdapters = __webpack_require__(/*! ./event-handler-adapters */ "./src/main/js/api/event-handler-adapters.ts");
 /**
  * The API for the input binding between the parameter and the pane.
  * @param In The type inner Tweakpane.
@@ -530,8 +596,11 @@ var InputBindingApi = /** @class */ (function () {
         this.controller = bindingController;
     }
     InputBindingApi.prototype.on = function (eventName, handler) {
-        var emitter = this.controller.binding.value.emitter;
-        emitter.on(eventName, handler);
+        HandlerAdapters.input({
+            binding: this.controller.binding,
+            eventName: eventName,
+            handler: handler,
+        });
         return this;
     };
     InputBindingApi.prototype.refresh = function () {
@@ -555,6 +624,7 @@ exports.InputBindingApi = InputBindingApi;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MonitorBindingApi = void 0;
+var EventHandlerAdapters = __webpack_require__(/*! ./event-handler-adapters */ "./src/main/js/api/event-handler-adapters.ts");
 /**
  * The API for the monitor binding between the parameter and the pane.
  */
@@ -569,8 +639,11 @@ var MonitorBindingApi = /** @class */ (function () {
         this.controller.controller.disposable.dispose();
     };
     MonitorBindingApi.prototype.on = function (eventName, handler) {
-        var emitter = this.controller.binding.value.emitter;
-        emitter.on(eventName, handler);
+        EventHandlerAdapters.monitor({
+            binding: this.controller.binding,
+            eventName: eventName,
+            handler: handler,
+        });
         return this;
     };
     MonitorBindingApi.prototype.refresh = function () {
@@ -655,15 +728,11 @@ var UiUtil = __webpack_require__(/*! ../controller/ui-util */ "./src/main/js/con
 var disposable_1 = __webpack_require__(/*! ../model/disposable */ "./src/main/js/model/disposable.ts");
 var target_1 = __webpack_require__(/*! ../model/target */ "./src/main/js/model/target.ts");
 var button_2 = __webpack_require__(/*! ./button */ "./src/main/js/api/button.ts");
+var EventHandlerAdapters = __webpack_require__(/*! ./event-handler-adapters */ "./src/main/js/api/event-handler-adapters.ts");
 var folder_2 = __webpack_require__(/*! ./folder */ "./src/main/js/api/folder.ts");
 var input_binding_2 = __webpack_require__(/*! ./input-binding */ "./src/main/js/api/input-binding.ts");
 var monitor_binding_2 = __webpack_require__(/*! ./monitor-binding */ "./src/main/js/api/monitor-binding.ts");
 var Preset = __webpack_require__(/*! ./preset */ "./src/main/js/api/preset.ts");
-var TO_INTERNAL_EVENT_NAME_MAP = {
-    change: 'inputchange',
-    fold: 'fold',
-    update: 'monitorupdate',
-};
 /**
  * The Tweakpane interface.
  *
@@ -760,11 +829,12 @@ var RootApi = /** @class */ (function () {
      * @return The API object itself.
      */
     RootApi.prototype.on = function (eventName, handler) {
-        var internalEventName = TO_INTERNAL_EVENT_NAME_MAP[eventName];
-        if (internalEventName) {
-            var emitter = this.controller.emitter;
-            emitter.on(internalEventName, handler);
-        }
+        EventHandlerAdapters.folder({
+            eventName: eventName,
+            folder: this.controller.folder,
+            handler: handler,
+            uiControllerList: this.controller.uiControllerList,
+        });
         return this;
     };
     /**
@@ -798,6 +868,7 @@ exports.RootApi = RootApi;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InputBinding = void 0;
+var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
  */
@@ -806,6 +877,7 @@ var InputBinding = /** @class */ (function () {
         this.onValueChange_ = this.onValueChange_.bind(this);
         this.reader_ = config.reader;
         this.writer_ = config.writer;
+        this.emitter = new emitter_1.Emitter();
         this.value = config.value;
         this.value.emitter.on('change', this.onValueChange_);
         this.target = config.target;
@@ -817,12 +889,15 @@ var InputBinding = /** @class */ (function () {
             this.value.rawValue = this.reader_(targetValue);
         }
     };
-    InputBinding.prototype.write_ = function (rawValue) {
-        var value = this.writer_(rawValue);
-        this.target.write(value);
+    InputBinding.prototype.getValueToWrite = function (rawValue) {
+        return this.writer_(rawValue);
     };
-    InputBinding.prototype.onValueChange_ = function (rawValue) {
+    InputBinding.prototype.write_ = function (rawValue) {
+        this.target.write(this.getValueToWrite(rawValue));
+    };
+    InputBinding.prototype.onValueChange_ = function (_, rawValue) {
         this.write_(rawValue);
+        this.emitter.emit('change', [this, rawValue]);
     };
     return InputBinding;
 }());
@@ -842,15 +917,19 @@ exports.InputBinding = InputBinding;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MonitorBinding = void 0;
+var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
  */
 var MonitorBinding = /** @class */ (function () {
     function MonitorBinding(config) {
         this.onTick_ = this.onTick_.bind(this);
+        this.onValueUpdate_ = this.onValueUpdate_.bind(this);
         this.reader_ = config.reader;
         this.target = config.target;
+        this.emitter = new emitter_1.Emitter();
         this.value = config.value;
+        this.value.emitter.on('update', this.onValueUpdate_);
         this.ticker = config.ticker;
         this.ticker.emitter.on('tick', this.onTick_);
         this.read();
@@ -864,8 +943,11 @@ var MonitorBinding = /** @class */ (function () {
             this.value.append(this.reader_(targetValue));
         }
     };
-    MonitorBinding.prototype.onTick_ = function () {
+    MonitorBinding.prototype.onTick_ = function (_) {
         this.read();
+    };
+    MonitorBinding.prototype.onValueUpdate_ = function (_, rawValue) {
+        this.emitter.emit('update', [this, rawValue]);
     };
     return MonitorBinding;
 }());
@@ -1934,28 +2016,20 @@ exports.ButtonController = ButtonController;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FolderController = void 0;
 var DomUtil = __webpack_require__(/*! ../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
-var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
 var ui_controller_list_1 = __webpack_require__(/*! ../model/ui-controller-list */ "./src/main/js/model/ui-controller-list.ts");
 var folder_2 = __webpack_require__(/*! ../view/folder */ "./src/main/js/view/folder.ts");
-var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/controller/input-binding.ts");
-var monitor_binding_1 = __webpack_require__(/*! ./monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 /**
  * @hidden
  */
 var FolderController = /** @class */ (function () {
     function FolderController(document, config) {
-        this.onFolderChange_ = this.onFolderChange_.bind(this);
-        this.onInputChange_ = this.onInputChange_.bind(this);
-        this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
         this.onTitleClick_ = this.onTitleClick_.bind(this);
         this.onUiControllerListAdd_ = this.onUiControllerListAdd_.bind(this);
         this.onUiControllerListRemove_ = this.onUiControllerListRemove_.bind(this);
-        this.emitter = new emitter_1.Emitter();
         this.disposable = config.disposable;
         this.folder = new folder_1.Folder(config.title, type_util_1.TypeUtil.getOrDefault(config.expanded, true));
-        this.folder.emitter.on('change', this.onFolderChange_);
         this.ucList_ = new ui_controller_list_1.UiControllerList();
         this.ucList_.emitter.on('add', this.onUiControllerListAdd_);
         this.ucList_.emitter.on('remove', this.onUiControllerListRemove_);
@@ -2001,29 +2075,12 @@ var FolderController = /** @class */ (function () {
     FolderController.prototype.onTitleClick_ = function () {
         this.folder.expanded = !this.folder.expanded;
     };
-    FolderController.prototype.onUiControllerListAdd_ = function (uc, index) {
-        if (uc instanceof input_binding_1.InputBindingController) {
-            var emitter = uc.binding.value.emitter;
-            emitter.on('change', this.onInputChange_);
-        }
-        else if (uc instanceof monitor_binding_1.MonitorBindingController) {
-            var emitter = uc.binding.value.emitter;
-            emitter.on('update', this.onMonitorUpdate_);
-        }
+    FolderController.prototype.onUiControllerListAdd_ = function (_, uc, index) {
         this.view.containerElement.insertBefore(uc.view.element, this.view.containerElement.children[index]);
         this.folder.expandedHeight = this.computeExpandedHeight_();
     };
-    FolderController.prototype.onUiControllerListRemove_ = function () {
+    FolderController.prototype.onUiControllerListRemove_ = function (_) {
         this.folder.expandedHeight = this.computeExpandedHeight_();
-    };
-    FolderController.prototype.onInputChange_ = function (value) {
-        this.emitter.emit('inputchange', [value]);
-    };
-    FolderController.prototype.onMonitorUpdate_ = function (value) {
-        this.emitter.emit('monitorupdate', [value]);
-    };
-    FolderController.prototype.onFolderChange_ = function () {
-        this.emitter.emit('fold');
     };
     return FolderController;
 }());
@@ -2312,13 +2369,13 @@ var HPaletteInputController = /** @class */ (function () {
         this.value.rawValue = new color_1.Color([hue, s, v], 'hsv');
         this.view.update();
     };
-    HPaletteInputController.prototype.onPointerDown_ = function (d) {
+    HPaletteInputController.prototype.onPointerDown_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
-    HPaletteInputController.prototype.onPointerMove_ = function (d) {
+    HPaletteInputController.prototype.onPointerMove_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
-    HPaletteInputController.prototype.onPointerUp_ = function (d) {
+    HPaletteInputController.prototype.onPointerUp_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
     return HPaletteInputController;
@@ -2552,13 +2609,13 @@ var Point2dPadInputController = /** @class */ (function () {
         this.value.rawValue = new point_2d_1.Point2d(number_util_1.NumberUtil.map(d.px, 0, 1, -max, +max), number_util_1.NumberUtil.map(d.py, 0, 1, -max, +max));
         this.view.update();
     };
-    Point2dPadInputController.prototype.onPointerDown_ = function (d) {
+    Point2dPadInputController.prototype.onPointerDown_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
-    Point2dPadInputController.prototype.onPointerMove_ = function (d) {
+    Point2dPadInputController.prototype.onPointerMove_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
-    Point2dPadInputController.prototype.onPointerUp_ = function (d) {
+    Point2dPadInputController.prototype.onPointerUp_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
     return Point2dPadInputController;
@@ -2865,15 +2922,15 @@ var SliderInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
-    SliderInputController.prototype.onPointerDown_ = function (d) {
+    SliderInputController.prototype.onPointerDown_ = function (_, d) {
         this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
-    SliderInputController.prototype.onPointerMove_ = function (d) {
+    SliderInputController.prototype.onPointerMove_ = function (_, d) {
         this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
-    SliderInputController.prototype.onPointerUp_ = function (d) {
+    SliderInputController.prototype.onPointerUp_ = function (_, d) {
         this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
@@ -2925,13 +2982,13 @@ var SvPaletteInputController = /** @class */ (function () {
         this.value.rawValue = new color_1.Color([h, saturation, value], 'hsv');
         this.view.update();
     };
-    SvPaletteInputController.prototype.onPointerDown_ = function (d) {
+    SvPaletteInputController.prototype.onPointerDown_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
-    SvPaletteInputController.prototype.onPointerMove_ = function (d) {
+    SvPaletteInputController.prototype.onPointerMove_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
-    SvPaletteInputController.prototype.onPointerUp_ = function (d) {
+    SvPaletteInputController.prototype.onPointerUp_ = function (_, d) {
         this.handlePointerEvent_(d);
     };
     return SvPaletteInputController;
@@ -3148,14 +3205,10 @@ exports.SingleLogMonitorController = SingleLogMonitorController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RootController = void 0;
-var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
 var ui_controller_list_1 = __webpack_require__(/*! ../model/ui-controller-list */ "./src/main/js/model/ui-controller-list.ts");
 var root_1 = __webpack_require__(/*! ../view/root */ "./src/main/js/view/root.ts");
-var folder_2 = __webpack_require__(/*! ./folder */ "./src/main/js/controller/folder.ts");
-var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/controller/input-binding.ts");
-var monitor_binding_1 = __webpack_require__(/*! ./monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 function createFolder(config) {
     if (!config.title) {
         return null;
@@ -3167,13 +3220,8 @@ function createFolder(config) {
  */
 var RootController = /** @class */ (function () {
     function RootController(document, config) {
-        this.onFolderChange_ = this.onFolderChange_.bind(this);
-        this.onRootFolderChange_ = this.onRootFolderChange_.bind(this);
         this.onTitleClick_ = this.onTitleClick_.bind(this);
         this.onUiControllerListAdd_ = this.onUiControllerListAdd_.bind(this);
-        this.onInputChange_ = this.onInputChange_.bind(this);
-        this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
-        this.emitter = new emitter_1.Emitter();
         this.folder = createFolder(config);
         this.ucList_ = new ui_controller_list_1.UiControllerList();
         this.ucList_.emitter.on('add', this.onUiControllerListAdd_);
@@ -3185,9 +3233,6 @@ var RootController = /** @class */ (function () {
         });
         if (this.view.titleElement) {
             this.view.titleElement.addEventListener('click', this.onTitleClick_);
-        }
-        if (this.folder) {
-            this.folder.emitter.on('change', this.onRootFolderChange_);
         }
     }
     Object.defineProperty(RootController.prototype, "document", {
@@ -3204,39 +3249,13 @@ var RootController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    RootController.prototype.onUiControllerListAdd_ = function (uc, index) {
-        if (uc instanceof input_binding_1.InputBindingController) {
-            var emitter = uc.binding.value.emitter;
-            emitter.on('change', this.onInputChange_);
-        }
-        else if (uc instanceof monitor_binding_1.MonitorBindingController) {
-            var emitter = uc.binding.value.emitter;
-            emitter.on('update', this.onMonitorUpdate_);
-        }
-        else if (uc instanceof folder_2.FolderController) {
-            var emitter = uc.emitter;
-            emitter.on('fold', this.onFolderChange_);
-            emitter.on('inputchange', this.onInputChange_);
-            emitter.on('monitorupdate', this.onMonitorUpdate_);
-        }
+    RootController.prototype.onUiControllerListAdd_ = function (_, uc, index) {
         this.view.containerElement.insertBefore(uc.view.element, this.view.containerElement.children[index]);
     };
     RootController.prototype.onTitleClick_ = function () {
         if (this.folder) {
             this.folder.expanded = !this.folder.expanded;
         }
-    };
-    RootController.prototype.onInputChange_ = function (value) {
-        this.emitter.emit('inputchange', [value]);
-    };
-    RootController.prototype.onMonitorUpdate_ = function (value) {
-        this.emitter.emit('monitorupdate', [value]);
-    };
-    RootController.prototype.onFolderChange_ = function () {
-        this.emitter.emit('fold');
-    };
-    RootController.prototype.onRootFolderChange_ = function () {
-        this.emitter.emit('fold');
     };
     return RootController;
 }());
@@ -4248,7 +4267,10 @@ var PointerHandler = /** @class */ (function () {
         // Prevent native text selection
         e.preventDefault();
         this.pressed_ = true;
-        this.emitter.emit('down', [this.computePosition_(e.offsetX, e.offsetY)]);
+        this.emitter.emit('down', [
+            this,
+            this.computePosition_(e.offsetX, e.offsetY),
+        ]);
     };
     PointerHandler.prototype.onDocumentMouseMove_ = function (e) {
         if (!this.pressed_) {
@@ -4257,6 +4279,7 @@ var PointerHandler = /** @class */ (function () {
         var win = this.document.defaultView;
         var rect = this.element.getBoundingClientRect();
         this.emitter.emit('move', [
+            this,
             this.computePosition_(e.pageX - (((win && win.scrollX) || 0) + rect.left), e.pageY - (((win && win.scrollY) || 0) + rect.top)),
         ]);
     };
@@ -4268,6 +4291,7 @@ var PointerHandler = /** @class */ (function () {
         var win = this.document.defaultView;
         var rect = this.element.getBoundingClientRect();
         this.emitter.emit('up', [
+            this,
             this.computePosition_(e.pageX - (((win && win.scrollX) || 0) + rect.left), e.pageY - (((win && win.scrollY) || 0) + rect.top)),
         ]);
     };
@@ -4277,6 +4301,7 @@ var PointerHandler = /** @class */ (function () {
         var touch = e.targetTouches[0];
         var rect = this.element.getBoundingClientRect();
         this.emitter.emit('down', [
+            this,
             this.computePosition_(touch.clientX - rect.left, touch.clientY - rect.top),
         ]);
     };
@@ -4284,6 +4309,7 @@ var PointerHandler = /** @class */ (function () {
         var touch = e.targetTouches[0];
         var rect = this.element.getBoundingClientRect();
         this.emitter.emit('move', [
+            this,
             this.computePosition_(touch.clientX - rect.left, touch.clientY - rect.top),
         ]);
     };
@@ -4349,7 +4375,7 @@ var IntervalTicker = /** @class */ (function () {
         this.id_ = null;
     };
     IntervalTicker.prototype.onTick_ = function () {
-        this.emitter.emit('tick');
+        this.emitter.emit('tick', [this]);
     };
     IntervalTicker.prototype.onWindowBlur_ = function () {
         this.active_ = false;
@@ -4411,7 +4437,7 @@ var Button = /** @class */ (function () {
         this.title = title;
     }
     Button.prototype.click = function () {
-        this.emitter.emit('click');
+        this.emitter.emit('click', [this]);
     };
     return Button;
 }());
@@ -4542,7 +4568,7 @@ var Disposable = /** @class */ (function () {
             return false;
         }
         this.disposed_ = true;
-        this.emitter.emit('dispose');
+        this.emitter.emit('dispose', [this]);
         return true;
     };
     return Disposable;
@@ -4580,7 +4606,7 @@ var Foldable = /** @class */ (function () {
             var changed = this.expanded_ !== expanded;
             if (changed) {
                 this.expanded_ = expanded;
-                this.emitter.emit('change');
+                this.emitter.emit('change', [this]);
             }
         },
         enumerable: false,
@@ -4623,7 +4649,7 @@ var Folder = /** @class */ (function () {
             var changed = this.expanded_ !== expanded;
             if (changed) {
                 this.expanded_ = expanded;
-                this.emitter.emit('change');
+                this.emitter.emit('change', [this]);
             }
         },
         enumerable: false,
@@ -4637,7 +4663,7 @@ var Folder = /** @class */ (function () {
             var changed = this.expandedHeight_ !== expandedHeight;
             if (changed) {
                 this.expandedHeight_ = expandedHeight;
-                this.emitter.emit('change');
+                this.emitter.emit('change', [this]);
             }
         },
         enumerable: false,
@@ -4678,7 +4704,7 @@ var GraphCursor = /** @class */ (function () {
             var changed = this.index_ !== index;
             if (changed) {
                 this.index_ = index;
-                this.emitter.emit('change', [index]);
+                this.emitter.emit('change', [this, index]);
             }
         },
         enumerable: false,
@@ -4733,7 +4759,7 @@ var InputValue = /** @class */ (function () {
             var changed = !InputValue.equalsValue(this.rawValue_, constrainedValue);
             if (changed) {
                 this.rawValue_ = constrainedValue;
-                this.emitter.emit('change', [constrainedValue]);
+                this.emitter.emit('change', [this, constrainedValue]);
             }
         },
         enumerable: false,
@@ -4776,7 +4802,7 @@ var List = /** @class */ (function () {
     List.prototype.add = function (item, opt_index) {
         var index = opt_index !== undefined ? opt_index : this.items_.length;
         this.items_.splice(index, 0, item);
-        this.emitter.emit('add', [item, index]);
+        this.emitter.emit('add', [this, item, index]);
     };
     List.prototype.remove = function (item) {
         var index = this.items_.indexOf(item);
@@ -4784,7 +4810,7 @@ var List = /** @class */ (function () {
             return;
         }
         this.items_.splice(index, 1);
-        this.emitter.emit('remove');
+        this.emitter.emit('remove', [this]);
     };
     return List;
 }());
@@ -4833,7 +4859,7 @@ var MonitorValue = /** @class */ (function () {
         if (this.rawValues_.length > this.totalCount_) {
             this.rawValues_.splice(0, this.rawValues_.length - this.totalCount_);
         }
-        this.emitter.emit('update', [rawValue]);
+        this.emitter.emit('update', [this, rawValue]);
     };
     return MonitorValue;
 }());
@@ -4935,6 +4961,9 @@ exports.Target = Target;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UiControllerList = void 0;
+var folder_1 = __webpack_require__(/*! ../controller/folder */ "./src/main/js/controller/folder.ts");
+var input_binding_1 = __webpack_require__(/*! ../controller/input-binding */ "./src/main/js/controller/input-binding.ts");
+var monitor_binding_1 = __webpack_require__(/*! ../controller/monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var list_1 = __webpack_require__(/*! ./list */ "./src/main/js/model/list.ts");
 /**
@@ -4942,9 +4971,14 @@ var list_1 = __webpack_require__(/*! ./list */ "./src/main/js/model/list.ts");
  */
 var UiControllerList = /** @class */ (function () {
     function UiControllerList() {
+        this.onFolderFold_ = this.onFolderFold_.bind(this);
+        this.onFolderInputChange_ = this.onFolderInputChange_.bind(this);
+        this.onFolderMonitorUpdate_ = this.onFolderMonitorUpdate_.bind(this);
+        this.onInputChange_ = this.onInputChange_.bind(this);
         this.onListAdd_ = this.onListAdd_.bind(this);
-        this.onListRemove_ = this.onListRemove_.bind(this);
         this.onListItemDispose_ = this.onListItemDispose_.bind(this);
+        this.onListRemove_ = this.onListRemove_.bind(this);
+        this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
         this.ucList_ = new list_1.List();
         this.emitter = new emitter_1.Emitter();
         this.ucList_.emitter.on('add', this.onListAdd_);
@@ -4960,14 +4994,28 @@ var UiControllerList = /** @class */ (function () {
     UiControllerList.prototype.add = function (uc, opt_index) {
         this.ucList_.add(uc, opt_index);
     };
-    UiControllerList.prototype.onListAdd_ = function (uc, index) {
-        this.emitter.emit('add', [uc, index]);
+    UiControllerList.prototype.onListAdd_ = function (_, uc, index) {
+        this.emitter.emit('add', [this, uc, index]);
         uc.disposable.emitter.on('dispose', this.onListItemDispose_);
+        if (uc instanceof input_binding_1.InputBindingController) {
+            var emitter = uc.binding.emitter;
+            emitter.on('change', this.onInputChange_);
+        }
+        else if (uc instanceof monitor_binding_1.MonitorBindingController) {
+            var emitter = uc.binding.value.emitter;
+            emitter.on('update', this.onMonitorUpdate_);
+        }
+        else if (uc instanceof folder_1.FolderController) {
+            var emitter = uc.uiControllerList.emitter;
+            emitter.on('fold', this.onFolderFold_);
+            emitter.on('inputchange', this.onFolderInputChange_);
+            emitter.on('monitorupdate', this.onFolderMonitorUpdate_);
+        }
     };
-    UiControllerList.prototype.onListRemove_ = function () {
-        this.emitter.emit('remove');
+    UiControllerList.prototype.onListRemove_ = function (_) {
+        this.emitter.emit('remove', [this]);
     };
-    UiControllerList.prototype.onListItemDispose_ = function () {
+    UiControllerList.prototype.onListItemDispose_ = function (_) {
         var _this = this;
         var disposedUcs = this.ucList_.items.filter(function (uc) {
             return uc.disposable.disposed;
@@ -4975,6 +5023,21 @@ var UiControllerList = /** @class */ (function () {
         disposedUcs.forEach(function (uc) {
             _this.ucList_.remove(uc);
         });
+    };
+    UiControllerList.prototype.onInputChange_ = function (inputBinding, value) {
+        this.emitter.emit('inputchange', [this, inputBinding, value]);
+    };
+    UiControllerList.prototype.onMonitorUpdate_ = function (monitorBinding, value) {
+        this.emitter.emit('monitorupdate', [this, monitorBinding, value]);
+    };
+    UiControllerList.prototype.onFolderInputChange_ = function (_, inputBinding, value) {
+        this.emitter.emit('inputchange', [this, inputBinding, value]);
+    };
+    UiControllerList.prototype.onFolderMonitorUpdate_ = function (_, monitorBinding, value) {
+        this.emitter.emit('monitorupdate', [this, monitorBinding, value]);
+    };
+    UiControllerList.prototype.onFolderFold_ = function () {
+        this.emitter.emit('fold', [this]);
     };
     return UiControllerList;
 }());

@@ -696,13 +696,17 @@ exports.MiscRoute = {
             },
             globalEvent: function (container) {
                 var PARAMS = {
-                    log: '',
+                    boolean: true,
+                    color: '#0080ff',
                     number: 0,
                     string: 'text',
+                    log: '',
                 };
                 var pane = new Tweakpane({
                     container: container,
                 });
+                pane.addInput(PARAMS, 'boolean');
+                pane.addInput(PARAMS, 'color');
                 pane.addInput(PARAMS, 'number', {
                     max: 100,
                     min: 0,

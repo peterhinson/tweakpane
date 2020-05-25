@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ButtonParams | tweakpane</title>
+	<title>BooleanInputParams | tweakpane</title>
 	<meta name="description" content="Documentation for tweakpane">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="buttonparams.html">ButtonParams</a>
+					<a href="booleaninputparams.html">BooleanInputParams</a>
 				</li>
 			</ul>
-			<h1>Interface ButtonParams</h1>
+			<h1>Interface BooleanInputParams</h1>
 		</div>
 	</div>
 </header>
@@ -68,10 +68,10 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="baseparams.html" class="tsd-signature-type">BaseParams</a>
+						<a href="baseinputparams.html" class="tsd-signature-type">BaseInputParams</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">ButtonParams</span>
+								<span class="target">BooleanInputParams</span>
 							</li>
 						</ul>
 					</li>
@@ -84,8 +84,10 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="buttonparams.html#index" class="tsd-kind-icon">index</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="buttonparams.html#title" class="tsd-kind-icon">title</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="booleaninputparams.html#index" class="tsd-kind-icon">index</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="booleaninputparams.html#label" class="tsd-kind-icon">label</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="booleaninputparams.html#options" class="tsd-kind-icon">options</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external"><a href="booleaninputparams.html#presetkey" class="tsd-kind-icon">preset<wbr>Key</a></li>
 							</ul>
 						</section>
 					</div>
@@ -104,13 +106,35 @@
 						</ul>
 					</aside>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+					<a name="label" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> label</h3>
+					<div class="tsd-signature tsd-kind-icon">label<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="labelableparams.html">LabelableParams</a>.<a href="labelableparams.html#label">label</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L6">api/types.ts:6</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="title" class="tsd-anchor"></a>
-					<h3>title</h3>
-					<div class="tsd-signature tsd-kind-icon">title<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="options" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> options</h3>
+					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <a href="inputparamsoption.html" class="tsd-signature-type">InputParamsOption</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="inputparamsoptiondictionary.html" class="tsd-signature-type">InputParamsOptionDictionary</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L83">api/types.ts:83</a></li>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L29">api/types.ts:29</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+					<a name="presetkey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> preset<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">preset<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="baseinputparams.html">BaseInputParams</a>.<a href="baseinputparams.html#presetkey">presetKey</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/types.ts#L25">api/types.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -129,13 +153,19 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-is-external">
-						<a href="buttonparams.html" class="tsd-kind-icon">Button<wbr>Params</a>
+						<a href="booleaninputparams.html" class="tsd-kind-icon">Boolean<wbr>Input<wbr>Params</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
-								<a href="buttonparams.html#index" class="tsd-kind-icon">index</a>
+								<a href="booleaninputparams.html#index" class="tsd-kind-icon">index</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+								<a href="booleaninputparams.html#label" class="tsd-kind-icon">label</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="buttonparams.html#title" class="tsd-kind-icon">title</a>
+								<a href="booleaninputparams.html#options" class="tsd-kind-icon">options</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-external">
+								<a href="booleaninputparams.html#presetkey" class="tsd-kind-icon">preset<wbr>Key</a>
 							</li>
 						</ul>
 					</li>
