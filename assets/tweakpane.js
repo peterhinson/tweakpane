@@ -5793,8 +5793,6 @@ var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
 var className = class_name_1.ClassName('csw', 'input');
-var a = '';
-a.substr(1, 2);
 /**
  * @hidden
  */
