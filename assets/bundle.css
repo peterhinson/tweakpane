@@ -520,10 +520,11 @@ pre {
       padding-bottom: 32px;
       padding-top: 32px; } }
   .common-pageHeader_title {
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold; }
     @media screen and (max-width: 800px) {
       .common-pageHeader_title {
+        font-size: 2rem;
         text-align: center; } }
   @media screen and (min-width: 801px) {
     .common-pageHeader_paneLayout {
