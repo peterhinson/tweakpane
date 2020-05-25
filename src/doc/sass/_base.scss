@@ -1,11 +1,16 @@
 html {
 	--themes-background-color: #{$demo-result-bg-color};
 
+	background-color: $base-bg-color;
 	color: $base-fg-color;
 	font-family: $font-family;
 	font-size: 16px;
 }
-
+h1, h2, h3, h4, h5, h6 {
+	color: $base-heading-color;
+	font-weight: normal;
+	letter-spacing: 0.01em;
+}
 code {
 	font-family: $font-family-mono;
 }

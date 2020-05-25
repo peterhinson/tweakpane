@@ -10,7 +10,7 @@ export const IndexRoute = {
 	init: () => {
 		const ENV: Environment = {
 			amp: {x: 0.1, y: 0.5},
-			color: '#e4e4e7',
+			color: '#0b0c0e',
 			freq: {
 				x: 12.57,
 				y: 6.28,
