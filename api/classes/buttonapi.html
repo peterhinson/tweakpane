@@ -80,7 +80,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="buttonapi.html#dispose" class="tsd-kind-icon">dispose</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="buttonapi.html#on" class="tsd-kind-icon">on</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-external"><a href="buttonapi.html#on" class="tsd-kind-icon">on</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,33 +98,39 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/button.ts#L19">api/button.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/b917c39/src/main/js/api/button.ts#L20">api/button.ts:20</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-external">
 					<a name="on" class="tsd-anchor"></a>
 					<h3>on</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>eventName<span class="tsd-signature-symbol">: </span><a href="../index.html#eventname" class="tsd-signature-type">EventName</a>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Handler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="buttonapi.html" class="tsd-signature-type">ButtonApi</a></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">on&lt;EventName&gt;<span class="tsd-signature-symbol">(</span>eventName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EventName</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ButtonApiEventHandlers</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">EventName</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="buttonapi.html" class="tsd-signature-type">ButtonApi</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/76cb175/src/main/js/api/button.ts#L23">api/button.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/b917c39/src/main/js/api/button.ts#L24">api/button.ts:24</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>EventName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><a href="../interfaces/buttonapieventhandlers.html" class="tsd-signature-type">ButtonApiEventHandlers</a></h4>
+								</li>
+							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>eventName: <a href="../index.html#eventname" class="tsd-signature-type">EventName</a></h5>
+									<h5>eventName: <span class="tsd-signature-type">EventName</span></h5>
 								</li>
 								<li>
-									<h5>handler: <span class="tsd-signature-type">Handler</span></h5>
+									<h5>handler: <span class="tsd-signature-type">ButtonApiEventHandlers</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">EventName</span><span class="tsd-signature-symbol">]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="buttonapi.html" class="tsd-signature-type">ButtonApi</a></h4>
@@ -151,7 +157,7 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="buttonapi.html#dispose" class="tsd-kind-icon">dispose</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-external">
 								<a href="buttonapi.html#on" class="tsd-kind-icon">on</a>
 							</li>
 						</ul>

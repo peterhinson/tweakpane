@@ -429,8 +429,8 @@ function input(_a) {
     var binding = _a.binding, eventName = _a.eventName, handler = _a.handler;
     if (eventName === 'change') {
         var emitter = binding.emitter;
-        emitter.on('change', function (inputBinding, value) {
-            handler(inputBinding.getValueToWrite(value));
+        emitter.on('change', function (ev) {
+            handler(ev.sender.getValueToWrite(ev.rawValue));
         });
     }
 }
@@ -442,8 +442,8 @@ function monitor(_a) {
     var binding = _a.binding, eventName = _a.eventName, handler = _a.handler;
     if (eventName === 'update') {
         var emitter = binding.emitter;
-        emitter.on('update', function (monitorBinding) {
-            handler(monitorBinding.target.read());
+        emitter.on('update', function (ev) {
+            handler(ev.sender.target.read());
         });
     }
 }
@@ -455,14 +455,15 @@ function folder(_a) {
     var eventName = _a.eventName, folder = _a.folder, handler = _a.handler, uiControllerList = _a.uiControllerList;
     if (eventName === 'change') {
         var emitter = uiControllerList.emitter;
-        emitter.on('inputchange', function (_, inputBinding, value) {
-            handler(inputBinding.getValueToWrite(value));
+        emitter.on('inputchange', function (ev) {
+            // TODO: Find more type-safe way
+            handler(ev.inputBinding.getValueToWrite(ev.value));
         });
     }
     if (eventName === 'update') {
         var emitter = uiControllerList.emitter;
-        emitter.on('monitorupdate', function (_, monitorBinding) {
-            handler(monitorBinding.target.read());
+        emitter.on('monitorupdate', function (ev) {
+            handler(ev.monitorBinding.target.read());
         });
     }
     if (eventName === 'fold') {
@@ -895,9 +896,12 @@ var InputBinding = /** @class */ (function () {
     InputBinding.prototype.write_ = function (rawValue) {
         this.target.write(this.getValueToWrite(rawValue));
     };
-    InputBinding.prototype.onValueChange_ = function (_, rawValue) {
-        this.write_(rawValue);
-        this.emitter.emit('change', [this, rawValue]);
+    InputBinding.prototype.onValueChange_ = function (ev) {
+        this.write_(ev.rawValue);
+        this.emitter.emit('change', {
+            rawValue: ev.rawValue,
+            sender: this,
+        });
     };
     return InputBinding;
 }());
@@ -946,8 +950,11 @@ var MonitorBinding = /** @class */ (function () {
     MonitorBinding.prototype.onTick_ = function (_) {
         this.read();
     };
-    MonitorBinding.prototype.onValueUpdate_ = function (_, rawValue) {
-        this.emitter.emit('update', [this, rawValue]);
+    MonitorBinding.prototype.onValueUpdate_ = function (ev) {
+        this.emitter.emit('update', {
+            rawValue: ev.rawValue,
+            sender: this,
+        });
     };
     return MonitorBinding;
 }());
@@ -2075,8 +2082,8 @@ var FolderController = /** @class */ (function () {
     FolderController.prototype.onTitleClick_ = function () {
         this.folder.expanded = !this.folder.expanded;
     };
-    FolderController.prototype.onUiControllerListAdd_ = function (_, uc, index) {
-        this.view.containerElement.insertBefore(uc.view.element, this.view.containerElement.children[index]);
+    FolderController.prototype.onUiControllerListAdd_ = function (ev) {
+        this.view.containerElement.insertBefore(ev.uiController.view.element, this.view.containerElement.children[ev.index]);
         this.folder.expandedHeight = this.computeExpandedHeight_();
     };
     FolderController.prototype.onUiControllerListRemove_ = function (_) {
@@ -2369,14 +2376,14 @@ var HPaletteInputController = /** @class */ (function () {
         this.value.rawValue = new color_1.Color([hue, s, v], 'hsv');
         this.view.update();
     };
-    HPaletteInputController.prototype.onPointerDown_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    HPaletteInputController.prototype.onPointerDown_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
-    HPaletteInputController.prototype.onPointerMove_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    HPaletteInputController.prototype.onPointerMove_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
-    HPaletteInputController.prototype.onPointerUp_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    HPaletteInputController.prototype.onPointerUp_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
     return HPaletteInputController;
 }());
@@ -2609,14 +2616,14 @@ var Point2dPadInputController = /** @class */ (function () {
         this.value.rawValue = new point_2d_1.Point2d(number_util_1.NumberUtil.map(d.px, 0, 1, -max, +max), number_util_1.NumberUtil.map(d.py, 0, 1, -max, +max));
         this.view.update();
     };
-    Point2dPadInputController.prototype.onPointerDown_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    Point2dPadInputController.prototype.onPointerDown_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
-    Point2dPadInputController.prototype.onPointerMove_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    Point2dPadInputController.prototype.onPointerMove_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
-    Point2dPadInputController.prototype.onPointerUp_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    Point2dPadInputController.prototype.onPointerUp_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
     return Point2dPadInputController;
 }());
@@ -2922,16 +2929,16 @@ var SliderInputController = /** @class */ (function () {
         this.ptHandler_.emitter.on('move', this.onPointerMove_);
         this.ptHandler_.emitter.on('up', this.onPointerUp_);
     }
-    SliderInputController.prototype.onPointerDown_ = function (_, d) {
-        this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
+    SliderInputController.prototype.onPointerDown_ = function (ev) {
+        this.value.rawValue = number_util_1.NumberUtil.map(ev.data.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
-    SliderInputController.prototype.onPointerMove_ = function (_, d) {
-        this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
+    SliderInputController.prototype.onPointerMove_ = function (ev) {
+        this.value.rawValue = number_util_1.NumberUtil.map(ev.data.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
-    SliderInputController.prototype.onPointerUp_ = function (_, d) {
-        this.value.rawValue = number_util_1.NumberUtil.map(d.px, 0, 1, this.minValue_, this.maxValue_);
+    SliderInputController.prototype.onPointerUp_ = function (ev) {
+        this.value.rawValue = number_util_1.NumberUtil.map(ev.data.px, 0, 1, this.minValue_, this.maxValue_);
         this.view.update();
     };
     return SliderInputController;
@@ -2982,14 +2989,14 @@ var SvPaletteInputController = /** @class */ (function () {
         this.value.rawValue = new color_1.Color([h, saturation, value], 'hsv');
         this.view.update();
     };
-    SvPaletteInputController.prototype.onPointerDown_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    SvPaletteInputController.prototype.onPointerDown_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
-    SvPaletteInputController.prototype.onPointerMove_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    SvPaletteInputController.prototype.onPointerMove_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
-    SvPaletteInputController.prototype.onPointerUp_ = function (_, d) {
-        this.handlePointerEvent_(d);
+    SvPaletteInputController.prototype.onPointerUp_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
     };
     return SvPaletteInputController;
 }());
@@ -3249,8 +3256,8 @@ var RootController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    RootController.prototype.onUiControllerListAdd_ = function (_, uc, index) {
-        this.view.containerElement.insertBefore(uc.view.element, this.view.containerElement.children[index]);
+    RootController.prototype.onUiControllerListAdd_ = function (ev) {
+        this.view.containerElement.insertBefore(ev.uiController.view.element, this.view.containerElement.children[ev.index]);
     };
     RootController.prototype.onTitleClick_ = function () {
         if (this.folder) {
@@ -4118,14 +4125,13 @@ var Emitter = /** @class */ (function () {
         }
         return this;
     };
-    Emitter.prototype.emit = function (eventName, opt_args) {
+    Emitter.prototype.emit = function (eventName, event) {
         var observers = this.observers_[eventName];
         if (!observers) {
             return;
         }
         observers.forEach(function (observer) {
-            var handlerArgs = opt_args || [];
-            observer.handler.apply(observer, handlerArgs);
+            observer.handler(event);
         });
     };
     return Emitter;
@@ -4267,10 +4273,10 @@ var PointerHandler = /** @class */ (function () {
         // Prevent native text selection
         e.preventDefault();
         this.pressed_ = true;
-        this.emitter.emit('down', [
-            this,
-            this.computePosition_(e.offsetX, e.offsetY),
-        ]);
+        this.emitter.emit('down', {
+            data: this.computePosition_(e.offsetX, e.offsetY),
+            sender: this,
+        });
     };
     PointerHandler.prototype.onDocumentMouseMove_ = function (e) {
         if (!this.pressed_) {
@@ -4278,10 +4284,10 @@ var PointerHandler = /** @class */ (function () {
         }
         var win = this.document.defaultView;
         var rect = this.element.getBoundingClientRect();
-        this.emitter.emit('move', [
-            this,
-            this.computePosition_(e.pageX - (((win && win.scrollX) || 0) + rect.left), e.pageY - (((win && win.scrollY) || 0) + rect.top)),
-        ]);
+        this.emitter.emit('move', {
+            data: this.computePosition_(e.pageX - (((win && win.scrollX) || 0) + rect.left), e.pageY - (((win && win.scrollY) || 0) + rect.top)),
+            sender: this,
+        });
     };
     PointerHandler.prototype.onDocumentMouseUp_ = function (e) {
         if (!this.pressed_) {
@@ -4290,28 +4296,28 @@ var PointerHandler = /** @class */ (function () {
         this.pressed_ = false;
         var win = this.document.defaultView;
         var rect = this.element.getBoundingClientRect();
-        this.emitter.emit('up', [
-            this,
-            this.computePosition_(e.pageX - (((win && win.scrollX) || 0) + rect.left), e.pageY - (((win && win.scrollY) || 0) + rect.top)),
-        ]);
+        this.emitter.emit('up', {
+            data: this.computePosition_(e.pageX - (((win && win.scrollX) || 0) + rect.left), e.pageY - (((win && win.scrollY) || 0) + rect.top)),
+            sender: this,
+        });
     };
     PointerHandler.prototype.onTouchStart_ = function (e) {
         // Prevent native page scroll
         e.preventDefault();
         var touch = e.targetTouches[0];
         var rect = this.element.getBoundingClientRect();
-        this.emitter.emit('down', [
-            this,
-            this.computePosition_(touch.clientX - rect.left, touch.clientY - rect.top),
-        ]);
+        this.emitter.emit('down', {
+            data: this.computePosition_(touch.clientX - rect.left, touch.clientY - rect.top),
+            sender: this,
+        });
     };
     PointerHandler.prototype.onTouchMove_ = function (e) {
         var touch = e.targetTouches[0];
         var rect = this.element.getBoundingClientRect();
-        this.emitter.emit('move', [
-            this,
-            this.computePosition_(touch.clientX - rect.left, touch.clientY - rect.top),
-        ]);
+        this.emitter.emit('move', {
+            data: this.computePosition_(touch.clientX - rect.left, touch.clientY - rect.top),
+            sender: this,
+        });
     };
     return PointerHandler;
 }());
@@ -4375,7 +4381,9 @@ var IntervalTicker = /** @class */ (function () {
         this.id_ = null;
     };
     IntervalTicker.prototype.onTick_ = function () {
-        this.emitter.emit('tick', [this]);
+        this.emitter.emit('tick', {
+            sender: this,
+        });
     };
     IntervalTicker.prototype.onWindowBlur_ = function () {
         this.active_ = false;
@@ -4437,7 +4445,9 @@ var Button = /** @class */ (function () {
         this.title = title;
     }
     Button.prototype.click = function () {
-        this.emitter.emit('click', [this]);
+        this.emitter.emit('click', {
+            sender: this,
+        });
     };
     return Button;
 }());
@@ -4458,7 +4468,6 @@ exports.Button = Button;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Color = void 0;
 var ColorModel = __webpack_require__(/*! ../misc/color-model */ "./src/main/js/misc/color-model.ts");
-var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var CONSTRAINT_MAP = {
@@ -4488,7 +4497,6 @@ function isRgbColorComponent(obj, key) {
  */
 var Color = /** @class */ (function () {
     function Color(comps, mode) {
-        this.emitter = new emitter_1.Emitter();
         this.mode_ = mode;
         this.comps_ = CONSTRAINT_MAP[mode](comps);
     }
@@ -4568,7 +4576,9 @@ var Disposable = /** @class */ (function () {
             return false;
         }
         this.disposed_ = true;
-        this.emitter.emit('dispose', [this]);
+        this.emitter.emit('dispose', {
+            sender: this,
+        });
         return true;
     };
     return Disposable;
@@ -4606,7 +4616,9 @@ var Foldable = /** @class */ (function () {
             var changed = this.expanded_ !== expanded;
             if (changed) {
                 this.expanded_ = expanded;
-                this.emitter.emit('change', [this]);
+                this.emitter.emit('change', {
+                    sender: this,
+                });
             }
         },
         enumerable: false,
@@ -4649,7 +4661,9 @@ var Folder = /** @class */ (function () {
             var changed = this.expanded_ !== expanded;
             if (changed) {
                 this.expanded_ = expanded;
-                this.emitter.emit('change', [this]);
+                this.emitter.emit('change', {
+                    sender: this,
+                });
             }
         },
         enumerable: false,
@@ -4663,7 +4677,9 @@ var Folder = /** @class */ (function () {
             var changed = this.expandedHeight_ !== expandedHeight;
             if (changed) {
                 this.expandedHeight_ = expandedHeight;
-                this.emitter.emit('change', [this]);
+                this.emitter.emit('change', {
+                    sender: this,
+                });
             }
         },
         enumerable: false,
@@ -4704,7 +4720,10 @@ var GraphCursor = /** @class */ (function () {
             var changed = this.index_ !== index;
             if (changed) {
                 this.index_ = index;
-                this.emitter.emit('change', [this, index]);
+                this.emitter.emit('change', {
+                    index: index,
+                    sender: this,
+                });
             }
         },
         enumerable: false,
@@ -4759,7 +4778,10 @@ var InputValue = /** @class */ (function () {
             var changed = !InputValue.equalsValue(this.rawValue_, constrainedValue);
             if (changed) {
                 this.rawValue_ = constrainedValue;
-                this.emitter.emit('change', [this, constrainedValue]);
+                this.emitter.emit('change', {
+                    rawValue: constrainedValue,
+                    sender: this,
+                });
             }
         },
         enumerable: false,
@@ -4802,7 +4824,11 @@ var List = /** @class */ (function () {
     List.prototype.add = function (item, opt_index) {
         var index = opt_index !== undefined ? opt_index : this.items_.length;
         this.items_.splice(index, 0, item);
-        this.emitter.emit('add', [this, item, index]);
+        this.emitter.emit('add', {
+            index: index,
+            item: item,
+            sender: this,
+        });
     };
     List.prototype.remove = function (item) {
         var index = this.items_.indexOf(item);
@@ -4810,7 +4836,9 @@ var List = /** @class */ (function () {
             return;
         }
         this.items_.splice(index, 1);
-        this.emitter.emit('remove', [this]);
+        this.emitter.emit('remove', {
+            sender: this,
+        });
     };
     return List;
 }());
@@ -4859,7 +4887,10 @@ var MonitorValue = /** @class */ (function () {
         if (this.rawValues_.length > this.totalCount_) {
             this.rawValues_.splice(0, this.rawValues_.length - this.totalCount_);
         }
-        this.emitter.emit('update', [this, rawValue]);
+        this.emitter.emit('update', {
+            rawValue: rawValue,
+            sender: this,
+        });
     };
     return MonitorValue;
 }());
@@ -4994,15 +5025,22 @@ var UiControllerList = /** @class */ (function () {
     UiControllerList.prototype.add = function (uc, opt_index) {
         this.ucList_.add(uc, opt_index);
     };
-    UiControllerList.prototype.onListAdd_ = function (_, uc, index) {
-        this.emitter.emit('add', [this, uc, index]);
+    UiControllerList.prototype.onListAdd_ = function (ev) {
+        var uc = ev.item;
+        this.emitter.emit('add', {
+            index: ev.index,
+            sender: this,
+            uiController: uc,
+        });
         uc.disposable.emitter.on('dispose', this.onListItemDispose_);
         if (uc instanceof input_binding_1.InputBindingController) {
             var emitter = uc.binding.emitter;
+            // TODO: Find more type-safe way
             emitter.on('change', this.onInputChange_);
         }
         else if (uc instanceof monitor_binding_1.MonitorBindingController) {
-            var emitter = uc.binding.value.emitter;
+            var emitter = uc.binding.emitter;
+            // TODO: Find more type-safe way
             emitter.on('update', this.onMonitorUpdate_);
         }
         else if (uc instanceof folder_1.FolderController) {
@@ -5013,7 +5051,9 @@ var UiControllerList = /** @class */ (function () {
         }
     };
     UiControllerList.prototype.onListRemove_ = function (_) {
-        this.emitter.emit('remove', [this]);
+        this.emitter.emit('remove', {
+            sender: this,
+        });
     };
     UiControllerList.prototype.onListItemDispose_ = function (_) {
         var _this = this;
@@ -5024,20 +5064,39 @@ var UiControllerList = /** @class */ (function () {
             _this.ucList_.remove(uc);
         });
     };
-    UiControllerList.prototype.onInputChange_ = function (inputBinding, value) {
-        this.emitter.emit('inputchange', [this, inputBinding, value]);
+    UiControllerList.prototype.onInputChange_ = function (ev) {
+        this.emitter.emit('inputchange', {
+            inputBinding: ev.sender,
+            sender: this,
+            value: ev.rawValue,
+        });
     };
-    UiControllerList.prototype.onMonitorUpdate_ = function (monitorBinding, value) {
-        this.emitter.emit('monitorupdate', [this, monitorBinding, value]);
+    UiControllerList.prototype.onMonitorUpdate_ = function (ev) {
+        this.emitter.emit('monitorupdate', {
+            monitorBinding: ev.sender,
+            sender: this,
+            value: ev.rawValue,
+        });
     };
-    UiControllerList.prototype.onFolderInputChange_ = function (_, inputBinding, value) {
-        this.emitter.emit('inputchange', [this, inputBinding, value]);
+    UiControllerList.prototype.onFolderInputChange_ = function (ev) {
+        this.emitter.emit('inputchange', {
+            inputBinding: ev.inputBinding,
+            sender: this,
+            value: ev.value,
+        });
     };
-    UiControllerList.prototype.onFolderMonitorUpdate_ = function (_, monitorBinding, value) {
-        this.emitter.emit('monitorupdate', [this, monitorBinding, value]);
+    UiControllerList.prototype.onFolderMonitorUpdate_ = function (ev) {
+        this.emitter.emit('monitorupdate', {
+            monitorBinding: ev.monitorBinding,
+            sender: this,
+            value: ev.value,
+        });
     };
-    UiControllerList.prototype.onFolderFold_ = function () {
-        this.emitter.emit('fold', [this]);
+    UiControllerList.prototype.onFolderFold_ = function (ev) {
+        this.emitter.emit('fold', {
+            expanded: ev.expanded,
+            sender: this,
+        });
     };
     return UiControllerList;
 }());
