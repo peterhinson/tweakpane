@@ -34,14 +34,14 @@ $prefix: 'common';
 			align-items: center;
 			display: flex;
 			justify-content: space-between;
-			padding: 64px (16px + 32px);
+			padding: 64px 64px;
 		}
 		@include middle() {
 			max-width: 480px;
 		}
 		@include nonwide() {
 			display: block;
-			padding: 64px 16px;
+			padding: 64px 32px;
 		}
 	}
 	&_titleLayout {

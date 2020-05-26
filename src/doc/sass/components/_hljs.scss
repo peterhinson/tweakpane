@@ -11,8 +11,8 @@ $prefix: 'hljs';
 }
 .#{$prefix}-literal,
 .#{$prefix}-number {
-	color: hsl(270, 30%, 65%);
+	color: hsl(250, 30%, 65%);
 }
 .#{$prefix}-string {
-	color: hsl(190, 25%, 60%);
+	color: hsl(200, 25%, 60%);
 }

@@ -15,11 +15,11 @@ $sp-width: 480px;
 // Base
 $base-hue: 230;
 $base-bg-color: hsl($base-hue, 10%, 7%);
-$base-fg-color: hsl($base-hue, 5%, 55%);
-$base-heading-color: hsl($base-hue, 5%, 75%);
+$base-fg-color: hsl($base-hue, 7%, 55%);
+$base-heading-color: hsl($base-hue, 7%, 80%);
 
 // Document
-$document-a-color: hsl($base-hue - 10, 45%, 60%);
+$document-a-color: hsl($base-hue - 10, 30%, 50%);
 $document-code-bg-color: hsl($base-hue, 8%, 10%);
 $document-code-fg-color: hsl($base-hue, 5%, 70%);
 
@@ -42,8 +42,8 @@ $z-index-global-header: 1002;
 
 // Misc
 $code-block-bg-color: $document-code-bg-color;
-$code-block-title-bg-color: hsl($base-hue, 7%, 40%);
-$code-block-title-fg-color: hsl($base-hue, 7%, 85%);
+$code-block-title-bg-color: $base-bg-color;
+$code-block-title-fg-color: $base-fg-color;
 $demo-result-bg-color: $document-code-bg-color;
 $logo-color: $base-fg-color;
 $logo-hover-color: rgba($base-fg-color, 0.8);

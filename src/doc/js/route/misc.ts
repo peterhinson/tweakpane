@@ -44,7 +44,7 @@ ${indentedProps}
 			params?: ThemeParams,
 		) => {
 			const PARAMS = {
-				background: '#f1f2f3',
+				background: '#17181c',
 				point2d: {x: 0, y: 0},
 				slider: 0,
 				variables: (params && params.cssProps.join('\n')) || '',

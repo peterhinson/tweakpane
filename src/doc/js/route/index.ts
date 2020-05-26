@@ -10,7 +10,7 @@ export const IndexRoute = {
 	init: () => {
 		const ENV: Environment = {
 			amp: {x: 0.1, y: 0.5},
-			color: '#0b0c0e',
+			color: '#101114',
 			freq: {
 				x: 12.57,
 				y: 6.28,
@@ -25,7 +25,7 @@ export const IndexRoute = {
 		const PRESETS: {[key: string]: Environment} = {
 			atmos: {
 				amp: {x: 0.1, y: 0.53},
-				color: '#e4e4e7',
+				color: '#282833',
 				freq: {x: 45, y: 16},
 				maxSize: 128,
 				range: 0.79,
@@ -35,7 +35,7 @@ export const IndexRoute = {
 			},
 			bubble: {
 				amp: {x: 0.3, y: 0.51},
-				color: '#ffffff',
+				color: '#848794',
 				freq: {x: 64, y: 32},
 				maxSize: 128,
 				range: 0.65,
@@ -45,7 +45,7 @@ export const IndexRoute = {
 			},
 			cloud: {
 				amp: {x: 0.07, y: 0},
-				color: '#e4e4e7',
+				color: '#282833',
 				freq: {x: 22.25, y: 0},
 				maxSize: 105,
 				range: 0.63,
