@@ -467,11 +467,11 @@ function folder(_a) {
         });
     }
     if (eventName === 'fold') {
-        uiControllerList.emitter.on('fold', function () {
-            handler();
+        uiControllerList.emitter.on('fold', function (ev) {
+            handler(ev.expanded);
         });
-        folder === null || folder === void 0 ? void 0 : folder.emitter.on('change', function () {
-            handler();
+        folder === null || folder === void 0 ? void 0 : folder.emitter.on('change', function (ev) {
+            handler(ev.expanded);
         });
     }
 }
@@ -4662,6 +4662,7 @@ var Folder = /** @class */ (function () {
             if (changed) {
                 this.expanded_ = expanded;
                 this.emitter.emit('change', {
+                    expanded: expanded,
                     sender: this,
                 });
             }
@@ -4678,6 +4679,7 @@ var Folder = /** @class */ (function () {
             if (changed) {
                 this.expandedHeight_ = expandedHeight;
                 this.emitter.emit('change', {
+                    expanded: this.expanded_,
                     sender: this,
                 });
             }
@@ -5002,14 +5004,15 @@ var list_1 = __webpack_require__(/*! ./list */ "./src/main/js/model/list.ts");
  */
 var UiControllerList = /** @class */ (function () {
     function UiControllerList() {
-        this.onFolderFold_ = this.onFolderFold_.bind(this);
-        this.onFolderInputChange_ = this.onFolderInputChange_.bind(this);
-        this.onFolderMonitorUpdate_ = this.onFolderMonitorUpdate_.bind(this);
-        this.onInputChange_ = this.onInputChange_.bind(this);
+        this.onItemFolderFold_ = this.onItemFolderFold_.bind(this);
+        this.onSubitemFolderFold_ = this.onSubitemFolderFold_.bind(this);
+        this.onSubitemInputChange_ = this.onSubitemInputChange_.bind(this);
+        this.onSubitemMonitorUpdate_ = this.onSubitemMonitorUpdate_.bind(this);
+        this.onItemInputChange_ = this.onItemInputChange_.bind(this);
         this.onListAdd_ = this.onListAdd_.bind(this);
         this.onListItemDispose_ = this.onListItemDispose_.bind(this);
         this.onListRemove_ = this.onListRemove_.bind(this);
-        this.onMonitorUpdate_ = this.onMonitorUpdate_.bind(this);
+        this.onItemMonitorUpdate_ = this.onItemMonitorUpdate_.bind(this);
         this.ucList_ = new list_1.List();
         this.emitter = new emitter_1.Emitter();
         this.ucList_.emitter.on('add', this.onListAdd_);
@@ -5036,18 +5039,19 @@ var UiControllerList = /** @class */ (function () {
         if (uc instanceof input_binding_1.InputBindingController) {
             var emitter = uc.binding.emitter;
             // TODO: Find more type-safe way
-            emitter.on('change', this.onInputChange_);
+            emitter.on('change', this.onItemInputChange_);
         }
         else if (uc instanceof monitor_binding_1.MonitorBindingController) {
             var emitter = uc.binding.emitter;
             // TODO: Find more type-safe way
-            emitter.on('update', this.onMonitorUpdate_);
+            emitter.on('update', this.onItemMonitorUpdate_);
         }
         else if (uc instanceof folder_1.FolderController) {
+            uc.folder.emitter.on('change', this.onItemFolderFold_);
             var emitter = uc.uiControllerList.emitter;
-            emitter.on('fold', this.onFolderFold_);
-            emitter.on('inputchange', this.onFolderInputChange_);
-            emitter.on('monitorupdate', this.onFolderMonitorUpdate_);
+            emitter.on('fold', this.onSubitemFolderFold_);
+            emitter.on('inputchange', this.onSubitemInputChange_);
+            emitter.on('monitorupdate', this.onSubitemMonitorUpdate_);
         }
     };
     UiControllerList.prototype.onListRemove_ = function (_) {
@@ -5064,35 +5068,41 @@ var UiControllerList = /** @class */ (function () {
             _this.ucList_.remove(uc);
         });
     };
-    UiControllerList.prototype.onInputChange_ = function (ev) {
+    UiControllerList.prototype.onItemInputChange_ = function (ev) {
         this.emitter.emit('inputchange', {
             inputBinding: ev.sender,
             sender: this,
             value: ev.rawValue,
         });
     };
-    UiControllerList.prototype.onMonitorUpdate_ = function (ev) {
+    UiControllerList.prototype.onItemMonitorUpdate_ = function (ev) {
         this.emitter.emit('monitorupdate', {
             monitorBinding: ev.sender,
             sender: this,
             value: ev.rawValue,
         });
     };
-    UiControllerList.prototype.onFolderInputChange_ = function (ev) {
+    UiControllerList.prototype.onItemFolderFold_ = function (ev) {
+        this.emitter.emit('fold', {
+            expanded: ev.expanded,
+            sender: this,
+        });
+    };
+    UiControllerList.prototype.onSubitemInputChange_ = function (ev) {
         this.emitter.emit('inputchange', {
             inputBinding: ev.inputBinding,
             sender: this,
             value: ev.value,
         });
     };
-    UiControllerList.prototype.onFolderMonitorUpdate_ = function (ev) {
+    UiControllerList.prototype.onSubitemMonitorUpdate_ = function (ev) {
         this.emitter.emit('monitorupdate', {
             monitorBinding: ev.monitorBinding,
             sender: this,
             value: ev.value,
         });
     };
-    UiControllerList.prototype.onFolderFold_ = function (ev) {
+    UiControllerList.prototype.onSubitemFolderFold_ = function (ev) {
         this.emitter.emit('fold', {
             expanded: ev.expanded,
             sender: this,
