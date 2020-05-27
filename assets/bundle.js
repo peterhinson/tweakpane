@@ -638,7 +638,7 @@ exports.MiscRoute = {
                 f2.addInput(PARAMS, 'randomness');
             },
             button: function (container) {
-                var PARAMS = { count: 0 };
+                var PARAMS = { count: '0' };
                 var pane = new Tweakpane({
                     container: container,
                 });
@@ -647,10 +647,13 @@ exports.MiscRoute = {
                     title: 'Increment',
                 })
                     .on('click', function () {
-                    PARAMS.count += 1;
+                    PARAMS.count = String(parseInt(PARAMS.count, 10) + 1);
+                    pane.refresh();
                 });
                 pane.addSeparator();
-                pane.addMonitor(PARAMS, 'count');
+                pane.addMonitor(PARAMS, 'count', {
+                    interval: 0,
+                });
             },
             separator: function (container) {
                 var pane = new Tweakpane({
@@ -1033,7 +1036,10 @@ exports.MonitorRoute = {
                     min: -1,
                     view: 'graph',
                 });
-                nf.addMonitor(SHARED_PARAMS, 'positive', {
+                var bf = pane.addFolder({
+                    title: 'Boolean',
+                });
+                bf.addMonitor(SHARED_PARAMS, 'positive', {
                     label: 'positive',
                 });
             },

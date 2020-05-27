@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700");
-@import url("https://fonts.googleapis.com/css?family=Rubik:400,700");
+@import url("https://fonts.googleapis.com/css?family=Rubik:400,500,700");
 @import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,700");
 html,
 body,
@@ -37,9 +37,19 @@ li {
 
 html {
   --themes-background-color: #f1f2f3;
-  color: #474952;
+  color: #53555f;
   font-family: Rubik, sans-serif;
   font-size: 16px; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #2f3137;
+  font-weight: 500;
+  letter-spacing: 0.01em; }
 
 code {
   font-family: "Source Code Pro", sans-serif; }
@@ -47,16 +57,19 @@ code {
 pre {
   font-family: "Source Code Pro", sans-serif; }
 
+strong {
+  color: #2f3137; }
+
 .common-button {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  background-color: #8599ad;
-  border-radius: 6px;
+  background-color: #9194a1;
+  border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   color: #f1f2f3;
   display: inline-block;
-  font-weight: bold;
+  font-weight: 500;
   height: 32px;
   line-height: 32px;
   padding-left: 1em;
@@ -64,9 +77,9 @@ pre {
   text-align: center;
   text-decoration: none; }
   .common-button:hover {
-    background-color: #8fa6bc; }
+    background-color: #9fa1ad; }
   .common-button:active {
-    background-color: #9cb3c9; }
+    background-color: #acaeb9; }
   .common-button_icon {
     font-size: 0.9em;
     margin-right: 0.5em; }
@@ -79,7 +92,7 @@ pre {
     display: flex; } }
 
 .common-demo_codeLayout {
-  background-color: #e4e4e7;
+  background-color: #ececee;
   flex: 3; }
 
 .common-demo_resultLayout {
@@ -174,7 +187,7 @@ pre {
   margin-left: 0.5em; }
 
 .common-globalFooterMenuItem > a {
-  font-weight: bold; }
+  font-weight: 500; }
 
 .common-globalFooterMenuItem_submenuLayout {
   margin-top: 0.5em;
@@ -248,7 +261,7 @@ pre {
       .common-globalHeaderMenu_item a:hover {
         text-decoration: underline; }
     .common-globalHeaderMenu_item.common-globalHeaderMenu_item-active a {
-      font-weight: bold; }
+      font-weight: 500; }
       @media screen and (min-width: 801px) {
         .common-globalHeaderMenu_item.common-globalHeaderMenu_item-active a {
           background-color: #f1f2f3; } }
@@ -272,21 +285,21 @@ pre {
   color: #6c7393; }
 
 .common-logo {
-  color: #474952;
+  color: #53555f;
   display: block;
-  font-weight: bold;
+  font-weight: 500;
   padding-left: 20px;
   position: relative;
   text-decoration: none; }
   .common-logo:hover {
-    color: rgba(71, 73, 82, 0.8);
+    color: rgba(83, 85, 95, 0.8);
     text-decoration: none; }
   .common-logo.common-logo-light {
     color: #f1f2f3; }
     .common-logo.common-logo-light:hover {
       color: rgba(241, 242, 243, 0.8); }
   .common-logo_symbol {
-    background: linear-gradient(to left, #474952, #474952 4px, transparent 4px, transparent 8px, #474952 8px, #474952);
+    background: linear-gradient(to left, #53555f, #53555f 4px, transparent 4px, transparent 8px, #53555f 8px, #53555f);
     border-radius: 4px;
     bottom: 2px;
     content: '';
@@ -301,7 +314,7 @@ pre {
   .common-logo.common-logo-light .common-logo_symbol {
     background: linear-gradient(to left, #f1f2f3, #f1f2f3 4px, transparent 4px, transparent 8px, #f1f2f3 8px, #f1f2f3); }
   .common-logo:hover .common-logo_symbol {
-    background: linear-gradient(to left, rgba(71, 73, 82, 0.8), rgba(71, 73, 82, 0.8) 4px, transparent 4px, transparent 8px, rgba(71, 73, 82, 0.8) 8px, rgba(71, 73, 82, 0.8)); }
+    background: linear-gradient(to left, rgba(83, 85, 95, 0.8), rgba(83, 85, 95, 0.8) 4px, transparent 4px, transparent 8px, rgba(83, 85, 95, 0.8) 8px, rgba(83, 85, 95, 0.8)); }
   .common-logo.common-logo-light:hover .common-logo_symbol {
     background: linear-gradient(to left, rgba(241, 242, 243, 0.8), rgba(241, 242, 243, 0.8) 4px, transparent 4px, transparent 8px, rgba(241, 242, 243, 0.8) 8px, rgba(241, 242, 243, 0.8)); }
 
@@ -375,7 +388,9 @@ pre {
       .common-main_pageHeaderLayout p code, .common-main_innerLayout p code {
         background-color: #f1f2f3;
         color: #666f99;
-        font-weight: bold; }
+        font-weight: 500;
+        padding-left: 0.25em;
+        padding-right: 0.25em; }
     .common-main_pageHeaderLayout a, .common-main_innerLayout a {
       color: #2680d9; }
   .common-main_innerLayout {
@@ -408,7 +423,7 @@ pre {
   vertical-align: middle; }
 
 .common-codeBlock {
-  background-color: #e4e4e7;
+  background-color: #ececee;
   position: relative; }
   .common-codeBlock pre {
     overflow: auto;
@@ -507,21 +522,20 @@ pre {
         align-items: center;
         display: flex;
         justify-content: space-between;
-        padding: 64px 48px; } }
+        padding: 64px; } }
     @media screen and (min-width: 481px) and (max-width: 800px) {
       .common-pageHeader_innerLayout {
         max-width: 480px; } }
     @media screen and (max-width: 800px) {
       .common-pageHeader_innerLayout {
         display: block;
-        padding: 64px 16px; } }
+        padding: 64px 32px; } }
   @media screen and (min-width: 801px) {
     .common-pageHeader_titleLayout {
       padding-bottom: 32px;
       padding-top: 32px; } }
   .common-pageHeader_title {
-    font-size: 3rem;
-    font-weight: bold; }
+    font-size: 3rem; }
     @media screen and (max-width: 800px) {
       .common-pageHeader_title {
         font-size: 2rem;
