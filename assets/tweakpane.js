@@ -512,6 +512,7 @@ var button_2 = __webpack_require__(/*! ./button */ "./src/main/js/api/button.ts"
 var EventHandlerAdapters = __webpack_require__(/*! ./event-handler-adapters */ "./src/main/js/api/event-handler-adapters.ts");
 var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/api/input-binding.ts");
 var monitor_binding_1 = __webpack_require__(/*! ./monitor-binding */ "./src/main/js/api/monitor-binding.ts");
+var separator_2 = __webpack_require__(/*! ./separator */ "./src/main/js/api/separator.ts");
 var FolderApi = /** @class */ (function () {
     /**
      * @hidden
@@ -555,6 +556,7 @@ var FolderApi = /** @class */ (function () {
             disposable: new disposable_1.Disposable(),
         });
         this.controller.uiControllerList.add(uc, params.index);
+        return new separator_2.SeparatorApi(uc);
     };
     FolderApi.prototype.on = function (eventName, handler) {
         EventHandlerAdapters.folder({
@@ -734,6 +736,7 @@ var folder_2 = __webpack_require__(/*! ./folder */ "./src/main/js/api/folder.ts"
 var input_binding_2 = __webpack_require__(/*! ./input-binding */ "./src/main/js/api/input-binding.ts");
 var monitor_binding_2 = __webpack_require__(/*! ./monitor-binding */ "./src/main/js/api/monitor-binding.ts");
 var Preset = __webpack_require__(/*! ./preset */ "./src/main/js/api/preset.ts");
+var separator_2 = __webpack_require__(/*! ./separator */ "./src/main/js/api/separator.ts");
 /**
  * The Tweakpane interface.
  *
@@ -802,6 +805,7 @@ var RootApi = /** @class */ (function () {
             disposable: new disposable_1.Disposable(),
         });
         this.controller.uiControllerList.add(uc, params.index);
+        return new separator_2.SeparatorApi(uc);
     };
     /**
      * Import a preset of all inputs.
@@ -854,6 +858,34 @@ var RootApi = /** @class */ (function () {
     return RootApi;
 }());
 exports.RootApi = RootApi;
+
+
+/***/ }),
+
+/***/ "./src/main/js/api/separator.ts":
+/*!**************************************!*\
+  !*** ./src/main/js/api/separator.ts ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SeparatorApi = void 0;
+var SeparatorApi = /** @class */ (function () {
+    /**
+     * @hidden
+     */
+    function SeparatorApi(controller) {
+        this.controller = controller;
+    }
+    SeparatorApi.prototype.dispose = function () {
+        this.controller.disposable.dispose();
+    };
+    return SeparatorApi;
+}());
+exports.SeparatorApi = SeparatorApi;
 
 
 /***/ }),
@@ -939,7 +971,7 @@ var MonitorBinding = /** @class */ (function () {
         this.read();
     }
     MonitorBinding.prototype.dispose = function () {
-        this.ticker.dispose();
+        this.ticker.disposable.dispose();
     };
     MonitorBinding.prototype.read = function () {
         var targetValue = this.target.read();
@@ -4337,6 +4369,7 @@ exports.PointerHandler = PointerHandler;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntervalTicker = void 0;
+var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var emitter_1 = __webpack_require__(/*! ../emitter */ "./src/main/js/misc/emitter.ts");
 /**
  * @hidden
@@ -4370,16 +4403,17 @@ var IntervalTicker = /** @class */ (function () {
         //   win.addEventListener('blur', this.onWindowBlur_);
         //   win.addEventListener('focus', this.onWindowFocus_);
         // }
-    }
-    IntervalTicker.prototype.dispose = function () {
-        if (this.id_ !== null) {
-            var win = this.doc_.defaultView;
-            if (win) {
-                win.clearInterval(this.id_);
+        this.disposable = new disposable_1.Disposable();
+        this.disposable.emitter.on('dispose', function () {
+            if (_this.id_ !== null) {
+                var win = _this.doc_.defaultView;
+                if (win) {
+                    win.clearInterval(_this.id_);
+                }
             }
-        }
-        this.id_ = null;
-    };
+            _this.id_ = null;
+        });
+    }
     IntervalTicker.prototype.onTick_ = function () {
         this.emitter.emit('tick', {
             sender: this,
