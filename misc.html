@@ -207,7 +207,7 @@ const preset = pane.<strong>exportPreset</strong>();
 console.log(preset);
 </code></pre></div>
 		</div>
-		<div class="common-demo_resultLayout common-demo_resultLayout-withJson">
+		<div class="common-demo_resultLayout">
 			<div class="common-paneContainer common-paneContainer-export"></div>
 			<div class="common-demo_resultJsonLayout">
 				<pre class="common-demo_resultJson" data-imex></pre>
@@ -228,7 +228,7 @@ console.log(preset);
 pane.<strong>importPreset</strong>(preset);
 </code></pre></div>
 		</div>
-		<div class="common-demo_resultLayout common-demo_resultLayout-withJson">
+		<div class="common-demo_resultLayout">
 			<pre class="common-demo_resultJson" data-imex></pre>
 			<div class="common-demo_resultJsonLayout">
 				<div class="common-paneContainer common-paneContainer-import"></div>
@@ -249,7 +249,7 @@ pane.addInput(PARAMS2, 'speed', {
 });
 </code></pre></div>
 		</div>
-		<div class="common-demo_resultLayout common-demo_resultLayout-withJson">
+		<div class="common-demo_resultLayout">
 			<div class="common-paneContainer common-paneContainer-presetKey"></div>
 			<div class="common-demo_resultJsonLayout">
 				<pre class="common-demo_resultJson" data-presetKey></pre>
@@ -347,6 +347,9 @@ pane.addInput(PARAMS2, 'speed', {
 pane.addInput(PARAMS, 'initSpd', {
   <strong>label</strong>: 'Initial speed',
 });
+pane.addInput(PARAMS, 'size', {
+  <strong>label</strong>: 'Force field<strong>\n</strong>radius',
+});
 </code></pre></div>
 		</div>
 		<div class="common-demo_resultLayout">
@@ -368,6 +371,31 @@ pane.addInput(PARAMS, 'initSpd', {
 
 pane.<strong>refresh</strong>();
 </code></pre></div>
+		</div>
+	</div>
+</div>
+
+
+<h3>Component visibility</h3>
+<p>Toggle <code>hidden</code> property to show/hide components.</p>
+
+<div class="common-main_mediaLayout">
+	<div class="common-demo">
+		<div class="common-demo_codeLayout">
+			<div class="common-codeBlock"><pre><code class="js">const pane = new Tweakpane();
+const f = pane.addFolder({
+  title: 'Advanced',
+});
+// f.addInput(PARAMS, ...);
+
+pane.addButton({title: 'Toggle'})
+  .on('click', () => {
+    f.<strong>hidden</strong> = !f.<strong>hidden</strong>;
+  });
+</code></pre></div>
+		</div>
+		<div class="common-demo_resultLayout">
+			<div class="common-paneContainer common-paneContainer-hidden"></div>
 		</div>
 	</div>
 </div>

@@ -540,6 +540,9 @@ exports.MiscRoute = {
             name: 'export',
             size: 10,
         };
+        var IMEX_LOG = {
+            log: '',
+        };
         var showTheme = function (params) {
             var elem = document.querySelector('*[data-themeCss]');
             if (!elem) {
@@ -737,14 +740,14 @@ exports.MiscRoute = {
                     min: 0,
                 });
                 pane.addInput(IMEX_PARAMS, 'color');
+                pane.addSeparator();
+                pane.addMonitor(IMEX_LOG, 'log', {
+                    label: '(preset)',
+                    multiline: true,
+                });
                 var updatePreset = function () {
                     var preset = pane.exportPreset();
-                    var elems = Array.prototype.slice.call(document.querySelectorAll('*[data-imex]'));
-                    elems.forEach(function (elem) {
-                        if (elem) {
-                            elem.textContent = JSON.stringify(preset, null, 2);
-                        }
-                    });
+                    IMEX_LOG.log = JSON.stringify(preset, null, 2);
                 };
                 pane.on('change', updatePreset);
                 updatePreset();
@@ -752,11 +755,16 @@ exports.MiscRoute = {
             import: function (container) {
                 var PARAMS = {
                     color: '#0080ff',
+                    log: '',
                     name: 'import',
                     size: 50,
                 };
                 var pane = new Tweakpane({
                     container: container,
+                });
+                pane.addMonitor(IMEX_LOG, 'log', {
+                    label: '(preset)',
+                    multiline: true,
                 });
                 pane
                     .addButton({
@@ -771,26 +779,33 @@ exports.MiscRoute = {
                 pane.addInput(PARAMS, 'color');
             },
             presetKey: function (container) {
-                var PARAMS1 = { speed: 1 / 3 };
-                var PARAMS2 = { speed: 2 / 3 };
+                var PARAMS = {
+                    foo: { speed: 1 / 3 },
+                    bar: { speed: 2 / 3 },
+                    preset: '',
+                };
                 var pane = new Tweakpane({
                     container: container,
                 });
-                pane.addInput(PARAMS1, 'speed', {
+                pane.addInput(PARAMS.foo, 'speed', {
                     max: 1,
                     min: 0,
                 });
-                pane.addInput(PARAMS2, 'speed', {
+                pane.addInput(PARAMS.bar, 'speed', {
                     max: 1,
                     min: 0,
                     presetKey: 'speed2',
                 });
+                pane.addSeparator();
+                var m = pane.addMonitor(PARAMS, 'preset', {
+                    interval: 0,
+                    label: '(preset)',
+                    multiline: true,
+                });
                 var updatePreset = function () {
-                    var elem = document.querySelector('*[data-presetKey]');
-                    if (elem) {
-                        var preset = pane.exportPreset();
-                        elem.textContent = JSON.stringify(preset, null, 2);
-                    }
+                    var preset = pane.exportPreset();
+                    PARAMS.preset = JSON.stringify(preset, null, 2);
+                    m.refresh();
                 };
                 pane.on('change', updatePreset);
                 updatePreset();
@@ -822,12 +837,18 @@ exports.MiscRoute = {
                 });
             },
             label: function (container) {
-                var PARAMS = { initSpd: 0 };
+                var PARAMS = {
+                    initSpd: 0,
+                    size: 30,
+                };
                 var pane = new Tweakpane({
                     container: container,
                 });
                 pane.addInput(PARAMS, 'initSpd', {
                     label: 'Initial speed',
+                });
+                pane.addInput(PARAMS, 'size', {
+                    label: 'Force field\nradius',
                 });
             },
             insert: function (container) {
@@ -837,6 +858,24 @@ exports.MiscRoute = {
                 pane.addButton({ title: 'Run' });
                 pane.addButton({ title: 'Stop' });
                 pane.addButton({ title: '**Reset**', index: 1 });
+            },
+            hidden: function (container) {
+                var PARAMS = {
+                    seed: 0.1,
+                };
+                var pane = new Tweakpane({
+                    container: container,
+                });
+                var f = pane.addFolder({ title: 'Advanced' });
+                f.addInput(PARAMS, 'seed');
+                pane
+                    .addButton({
+                    index: 0,
+                    title: 'Toggle',
+                })
+                    .on('click', function () {
+                    f.hidden = !f.hidden;
+                });
             },
             defaultTheme: function (container) {
                 return setUpThemedPane(container);

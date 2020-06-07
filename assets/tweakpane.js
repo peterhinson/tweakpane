@@ -396,8 +396,18 @@ var ButtonApi = /** @class */ (function () {
     function ButtonApi(buttonController) {
         this.controller = buttonController;
     }
+    Object.defineProperty(ButtonApi.prototype, "hidden", {
+        get: function () {
+            return this.controller.viewModel.hidden;
+        },
+        set: function (hidden) {
+            this.controller.viewModel.hidden = hidden;
+        },
+        enumerable: false,
+        configurable: true
+    });
     ButtonApi.prototype.dispose = function () {
-        this.controller.disposable.dispose();
+        this.controller.viewModel.dispose();
     };
     ButtonApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.button.emitter;
@@ -506,8 +516,8 @@ var InputBindingControllerCreators = __webpack_require__(/*! ../controller/bindi
 var MonitorBindingControllerCreators = __webpack_require__(/*! ../controller/binding-creators/monitor */ "./src/main/js/controller/binding-creators/monitor.ts");
 var button_1 = __webpack_require__(/*! ../controller/button */ "./src/main/js/controller/button.ts");
 var separator_1 = __webpack_require__(/*! ../controller/separator */ "./src/main/js/controller/separator.ts");
-var disposable_1 = __webpack_require__(/*! ../model/disposable */ "./src/main/js/model/disposable.ts");
 var target_1 = __webpack_require__(/*! ../model/target */ "./src/main/js/model/target.ts");
+var view_model_1 = __webpack_require__(/*! ../model/view-model */ "./src/main/js/model/view-model.ts");
 var button_2 = __webpack_require__(/*! ./button */ "./src/main/js/api/button.ts");
 var EventHandlerAdapters = __webpack_require__(/*! ./event-handler-adapters */ "./src/main/js/api/event-handler-adapters.ts");
 var input_binding_1 = __webpack_require__(/*! ./input-binding */ "./src/main/js/api/input-binding.ts");
@@ -530,8 +540,18 @@ var FolderApi = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(FolderApi.prototype, "hidden", {
+        get: function () {
+            return this.controller.viewModel.hidden;
+        },
+        set: function (hidden) {
+            this.controller.viewModel.hidden = hidden;
+        },
+        enumerable: false,
+        configurable: true
+    });
     FolderApi.prototype.dispose = function () {
-        this.controller.disposable.dispose();
+        this.controller.viewModel.dispose();
     };
     FolderApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
@@ -546,14 +566,14 @@ var FolderApi = /** @class */ (function () {
         return new monitor_binding_1.MonitorBindingApi(uc);
     };
     FolderApi.prototype.addButton = function (params) {
-        var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
+        var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { viewModel: new view_model_1.ViewModel() }));
         this.controller.uiControllerList.add(uc, params.index);
         return new button_2.ButtonApi(uc);
     };
     FolderApi.prototype.addSeparator = function (opt_params) {
         var params = opt_params || {};
         var uc = new separator_1.SeparatorController(this.controller.document, {
-            disposable: new disposable_1.Disposable(),
+            viewModel: new view_model_1.ViewModel(),
         });
         this.controller.uiControllerList.add(uc, params.index);
         return new separator_2.SeparatorApi(uc);
@@ -598,6 +618,19 @@ var InputBindingApi = /** @class */ (function () {
     function InputBindingApi(bindingController) {
         this.controller = bindingController;
     }
+    Object.defineProperty(InputBindingApi.prototype, "hidden", {
+        get: function () {
+            return this.controller.viewModel.hidden;
+        },
+        set: function (hidden) {
+            this.controller.viewModel.hidden = hidden;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    InputBindingApi.prototype.dispose = function () {
+        this.controller.viewModel.dispose();
+    };
     InputBindingApi.prototype.on = function (eventName, handler) {
         HandlerAdapters.input({
             binding: this.controller.binding,
@@ -638,8 +671,18 @@ var MonitorBindingApi = /** @class */ (function () {
     function MonitorBindingApi(bindingController) {
         this.controller = bindingController;
     }
+    Object.defineProperty(MonitorBindingApi.prototype, "hidden", {
+        get: function () {
+            return this.controller.viewModel.hidden;
+        },
+        set: function (hidden) {
+            this.controller.viewModel.hidden = hidden;
+        },
+        enumerable: false,
+        configurable: true
+    });
     MonitorBindingApi.prototype.dispose = function () {
-        this.controller.controller.disposable.dispose();
+        this.controller.controller.viewModel.dispose();
     };
     MonitorBindingApi.prototype.on = function (eventName, handler) {
         EventHandlerAdapters.monitor({
@@ -728,8 +771,8 @@ var input_binding_1 = __webpack_require__(/*! ../controller/input-binding */ "./
 var monitor_binding_1 = __webpack_require__(/*! ../controller/monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var separator_1 = __webpack_require__(/*! ../controller/separator */ "./src/main/js/controller/separator.ts");
 var UiUtil = __webpack_require__(/*! ../controller/ui-util */ "./src/main/js/controller/ui-util.ts");
-var disposable_1 = __webpack_require__(/*! ../model/disposable */ "./src/main/js/model/disposable.ts");
 var target_1 = __webpack_require__(/*! ../model/target */ "./src/main/js/model/target.ts");
+var view_model_1 = __webpack_require__(/*! ../model/view-model */ "./src/main/js/model/view-model.ts");
 var button_2 = __webpack_require__(/*! ./button */ "./src/main/js/api/button.ts");
 var EventHandlerAdapters = __webpack_require__(/*! ./event-handler-adapters */ "./src/main/js/api/event-handler-adapters.ts");
 var folder_2 = __webpack_require__(/*! ./folder */ "./src/main/js/api/folder.ts");
@@ -774,8 +817,18 @@ var RootApi = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(RootApi.prototype, "hidden", {
+        get: function () {
+            return this.controller.viewModel.hidden;
+        },
+        set: function (hidden) {
+            this.controller.viewModel.hidden = hidden;
+        },
+        enumerable: false,
+        configurable: true
+    });
     RootApi.prototype.dispose = function () {
-        this.controller.disposable.dispose();
+        this.controller.viewModel.dispose();
     };
     RootApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
@@ -790,19 +843,19 @@ var RootApi = /** @class */ (function () {
         return new monitor_binding_2.MonitorBindingApi(uc);
     };
     RootApi.prototype.addButton = function (params) {
-        var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
+        var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { viewModel: new view_model_1.ViewModel() }));
         this.controller.uiControllerList.add(uc, params.index);
         return new button_2.ButtonApi(uc);
     };
     RootApi.prototype.addFolder = function (params) {
-        var uc = new folder_1.FolderController(this.controller.document, __assign(__assign({}, params), { disposable: new disposable_1.Disposable() }));
+        var uc = new folder_1.FolderController(this.controller.document, __assign(__assign({}, params), { viewModel: new view_model_1.ViewModel() }));
         this.controller.uiControllerList.add(uc, params.index);
         return new folder_2.FolderApi(uc);
     };
     RootApi.prototype.addSeparator = function (opt_params) {
         var params = opt_params || {};
         var uc = new separator_1.SeparatorController(this.controller.document, {
-            disposable: new disposable_1.Disposable(),
+            viewModel: new view_model_1.ViewModel(),
         });
         this.controller.uiControllerList.add(uc, params.index);
         return new separator_2.SeparatorApi(uc);
@@ -880,8 +933,18 @@ var SeparatorApi = /** @class */ (function () {
     function SeparatorApi(controller) {
         this.controller = controller;
     }
+    Object.defineProperty(SeparatorApi.prototype, "hidden", {
+        get: function () {
+            return this.controller.viewModel.hidden;
+        },
+        set: function (hidden) {
+            this.controller.viewModel.hidden = hidden;
+        },
+        enumerable: false,
+        configurable: true
+    });
     SeparatorApi.prototype.dispose = function () {
-        this.controller.disposable.dispose();
+        this.controller.viewModel.dispose();
     };
     return SeparatorApi;
 }());
@@ -1226,8 +1289,8 @@ var composite_1 = __webpack_require__(/*! ../../constraint/composite */ "./src/m
 var list_1 = __webpack_require__(/*! ../../constraint/list */ "./src/main/js/constraint/list.ts");
 var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
 var BooleanConverter = __webpack_require__(/*! ../../converter/boolean */ "./src/main/js/converter/boolean.ts");
-var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
+var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var checkbox_1 = __webpack_require__(/*! ../input/checkbox */ "./src/main/js/controller/input/checkbox.ts");
 var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/input/list.ts");
@@ -1247,13 +1310,13 @@ function createController(document, value) {
     var c = value.constraint;
     if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
         return new list_2.ListInputController(document, {
-            disposable: new disposable_1.Disposable(),
+            viewModel: new view_model_1.ViewModel(),
             stringifyValue: BooleanConverter.toString,
             value: value,
         });
     }
     return new checkbox_1.CheckboxInputController(document, {
-        disposable: new disposable_1.Disposable(),
+        viewModel: new view_model_1.ViewModel(),
         value: value,
     });
 }
@@ -1275,7 +1338,7 @@ function create(document, target, params) {
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: createController(document, value),
-        disposable: new disposable_1.Disposable(),
+        viewModel: new view_model_1.ViewModel(),
         label: params.label || target.key,
     });
 }
@@ -1301,8 +1364,8 @@ var boolean_1 = __webpack_require__(/*! ../../formatter/boolean */ "./src/main/j
 var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
-var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
+var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
 var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js/controller/monitor/multi-log.ts");
 var single_log_1 = __webpack_require__(/*! ../monitor/single-log */ "./src/main/js/controller/monitor/single-log.ts");
@@ -1317,12 +1380,12 @@ function create(document, target, params) {
     var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
         ? new single_log_1.SingleLogMonitorController(document, {
-            disposable: new disposable_1.Disposable(),
+            viewModel: new view_model_1.ViewModel(),
             formatter: new boolean_1.BooleanFormatter(),
             value: value,
         })
         : new multi_log_1.MultiLogMonitorController(document, {
-            disposable: new disposable_1.Disposable(),
+            viewModel: new view_model_1.ViewModel(),
             formatter: new boolean_1.BooleanFormatter(),
             value: value,
         });
@@ -1335,7 +1398,7 @@ function create(document, target, params) {
             value: value,
         }),
         controller: controller,
-        disposable: controller.disposable,
+        viewModel: controller.viewModel,
         label: params.label || target.key,
     });
 }
@@ -1359,8 +1422,8 @@ var input_1 = __webpack_require__(/*! ../../binding/input */ "./src/main/js/bind
 var ColorConverter = __webpack_require__(/*! ../../converter/color */ "./src/main/js/converter/color.ts");
 var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/formatter/color.ts");
 var color_2 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
-var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
+var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
 var number_color_1 = __webpack_require__(/*! ../../parser/number-color */ "./src/main/js/parser/number-color.ts");
 var StringColorParser = __webpack_require__(/*! ../../parser/string-color */ "./src/main/js/parser/string-color.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
@@ -1379,11 +1442,10 @@ function createWithString(document, target, params) {
     }
     var converter = ColorConverter.fromMixed;
     var color = converter(initialValue);
-    var disposable = new disposable_1.Disposable();
+    var viewModel = new view_model_1.ViewModel();
     var value = new input_value_1.InputValue(color);
     var writer = ColorConverter.getStringifier(notation);
     return new input_binding_1.InputBindingController(document, {
-        disposable: disposable,
         binding: new input_1.InputBinding({
             reader: converter,
             target: target,
@@ -1391,12 +1453,13 @@ function createWithString(document, target, params) {
             writer: writer,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
-            disposable: disposable,
             formatter: new color_1.ColorFormatter(writer),
             parser: StringColorParser.CompositeParser,
             value: value,
+            viewModel: viewModel,
         }),
         label: params.label || target.key,
+        viewModel: viewModel,
     });
 }
 exports.createWithString = createWithString;
@@ -1419,7 +1482,7 @@ function createWithNumber(document, target, params) {
         return null;
     }
     var value = new input_value_1.InputValue(color);
-    var disposable = new disposable_1.Disposable();
+    var viewModel = new view_model_1.ViewModel();
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
             reader: ColorConverter.fromMixed,
@@ -1428,13 +1491,13 @@ function createWithNumber(document, target, params) {
             writer: ColorConverter.toNumber,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
-            disposable: disposable,
             formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
             parser: StringColorParser.CompositeParser,
             value: value,
+            viewModel: viewModel,
         }),
-        disposable: disposable,
         label: params.label || target.key,
+        viewModel: viewModel,
     });
 }
 exports.createWithNumber = createWithNumber;
@@ -1447,7 +1510,7 @@ function createWithObject(document, target, params) {
         return null;
     }
     var color = color_2.Color.fromRgbObject(initialValue);
-    var disposable = new disposable_1.Disposable();
+    var viewModel = new view_model_1.ViewModel();
     var value = new input_value_1.InputValue(color);
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
@@ -1457,12 +1520,12 @@ function createWithObject(document, target, params) {
             writer: color_2.Color.toRgbObject,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
-            disposable: disposable,
+            viewModel: viewModel,
             formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
             parser: StringColorParser.CompositeParser,
             value: value,
         }),
-        disposable: disposable,
+        viewModel: viewModel,
         label: params.label || target.key,
     });
 }
@@ -1599,8 +1662,8 @@ var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/con
 var NumberConverter = __webpack_require__(/*! ../../converter/number */ "./src/main/js/converter/number.ts");
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
-var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
+var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
 var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/input/list.ts");
@@ -1634,24 +1697,24 @@ function createController(document, value) {
     var c = value.constraint;
     if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
         return new list_2.ListInputController(document, {
-            disposable: new disposable_1.Disposable(),
             stringifyValue: NumberConverter.toString,
             value: value,
+            viewModel: new view_model_1.ViewModel(),
         });
     }
     if (c && util_1.ConstraintUtil.findConstraint(c, range_1.RangeConstraint)) {
         return new slider_text_1.SliderTextInputController(document, {
-            disposable: new disposable_1.Disposable(),
             formatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
             parser: string_number_1.StringNumberParser,
             value: value,
+            viewModel: new view_model_1.ViewModel(),
         });
     }
     return new number_text_1.NumberTextInputController(document, {
-        disposable: new disposable_1.Disposable(),
         formatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(value.constraint, value.rawValue)),
         parser: string_number_1.StringNumberParser,
         value: value,
+        viewModel: new view_model_1.ViewModel(),
     });
 }
 /**
@@ -1673,8 +1736,8 @@ function create(document, target, params) {
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: controller,
-        disposable: controller.disposable,
         label: params.label || target.key,
+        viewModel: controller.viewModel,
     });
 }
 exports.create = create;
@@ -1699,8 +1762,8 @@ var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/
 var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
-var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
+var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
 var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var graph_1 = __webpack_require__(/*! ../monitor/graph */ "./src/main/js/controller/monitor/graph.ts");
 var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js/controller/monitor/multi-log.ts");
@@ -1713,14 +1776,14 @@ function createTextMonitor(document, target, params) {
     var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 1));
     var controller = value.totalCount === 1
         ? new single_log_1.SingleLogMonitorController(document, {
-            disposable: new disposable_1.Disposable(),
             formatter: createFormatter(),
             value: value,
+            viewModel: new view_model_1.ViewModel(),
         })
         : new multi_log_1.MultiLogMonitorController(document, {
-            disposable: new disposable_1.Disposable(),
             formatter: createFormatter(),
             value: value,
+            viewModel: new view_model_1.ViewModel(),
         });
     var ticker = new interval_1.IntervalTicker(document, type_util_1.TypeUtil.getOrDefault(params.interval, constants_1.Constants.monitorDefaultInterval));
     return new monitor_binding_1.MonitorBindingController(document, {
@@ -1731,19 +1794,19 @@ function createTextMonitor(document, target, params) {
             value: value,
         }),
         controller: controller,
-        disposable: controller.disposable,
         label: params.label || target.key,
+        viewModel: controller.viewModel,
     });
 }
 function createGraphMonitor(document, target, params) {
     var value = new monitor_value_1.MonitorValue(type_util_1.TypeUtil.getOrDefault(params.count, 64));
     var ticker = new interval_1.IntervalTicker(document, type_util_1.TypeUtil.getOrDefault(params.interval, constants_1.Constants.monitorDefaultInterval));
     var controller = new graph_1.GraphMonitorController(document, {
-        disposable: new disposable_1.Disposable(),
         formatter: createFormatter(),
         maxValue: type_util_1.TypeUtil.getOrDefault('max' in params ? params.max : null, 100),
         minValue: type_util_1.TypeUtil.getOrDefault('min' in params ? params.min : null, 0),
         value: value,
+        viewModel: new view_model_1.ViewModel(),
     });
     return new monitor_binding_1.MonitorBindingController(document, {
         binding: new monitor_1.MonitorBinding({
@@ -1753,8 +1816,8 @@ function createGraphMonitor(document, target, params) {
             value: value,
         }),
         controller: controller,
-        disposable: controller.disposable,
         label: params.label || target.key,
+        viewModel: new view_model_1.ViewModel(),
     });
 }
 function create(document, target, params) {
@@ -1792,8 +1855,8 @@ var Point2dConverter = __webpack_require__(/*! ../../converter/point-2d */ "./sr
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
-var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
+var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
 var any_point_2d_1 = __webpack_require__(/*! ../../parser/any-point-2d */ "./src/main/js/parser/any-point-2d.ts");
 var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
@@ -1831,9 +1894,9 @@ function createController(document, value) {
         throw pane_error_1.PaneError.shouldNeverHappen();
     }
     return new point_2d_pad_text_1.Point2dPadTextInputController(document, {
-        disposable: new disposable_1.Disposable(),
         parser: string_number_1.StringNumberParser,
         value: value,
+        viewModel: new view_model_1.ViewModel(),
         xFormatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(c.xConstraint, value.rawValue.x)),
         yFormatter: new number_1.NumberFormatter(UiUtil.getSuitableDecimalDigits(c.yConstraint, value.rawValue.y)),
     });
@@ -1858,8 +1921,8 @@ function create(document, target, params) {
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: controller,
-        disposable: controller.disposable,
         label: params.label || target.key,
+        viewModel: controller.viewModel,
     });
 }
 exports.create = create;
@@ -1884,8 +1947,8 @@ var list_1 = __webpack_require__(/*! ../../constraint/list */ "./src/main/js/con
 var util_1 = __webpack_require__(/*! ../../constraint/util */ "./src/main/js/constraint/util.ts");
 var StringConverter = __webpack_require__(/*! ../../converter/string */ "./src/main/js/converter/string.ts");
 var string_1 = __webpack_require__(/*! ../../formatter/string */ "./src/main/js/formatter/string.ts");
-var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
+var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/input/list.ts");
 var text_1 = __webpack_require__(/*! ../input/text */ "./src/main/js/controller/input/text.ts");
@@ -1905,16 +1968,16 @@ function createController(document, value) {
     var c = value.constraint;
     if (c && util_1.ConstraintUtil.findConstraint(c, list_1.ListConstraint)) {
         return new list_2.ListInputController(document, {
-            disposable: new disposable_1.Disposable(),
             stringifyValue: StringConverter.toString,
             value: value,
+            viewModel: new view_model_1.ViewModel(),
         });
     }
     return new text_1.TextInputController(document, {
-        disposable: new disposable_1.Disposable(),
         formatter: new string_1.StringFormatter(),
         parser: StringConverter.toString,
         value: value,
+        viewModel: new view_model_1.ViewModel(),
     });
 }
 /**
@@ -1936,8 +1999,8 @@ function create(document, target, params) {
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: controller,
-        disposable: controller.disposable,
         label: params.label || target.key,
+        viewModel: controller.viewModel,
     });
 }
 exports.create = create;
@@ -1962,8 +2025,8 @@ var string_1 = __webpack_require__(/*! ../../formatter/string */ "./src/main/js/
 var constants_1 = __webpack_require__(/*! ../../misc/constants */ "./src/main/js/misc/constants.ts");
 var interval_1 = __webpack_require__(/*! ../../misc/ticker/interval */ "./src/main/js/misc/ticker/interval.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
-var disposable_1 = __webpack_require__(/*! ../../model/disposable */ "./src/main/js/model/disposable.ts");
 var monitor_value_1 = __webpack_require__(/*! ../../model/monitor-value */ "./src/main/js/model/monitor-value.ts");
+var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
 var monitor_binding_1 = __webpack_require__(/*! ../monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
 var multi_log_1 = __webpack_require__(/*! ../monitor/multi-log */ "./src/main/js/controller/monitor/multi-log.ts");
 var single_log_1 = __webpack_require__(/*! ../monitor/single-log */ "./src/main/js/controller/monitor/single-log.ts");
@@ -1979,14 +2042,14 @@ function create(document, target, params) {
     var multiline = value.totalCount > 1 || ('multiline' in params && params.multiline);
     var controller = multiline
         ? new multi_log_1.MultiLogMonitorController(document, {
-            disposable: new disposable_1.Disposable(),
             formatter: new string_1.StringFormatter(),
             value: value,
+            viewModel: new view_model_1.ViewModel(),
         })
         : new single_log_1.SingleLogMonitorController(document, {
-            disposable: new disposable_1.Disposable(),
             formatter: new string_1.StringFormatter(),
             value: value,
+            viewModel: new view_model_1.ViewModel(),
         });
     var ticker = new interval_1.IntervalTicker(document, type_util_1.TypeUtil.getOrDefault(params.interval, constants_1.Constants.monitorDefaultInterval));
     return new monitor_binding_1.MonitorBindingController(document, {
@@ -1997,8 +2060,8 @@ function create(document, target, params) {
             value: value,
         }),
         controller: controller,
-        disposable: controller.disposable,
         label: params.label || target.key,
+        viewModel: controller.viewModel,
     });
 }
 exports.create = create;
@@ -2026,10 +2089,10 @@ var ButtonController = /** @class */ (function () {
     function ButtonController(document, config) {
         this.onButtonClick_ = this.onButtonClick_.bind(this);
         this.button = new button_1.Button(config.title);
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new button_2.ButtonView(document, {
             button: this.button,
-            disposable: this.disposable,
+            model: this.viewModel,
         });
         this.view.buttonElement.addEventListener('click', this.onButtonClick_);
     }
@@ -2039,6 +2102,37 @@ var ButtonController = /** @class */ (function () {
     return ButtonController;
 }());
 exports.ButtonController = ButtonController;
+
+
+/***/ }),
+
+/***/ "./src/main/js/controller/container-util.ts":
+/*!**************************************************!*\
+  !*** ./src/main/js/controller/container-util.ts ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateAllItemsPositions = void 0;
+function updateAllItemsPositions(uiControllerList) {
+    var visibleItems = uiControllerList.items.filter(function (uc) { return !uc.viewModel.hidden; });
+    var firstVisibleItem = visibleItems[0];
+    var lastVisibleItem = visibleItems[visibleItems.length - 1];
+    uiControllerList.items.forEach(function (uc) {
+        var ps = [];
+        if (uc === firstVisibleItem) {
+            ps.push('first');
+        }
+        if (uc === lastVisibleItem) {
+            ps.push('last');
+        }
+        uc.viewModel.positions = ps;
+    });
+}
+exports.updateAllItemsPositions = updateAllItemsPositions;
 
 
 /***/ }),
@@ -2059,6 +2153,7 @@ var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/mi
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
 var ui_controller_list_1 = __webpack_require__(/*! ../model/ui-controller-list */ "./src/main/js/model/ui-controller-list.ts");
 var folder_2 = __webpack_require__(/*! ../view/folder */ "./src/main/js/view/folder.ts");
+var ContainerUtil = __webpack_require__(/*! ./container-util */ "./src/main/js/controller/container-util.ts");
 /**
  * @hidden
  */
@@ -2066,16 +2161,18 @@ var FolderController = /** @class */ (function () {
     function FolderController(document, config) {
         this.onTitleClick_ = this.onTitleClick_.bind(this);
         this.onUiControllerListAdd_ = this.onUiControllerListAdd_.bind(this);
+        this.onUiControllerListLayout_ = this.onUiControllerListLayout_.bind(this);
         this.onUiControllerListRemove_ = this.onUiControllerListRemove_.bind(this);
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.folder = new folder_1.Folder(config.title, type_util_1.TypeUtil.getOrDefault(config.expanded, true));
         this.ucList_ = new ui_controller_list_1.UiControllerList();
         this.ucList_.emitter.on('add', this.onUiControllerListAdd_);
+        this.ucList_.emitter.on('layout', this.onUiControllerListLayout_);
         this.ucList_.emitter.on('remove', this.onUiControllerListRemove_);
         this.doc_ = document;
         this.view = new folder_2.FolderView(this.doc_, {
-            disposable: this.disposable,
             folder: this.folder,
+            model: this.viewModel,
         });
         this.view.titleElement.addEventListener('click', this.onTitleClick_);
     }
@@ -2114,12 +2211,19 @@ var FolderController = /** @class */ (function () {
     FolderController.prototype.onTitleClick_ = function () {
         this.folder.expanded = !this.folder.expanded;
     };
-    FolderController.prototype.onUiControllerListAdd_ = function (ev) {
-        this.view.containerElement.insertBefore(ev.uiController.view.element, this.view.containerElement.children[ev.index]);
+    FolderController.prototype.applyUiControllerListChange_ = function () {
+        ContainerUtil.updateAllItemsPositions(this.uiControllerList);
         this.folder.expandedHeight = this.computeExpandedHeight_();
     };
+    FolderController.prototype.onUiControllerListAdd_ = function (ev) {
+        DomUtil.insertElementAt(this.view.containerElement, ev.uiController.view.element, ev.index);
+        this.applyUiControllerListChange_();
+    };
     FolderController.prototype.onUiControllerListRemove_ = function (_) {
-        this.folder.expandedHeight = this.computeExpandedHeight_();
+        this.applyUiControllerListChange_();
+    };
+    FolderController.prototype.onUiControllerListLayout_ = function (_) {
+        this.applyUiControllerListChange_();
     };
     return FolderController;
 }());
@@ -2147,9 +2251,9 @@ var InputBindingController = /** @class */ (function () {
     function InputBindingController(document, config) {
         this.binding = config.binding;
         this.controller = config.controller;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new labeled_1.LabeledView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             label: config.label,
             view: this.controller.view,
         });
@@ -2181,9 +2285,9 @@ var CheckboxInputController = /** @class */ (function () {
     function CheckboxInputController(document, config) {
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new checkbox_1.CheckboxInputView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             value: this.value,
         });
         this.view.inputElement.addEventListener('change', this.onInputChange_);
@@ -2228,25 +2332,25 @@ var ColorPickerInputController = /** @class */ (function () {
         this.onInputBlur_ = this.onInputBlur_.bind(this);
         this.value = config.value;
         this.foldable = new foldable_1.Foldable();
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.hPaletteIc_ = new h_palette_1.HPaletteInputController(document, {
-            disposable: this.disposable,
             value: this.value,
+            viewModel: this.viewModel,
         });
         this.svPaletteIc_ = new sv_palette_1.SvPaletteInputController(document, {
-            disposable: this.disposable,
             value: this.value,
+            viewModel: this.viewModel,
         });
         this.rgbTextIc_ = new rgb_text_1.RgbTextInputController(document, {
-            disposable: this.disposable,
             formatter: new number_1.NumberFormatter(0),
             parser: string_number_1.StringNumberParser,
             value: this.value,
+            viewModel: this.viewModel,
         });
         this.view = new color_picker_1.ColorPickerInputView(document, {
-            disposable: this.disposable,
             foldable: this.foldable,
             hPaletteInputView: this.hPaletteIc_.view,
+            model: this.viewModel,
             rgbTextView: this.rgbTextIc_.view,
             svPaletteInputView: this.svPaletteIc_.view,
             value: this.value,
@@ -2289,23 +2393,21 @@ var text_1 = __webpack_require__(/*! ./text */ "./src/main/js/controller/input/t
 var ColorSwatchTextInputController = /** @class */ (function () {
     function ColorSwatchTextInputController(document, config) {
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.swatchIc_ = new color_swatch_1.ColorSwatchInputController(document, {
-            disposable: this.disposable,
             value: this.value,
+            viewModel: this.viewModel,
         });
-        this.disposable = config.disposable;
         this.textIc_ = new text_1.TextInputController(document, {
-            disposable: this.disposable,
             formatter: config.formatter,
             parser: config.parser,
             value: this.value,
+            viewModel: this.viewModel,
         });
-        this.disposable = config.disposable;
         this.view = new color_swatch_text_1.ColorSwatchTextInputView(document, {
-            disposable: this.disposable,
             swatchInputView: this.swatchIc_.view,
             textInputView: this.textIc_.view,
+            model: this.viewModel,
         });
     }
     return ColorSwatchTextInputController;
@@ -2337,13 +2439,13 @@ var ColorSwatchInputController = /** @class */ (function () {
         this.onButtonBlur_ = this.onButtonBlur_.bind(this);
         this.onButtonClick_ = this.onButtonClick_.bind(this);
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.pickerIc_ = new color_picker_1.ColorPickerInputController(document, {
-            disposable: this.disposable,
             value: this.value,
+            viewModel: this.viewModel,
         });
         this.view = new color_swatch_1.ColorSwatchInputView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             pickerInputView: this.pickerIc_.view,
             value: this.value,
         });
@@ -2391,9 +2493,9 @@ var HPaletteInputController = /** @class */ (function () {
         this.onPointerMove_ = this.onPointerMove_.bind(this);
         this.onPointerUp_ = this.onPointerUp_.bind(this);
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new h_palette_1.HPaletteInputView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             value: this.value,
         });
         this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.canvasElement);
@@ -2456,9 +2558,9 @@ var ListInputController = /** @class */ (function () {
         this.onSelectChange_ = this.onSelectChange_.bind(this);
         this.value_ = config.value;
         this.listItems_ = findListItems(this.value_) || [];
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view_ = new list_2.ListInputView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             options: this.listItems_,
             stringifyValue: config.stringifyValue,
             value: this.value_,
@@ -2570,20 +2672,20 @@ var Point2dPadTextInputController = /** @class */ (function () {
         this.onPadButtonBlur_ = this.onPadButtonBlur_.bind(this);
         this.onPadButtonClick_ = this.onPadButtonClick_.bind(this);
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.padIc_ = new point_2d_pad_1.Point2dPadInputController(document, {
-            disposable: this.disposable,
             value: this.value,
+            viewModel: this.viewModel,
         });
         this.textIc_ = new point_2d_text_1.Point2dTextInputController(document, {
-            disposable: this.disposable,
             parser: config.parser,
             value: this.value,
+            viewModel: this.viewModel,
             xFormatter: config.xFormatter,
             yFormatter: config.yFormatter,
         });
         this.view = new point_2d_pad_text_1.Point2dPadTextInputView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             padInputView: this.padIc_.view,
             textInputView: this.textIc_.view,
         });
@@ -2631,11 +2733,11 @@ var Point2dPadInputController = /** @class */ (function () {
         this.value = config.value;
         this.foldable = new foldable_1.Foldable();
         this.maxValue_ = UiUtil.getSuitableMaxValueForPoint2dPad(this.value.constraint, this.value.rawValue);
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new point_2d_pad_1.Point2dPadInputView(document, {
-            disposable: this.disposable,
             foldable: this.foldable,
             maxValue: this.maxValue_,
+            model: this.viewModel,
             value: this.value,
         });
         this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.padElement);
@@ -2693,9 +2795,9 @@ var Point2dTextInputController = /** @class */ (function () {
         var c = this.value.constraint;
         this.xStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.Point2dConstraint ? c.xConstraint : undefined);
         this.yStep_ = UiUtil.getStepForTextInput(c instanceof point_2d_1.Point2dConstraint ? c.yConstraint : undefined);
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new point_2d_text_1.Point2dTextInputView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             value: this.value,
             xFormatter: config.xFormatter,
             yFormatter: config.yFormatter,
@@ -2783,10 +2885,10 @@ var RgbTextInputController = /** @class */ (function () {
         this.onInputKeyDown_ = this.onInputKeyDown_.bind(this);
         this.parser_ = config.parser;
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new rgb_text_1.RgbTextInputView(document, {
-            disposable: this.disposable,
             formatter: config.formatter,
+            model: this.viewModel,
             value: this.value,
         });
         this.view.inputElements.forEach(function (inputElem) {
@@ -2866,19 +2968,19 @@ var slider_1 = __webpack_require__(/*! ./slider */ "./src/main/js/controller/inp
 var SliderTextInputController = /** @class */ (function () {
     function SliderTextInputController(document, config) {
         this.value_ = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.sliderIc_ = new slider_1.SliderInputController(document, {
-            disposable: this.disposable,
             value: config.value,
+            viewModel: this.viewModel,
         });
         this.textIc_ = new number_text_1.NumberTextInputController(document, {
-            disposable: this.disposable,
             formatter: config.formatter,
             parser: config.parser,
             value: config.value,
+            viewModel: this.viewModel,
         });
         this.view_ = new slider_text_1.SliderTextInputView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             sliderInputView: this.sliderIc_.view,
             textInputView: this.textIc_.view,
         });
@@ -2949,11 +3051,11 @@ var SliderInputController = /** @class */ (function () {
         var _a = estimateSuitableRange(this.value), min = _a[0], max = _a[1];
         this.minValue_ = min;
         this.maxValue_ = max;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new slider_1.SliderInputView(document, {
-            disposable: this.disposable,
             maxValue: this.maxValue_,
             minValue: this.minValue_,
+            model: this.viewModel,
             value: this.value,
         });
         this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.outerElement);
@@ -3004,9 +3106,9 @@ var SvPaletteInputController = /** @class */ (function () {
         this.onPointerMove_ = this.onPointerMove_.bind(this);
         this.onPointerUp_ = this.onPointerUp_.bind(this);
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new sv_palette_1.SvPaletteInputView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
             value: this.value,
         });
         this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.canvasElement);
@@ -3058,10 +3160,10 @@ var TextInputController = /** @class */ (function () {
         this.onInputChange_ = this.onInputChange_.bind(this);
         this.parser_ = config.parser;
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new text_1.TextInputView(document, {
-            disposable: this.disposable,
             formatter: config.formatter,
+            model: this.viewModel,
             value: this.value,
         });
         this.view.inputElement.addEventListener('change', this.onInputChange_);
@@ -3102,13 +3204,13 @@ var MonitorBindingController = /** @class */ (function () {
         var _this = this;
         this.binding = config.binding;
         this.controller = config.controller;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new labeled_1.LabeledView(document, {
-            disposable: this.disposable,
             label: config.label,
+            model: this.viewModel,
             view: this.controller.view,
         });
-        this.controller.disposable.emitter.on('dispose', function () {
+        this.controller.viewModel.emitter.on('dispose', function () {
             _this.binding.dispose();
         });
     }
@@ -3142,13 +3244,13 @@ var GraphMonitorController = /** @class */ (function () {
         this.onGraphMouseMove_ = this.onGraphMouseMove_.bind(this);
         this.value = config.value;
         this.cursor_ = new graph_cursor_1.GraphCursor();
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new graph_1.GraphMonitorView(document, {
             cursor: this.cursor_,
-            disposable: this.disposable,
             formatter: config.formatter,
             maxValue: config.maxValue,
             minValue: config.minValue,
+            model: this.viewModel,
             value: this.value,
         });
         this.view.graphElement.addEventListener('mouseleave', this.onGraphMouseLeave_);
@@ -3187,10 +3289,10 @@ var multi_log_1 = __webpack_require__(/*! ../../view/monitor/multi-log */ "./src
 var MultiLogMonitorController = /** @class */ (function () {
     function MultiLogMonitorController(document, config) {
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new multi_log_1.MultiLogMonitorView(document, {
-            disposable: this.disposable,
             formatter: config.formatter,
+            model: this.viewModel,
             value: this.value,
         });
     }
@@ -3219,10 +3321,10 @@ var single_log_1 = __webpack_require__(/*! ../../view/monitor/single-log */ "./s
 var SingleLogMonitorController = /** @class */ (function () {
     function SingleLogMonitorController(document, config) {
         this.value = config.value;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new single_log_1.SingleLogMonitorView(document, {
-            disposable: this.disposable,
             formatter: config.formatter,
+            model: this.viewModel,
             value: this.value,
         });
     }
@@ -3244,10 +3346,12 @@ exports.SingleLogMonitorController = SingleLogMonitorController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RootController = void 0;
+var DomUtil = __webpack_require__(/*! ../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
 var ui_controller_list_1 = __webpack_require__(/*! ../model/ui-controller-list */ "./src/main/js/model/ui-controller-list.ts");
 var root_1 = __webpack_require__(/*! ../view/root */ "./src/main/js/view/root.ts");
+var ContainerUtil = __webpack_require__(/*! ./container-util */ "./src/main/js/controller/container-util.ts");
 function createFolder(config) {
     if (!config.title) {
         return null;
@@ -3261,14 +3365,18 @@ var RootController = /** @class */ (function () {
     function RootController(document, config) {
         this.onTitleClick_ = this.onTitleClick_.bind(this);
         this.onUiControllerListAdd_ = this.onUiControllerListAdd_.bind(this);
+        this.onUiControllerListLayout_ = this.onUiControllerListLayout_.bind(this);
+        this.onUiControllerListRemove_ = this.onUiControllerListRemove_.bind(this);
         this.folder = createFolder(config);
         this.ucList_ = new ui_controller_list_1.UiControllerList();
         this.ucList_.emitter.on('add', this.onUiControllerListAdd_);
+        this.ucList_.emitter.on('layout', this.onUiControllerListLayout_);
+        this.ucList_.emitter.on('remove', this.onUiControllerListRemove_);
         this.doc_ = document;
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new root_1.RootView(this.doc_, {
-            disposable: this.disposable,
             folder: this.folder,
+            model: this.viewModel,
         });
         if (this.view.titleElement) {
             this.view.titleElement.addEventListener('click', this.onTitleClick_);
@@ -3288,8 +3396,18 @@ var RootController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    RootController.prototype.applyUiControllerListChange_ = function () {
+        ContainerUtil.updateAllItemsPositions(this.uiControllerList);
+    };
     RootController.prototype.onUiControllerListAdd_ = function (ev) {
-        this.view.containerElement.insertBefore(ev.uiController.view.element, this.view.containerElement.children[ev.index]);
+        DomUtil.insertElementAt(this.view.containerElement, ev.uiController.view.element, ev.index);
+        this.applyUiControllerListChange_();
+    };
+    RootController.prototype.onUiControllerListRemove_ = function (_) {
+        this.applyUiControllerListChange_();
+    };
+    RootController.prototype.onUiControllerListLayout_ = function (_) {
+        this.applyUiControllerListChange_();
     };
     RootController.prototype.onTitleClick_ = function () {
         if (this.folder) {
@@ -3320,9 +3438,9 @@ var separator_1 = __webpack_require__(/*! ../view/separator */ "./src/main/js/vi
  */
 var SeparatorController = /** @class */ (function () {
     function SeparatorController(document, config) {
-        this.disposable = config.disposable;
+        this.viewModel = config.viewModel;
         this.view = new separator_1.SeparatorView(document, {
-            disposable: this.disposable,
+            model: this.viewModel,
         });
     }
     return SeparatorController;
@@ -4069,7 +4187,7 @@ exports.disposeElement = disposeElement;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSvgIconElement = exports.getCanvasContext = exports.getWindowDocument = exports.supportsTouch = exports.disableTransitionTemporarily = exports.forceReflow = exports.SVG_NS = void 0;
+exports.indexOfChildElement = exports.removeElement = exports.insertElementAt = exports.createSvgIconElement = exports.getCanvasContext = exports.getWindowDocument = exports.supportsTouch = exports.disableTransitionTemporarily = exports.forceReflow = exports.SVG_NS = void 0;
 var type_util_1 = __webpack_require__(/*! ./type-util */ "./src/main/js/misc/type-util.ts");
 exports.SVG_NS = 'http://www.w3.org/2000/svg';
 function forceReflow(element) {
@@ -4115,6 +4233,25 @@ function createSvgIconElement(document, iconId) {
     return elem;
 }
 exports.createSvgIconElement = createSvgIconElement;
+function insertElementAt(parentElement, element, index) {
+    parentElement.insertBefore(element, parentElement.children[index]);
+}
+exports.insertElementAt = insertElementAt;
+function removeElement(element) {
+    if (element.parentElement) {
+        element.parentElement.removeChild(element);
+    }
+}
+exports.removeElement = removeElement;
+function indexOfChildElement(element) {
+    var parentElem = element.parentElement;
+    if (!parentElem) {
+        return -1;
+    }
+    var children = Array.prototype.slice.call(parentElem.children);
+    return children.indexOf(element);
+}
+exports.indexOfChildElement = indexOfChildElement;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
@@ -4452,6 +4589,17 @@ exports.TypeUtil = {
     },
     getOrDefault: function (value, defaultValue) {
         return !exports.TypeUtil.isEmpty(value) ? value : defaultValue;
+    },
+    deepEqualsArray: function (a1, a2) {
+        if (a1.length !== a2.length) {
+            return false;
+        }
+        for (var i = 0; i < a1.length; i++) {
+            if (a1[i] !== a2[i]) {
+                return false;
+            }
+        }
+        return true;
     },
 };
 
@@ -5039,6 +5187,8 @@ var list_1 = __webpack_require__(/*! ./list */ "./src/main/js/model/list.ts");
 var UiControllerList = /** @class */ (function () {
     function UiControllerList() {
         this.onItemFolderFold_ = this.onItemFolderFold_.bind(this);
+        this.onListItemLayout_ = this.onListItemLayout_.bind(this);
+        this.onSubitemLayout_ = this.onSubitemLayout_.bind(this);
         this.onSubitemFolderFold_ = this.onSubitemFolderFold_.bind(this);
         this.onSubitemInputChange_ = this.onSubitemInputChange_.bind(this);
         this.onSubitemMonitorUpdate_ = this.onSubitemMonitorUpdate_.bind(this);
@@ -5069,7 +5219,8 @@ var UiControllerList = /** @class */ (function () {
             sender: this,
             uiController: uc,
         });
-        uc.disposable.emitter.on('dispose', this.onListItemDispose_);
+        uc.viewModel.emitter.on('dispose', this.onListItemDispose_);
+        uc.viewModel.emitter.on('change', this.onListItemLayout_);
         if (uc instanceof input_binding_1.InputBindingController) {
             var emitter = uc.binding.emitter;
             // TODO: Find more type-safe way
@@ -5083,6 +5234,7 @@ var UiControllerList = /** @class */ (function () {
         else if (uc instanceof folder_1.FolderController) {
             uc.folder.emitter.on('change', this.onItemFolderFold_);
             var emitter = uc.uiControllerList.emitter;
+            emitter.on('layout', this.onSubitemLayout_);
             emitter.on('fold', this.onSubitemFolderFold_);
             emitter.on('inputchange', this.onSubitemInputChange_);
             emitter.on('monitorupdate', this.onSubitemMonitorUpdate_);
@@ -5093,10 +5245,17 @@ var UiControllerList = /** @class */ (function () {
             sender: this,
         });
     };
+    UiControllerList.prototype.onListItemLayout_ = function (ev) {
+        if (ev.propertyName === 'hidden' || ev.propertyName === 'positions') {
+            this.emitter.emit('layout', {
+                sender: this,
+            });
+        }
+    };
     UiControllerList.prototype.onListItemDispose_ = function (_) {
         var _this = this;
         var disposedUcs = this.ucList_.items.filter(function (uc) {
-            return uc.disposable.disposed;
+            return uc.viewModel.disposed;
         });
         disposedUcs.forEach(function (uc) {
             _this.ucList_.remove(uc);
@@ -5119,6 +5278,11 @@ var UiControllerList = /** @class */ (function () {
     UiControllerList.prototype.onItemFolderFold_ = function (ev) {
         this.emitter.emit('fold', {
             expanded: ev.expanded,
+            sender: this,
+        });
+    };
+    UiControllerList.prototype.onSubitemLayout_ = function (_) {
+        this.emitter.emit('layout', {
             sender: this,
         });
     };
@@ -5145,6 +5309,104 @@ var UiControllerList = /** @class */ (function () {
     return UiControllerList;
 }());
 exports.UiControllerList = UiControllerList;
+
+
+/***/ }),
+
+/***/ "./src/main/js/model/view-model.ts":
+/*!*****************************************!*\
+  !*** ./src/main/js/model/view-model.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ViewModel = void 0;
+var emitter_1 = __webpack_require__(/*! ../misc/emitter */ "./src/main/js/misc/emitter.ts");
+var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var disposable_1 = __webpack_require__(/*! ./disposable */ "./src/main/js/model/disposable.ts");
+var ViewModel = /** @class */ (function () {
+    function ViewModel() {
+        this.onDispose_ = this.onDispose_.bind(this);
+        this.emitter = new emitter_1.Emitter();
+        this.positions_ = [];
+        this.hidden_ = false;
+        this.disposable_ = new disposable_1.Disposable();
+        this.disposable_.emitter.on('dispose', this.onDispose_);
+    }
+    Object.defineProperty(ViewModel.prototype, "hidden", {
+        get: function () {
+            return this.hidden_;
+        },
+        set: function (hidden) {
+            if (this.hidden_ === hidden) {
+                return;
+            }
+            this.hidden_ = hidden;
+            this.emitter.emit('change', {
+                propertyName: 'hidden',
+                sender: this,
+            });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ViewModel.prototype, "positions", {
+        get: function () {
+            return this.positions_;
+        },
+        set: function (positions) {
+            if (type_util_1.TypeUtil.deepEqualsArray(positions, this.positions_)) {
+                return;
+            }
+            this.positions_ = positions;
+            this.emitter.emit('change', {
+                propertyName: 'positions',
+                sender: this,
+            });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ViewModel.prototype, "disposed", {
+        get: function () {
+            return this.disposable_.disposed;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    ViewModel.prototype.dispose = function () {
+        this.disposable_.dispose();
+    };
+    ViewModel.prototype.onDispose_ = function () {
+        this.emitter.emit('dispose', {
+            sender: this,
+        });
+    };
+    return ViewModel;
+}());
+exports.ViewModel = ViewModel;
+
+
+/***/ }),
+
+/***/ "./src/main/js/model/view-positions.ts":
+/*!*********************************************!*\
+  !*** ./src/main/js/model/view-positions.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAll = void 0;
+function getAll() {
+    return ['first', 'last'];
+}
+exports.getAll = getAll;
 
 
 /***/ }),
@@ -5333,7 +5595,7 @@ var class_name_1 = __webpack_require__(/*! ./misc/class-name */ "./src/main/js/m
 var DomUtil = __webpack_require__(/*! ./misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var pane_error_1 = __webpack_require__(/*! ./misc/pane-error */ "./src/main/js/misc/pane-error.ts");
 var type_util_1 = __webpack_require__(/*! ./misc/type-util */ "./src/main/js/misc/type-util.ts");
-var disposable_1 = __webpack_require__(/*! ./model/disposable */ "./src/main/js/model/disposable.ts");
+var view_model_1 = __webpack_require__(/*! ./model/view-model */ "./src/main/js/model/view-model.ts");
 function createDefaultWrapperElement(document) {
     var elem = document.createElement('div');
     elem.classList.add(class_name_1.ClassName('dfw')());
@@ -5349,7 +5611,7 @@ var TweakpaneWithoutStyle = /** @class */ (function (_super) {
         var config = opt_config || {};
         var document = type_util_1.TypeUtil.getOrDefault(config.document, DomUtil.getWindowDocument());
         var rootController = new root_2.RootController(document, {
-            disposable: new disposable_1.Disposable(),
+            viewModel: new view_model_1.ViewModel(),
             title: config.title,
         });
         _this = _super.call(this, rootController) || this;
@@ -5435,7 +5697,7 @@ var ButtonView = /** @class */ (function (_super) {
         buttonElem.textContent = _this.button.title;
         _this.element.appendChild(buttonElem);
         _this.buttonElem_ = buttonElem;
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.buttonElem_ = DisposingUtil.disposeElement(_this.buttonElem_);
         });
         return _this;
@@ -5511,7 +5773,7 @@ var FolderView = /** @class */ (function (_super) {
         _this.element.appendChild(containerElem);
         _this.containerElem_ = containerElem;
         _this.applyModel_();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.containerElem_ = DisposingUtil.disposeElement(_this.containerElem_);
             _this.titleElem_ = DisposingUtil.disposeElement(_this.titleElem_);
         });
@@ -5621,7 +5883,7 @@ var CheckboxInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.inputElem_ = DisposingUtil.disposeElement(_this.inputElem_);
         });
         return _this;
@@ -5865,7 +6127,7 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
         pickerElem.appendChild(_this.pickerView_.element);
         _this.element.appendChild(pickerElem);
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.buttonElem_ = DisposingUtil.disposeElement(_this.buttonElem_);
             _this.swatchElem_ = DisposingUtil.disposeElement(_this.swatchElem_);
         });
@@ -5952,7 +6214,7 @@ var HPaletteInputView = /** @class */ (function (_super) {
         _this.element.appendChild(markerElem);
         _this.markerElem_ = markerElem;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.canvasElem_ = DisposingUtil.disposeElement(_this.canvasElem_);
             _this.markerElem_ = DisposingUtil.disposeElement(_this.markerElem_);
         });
@@ -6058,7 +6320,7 @@ var ListInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.selectElem_ = DisposingUtil.disposeElement(_this.selectElem_);
         });
         return _this;
@@ -6251,7 +6513,7 @@ var Point2dPadInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.padElem_ = DisposingUtil.disposeElement(_this.padElem_);
         });
         return _this;
@@ -6356,7 +6618,7 @@ var Point2dTextInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             if (_this.inputElems_) {
                 _this.inputElems_.forEach(function (elem) {
                     DisposingUtil.disposeElement(elem);
@@ -6457,7 +6719,7 @@ var RgbTextInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             if (_this.inputElems_) {
                 _this.inputElems_.forEach(function (elem) {
                     DisposingUtil.disposeElement(elem);
@@ -6616,7 +6878,7 @@ var SliderInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.innerElem_ = DisposingUtil.disposeElement(_this.innerElem_);
             _this.outerElem_ = DisposingUtil.disposeElement(_this.outerElem_);
         });
@@ -6713,7 +6975,7 @@ var SvPaletteInputView = /** @class */ (function (_super) {
         _this.element.appendChild(markerElem);
         _this.markerElem_ = markerElem;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.canvasElem_ = DisposingUtil.disposeElement(_this.canvasElem_);
             _this.markerElem_ = DisposingUtil.disposeElement(_this.markerElem_);
         });
@@ -6817,7 +7079,7 @@ var TextInputView = /** @class */ (function (_super) {
         config.value.emitter.on('change', _this.onValueChange_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.inputElem_ = DisposingUtil.disposeElement(_this.inputElem_);
         });
         return _this;
@@ -6875,6 +7137,19 @@ exports.LabeledView = void 0;
 var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var view_1 = __webpack_require__(/*! ./view */ "./src/main/js/view/view.ts");
 var className = class_name_1.ClassName('lbl');
+function createLabelNode(document, label) {
+    var frag = document.createDocumentFragment();
+    var lineNodes = label.split('\n').map(function (line) {
+        return document.createTextNode(line);
+    });
+    lineNodes.forEach(function (lineNode, index) {
+        if (index > 0) {
+            frag.appendChild(document.createElement('br'));
+        }
+        frag.appendChild(lineNode);
+    });
+    return frag;
+}
 /**
  * @hidden
  */
@@ -6886,7 +7161,7 @@ var LabeledView = /** @class */ (function (_super) {
         _this.element.classList.add(className());
         var labelElem = document.createElement('div');
         labelElem.classList.add(className('l'));
-        labelElem.textContent = _this.label;
+        labelElem.appendChild(createLabelNode(document, _this.label));
         _this.element.appendChild(labelElem);
         var viewElem = document.createElement('div');
         viewElem.classList.add(className('v'));
@@ -6962,7 +7237,7 @@ var GraphMonitorView = /** @class */ (function (_super) {
         config.value.emitter.on('update', _this.onValueUpdate_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.lineElem_ = DisposingUtil.disposeElement(_this.lineElem_);
             _this.svgElem_ = DisposingUtil.disposeElement(_this.svgElem_);
             _this.tooltipElem_ = DisposingUtil.disposeElement(_this.tooltipElem_);
@@ -7069,7 +7344,7 @@ var MultiLogMonitorView = /** @class */ (function (_super) {
         config.value.emitter.on('update', _this.onValueUpdate_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.textareaElem_ = DisposingUtil.disposeElement(_this.textareaElem_);
         });
         return _this;
@@ -7148,7 +7423,7 @@ var SingleLogMonitorView = /** @class */ (function (_super) {
         config.value.emitter.on('update', _this.onValueUpdate_);
         _this.value = config.value;
         _this.update();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.inputElem_ = DisposingUtil.disposeElement(_this.inputElem_);
         });
         return _this;
@@ -7231,7 +7506,7 @@ var RootView = /** @class */ (function (_super) {
         _this.element.appendChild(containerElem);
         _this.containerElem_ = containerElem;
         _this.applyModel_();
-        config.disposable.emitter.on('dispose', function () {
+        config.model.emitter.on('dispose', function () {
             _this.containerElem_ = DisposingUtil.disposeElement(_this.containerElem_);
             _this.folder_ = null;
             _this.titleElem_ = DisposingUtil.disposeElement(_this.titleElem_);
@@ -7334,18 +7609,24 @@ exports.SeparatorView = SeparatorView;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.View = void 0;
+var class_name_1 = __webpack_require__(/*! ../misc/class-name */ "./src/main/js/misc/class-name.ts");
 var DisposingUtil = __webpack_require__(/*! ../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
 var pane_error_1 = __webpack_require__(/*! ../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var ViewPositions = __webpack_require__(/*! ../model/view-positions */ "./src/main/js/model/view-positions.ts");
+var className = class_name_1.ClassName('');
 /**
  * @hidden
  */
 var View = /** @class */ (function () {
     function View(document, config) {
+        this.onChange_ = this.onChange_.bind(this);
         this.onDispose_ = this.onDispose_.bind(this);
-        this.disposable_ = config.disposable;
-        this.disposable_.emitter.on('dispose', this.onDispose_);
+        this.model_ = config.model;
+        this.model_.emitter.on('change', this.onChange_);
+        this.model_.emitter.on('dispose', this.onDispose_);
         this.doc_ = document;
         this.elem_ = this.doc_.createElement('div');
+        this.elem_.classList.add(className());
     }
     Object.defineProperty(View.prototype, "document", {
         get: function () {
@@ -7371,6 +7652,29 @@ var View = /** @class */ (function () {
         this.doc_ = null;
         this.elem_ = DisposingUtil.disposeElement(this.elem_);
     };
+    View.prototype.onChange_ = function (ev) {
+        var elem = this.elem_;
+        if (!elem) {
+            throw pane_error_1.PaneError.alreadyDisposed();
+        }
+        if (ev.propertyName === 'hidden') {
+            var hiddenClass = className(undefined, 'hidden');
+            if (this.model_.hidden) {
+                elem.classList.add(hiddenClass);
+            }
+            else {
+                elem.classList.remove(hiddenClass);
+            }
+        }
+        else if (ev.propertyName === 'positions') {
+            ViewPositions.getAll().forEach(function (pos) {
+                elem.classList.remove(className(undefined, pos));
+            });
+            this.model_.positions.forEach(function (pos) {
+                elem.classList.add(className(undefined, pos));
+            });
+        }
+    };
     return View;
 }());
 exports.View = View;
@@ -7390,7 +7694,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--folder-background-color);color:var(--folder-foreground-color);cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:var(--folder-background-color-hover)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:var(--folder-background-color-focus)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:var(--folder-background-color-active)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, var(--folder-foreground-color), var(--folder-foreground-color) 2px, transparent 2px, transparent 4px, var(--folder-foreground-color) 4px);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv:first-child,.tp-rotv_c>.tp-fldv:first-child{margin-top:-4px}.tp-fldv_c>.tp-fldv:last-child,.tp-rotv_c>.tp-fldv:last-child{margin-bottom:-4px}.tp-fldv_c>*+*,.tp-rotv_c>*+*{margin-top:4px}.tp-fldv_c>.tp-fldv+.tp-fldv,.tp-rotv_c>.tp-fldv+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv+.tp-sptv,.tp-rotv_c>.tp-sptv+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:var(--button-background-color-hover)}.tp-btnv_b:focus{background-color:var(--button-background-color-focus)}.tp-btnv_b:active{background-color:var(--button-background-color-active)}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_t{transition:border-radius 0.2s ease-in-out 0.2s}.tp-fldv.tp-fldv-expanded .tp-fldv_t{transition:border-radius 0s}.tp-fldv_c{border-left:var(--folder-background-color) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:var(--folder-background-color-hover)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:var(--folder-background-color-focus)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:var(--folder-background-color-active)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:var(--input-background-color);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:var(--input-foreground-color);border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:var(--input-background-color-hover)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:var(--input-background-color-focus)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:var(--input-background-color-active)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:var(--button-background-color-hover)}.tp-lstiv_s:focus{background-color:var(--button-background-color-focus)}.tp-lstiv_s:active{background-color:var(--button-background-color-active)}.tp-lstiv_m{border-color:var(--button-foreground-color) transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_l{color:var(--label-foreground-color);display:inline;line-height:20px;margin-right:8px}.tp-rgbtxtiv_w{display:flex}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;flex:1;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-rgbtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-rgbtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-rgbtxtiv_i:nth-child(1){border-bottom-right-radius:0;border-top-right-radius:0}.tp-rgbtxtiv_i:nth-child(2){border-radius:0}.tp-rgbtxtiv_i:nth-child(3){border-bottom-left-radius:0;border-top-left-radius:0}.tp-rgbtxtiv_i+.tp-rgbtxtiv_i{margin-left:1px}.tp-p2dpadiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:var(--input-background-color-hover)}.tp-p2dpadiv_p:focus{background-color:var(--input-background-color-focus)}.tp-p2dpadiv_p:active{background-color:var(--input-background-color-active)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:var(--input-guide-color)}.tp-p2dpadiv_l{stroke:var(--input-foreground-color);stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:var(--input-foreground-color)}.tp-p2dpadtxtiv{display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:var(--button-background-color-hover)}.tp-p2dpadtxtiv_b:focus{background-color:var(--button-background-color-focus)}.tp-p2dpadtxtiv_b:active{background-color:var(--button-background-color-active)}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:flex}.tp-p2dtxtiv_w{align-items:center;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-p2dtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-p2dtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:var(--input-background-color);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:var(--button-background-color);border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:var(--button-background-color-hover)}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:var(--button-background-color-focus)}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:var(--button-background-color-active)}.tp-txtiv{display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-txtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-txtiv_i:active{background-color:var(--input-background-color-active)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:var(--input-background-color-hover)}.tp-cswiv_sw:focus{background-color:var(--input-background-color-focus)}.tp-cswiv_sw:active{background-color:var(--input-background-color-active)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:var(--label-foreground-color);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:var(--monitor-foreground-color);stroke-linejoin:round}.tp-grpmv_t{color:var(--monitor-foreground-color);font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:var(--monitor-foreground-color);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%}.tp-rotv{--font-family: var(--tp-font-family, Roboto Mono,Source Code Pro,Menlo,Courier,monospace);--base-background-color: var(--tp-base-background-color, #2f3137);--base-shadow-color: var(--tp-base-shadow-color, rgba(0,0,0,0.2));--button-background-color: var(--tp-button-background-color, #adafb8);--button-background-color-active: var(--tp-button-background-color-active, #d6d7db);--button-background-color-focus: var(--tp-button-background-color-focus, #c8cad0);--button-background-color-hover: var(--tp-button-background-color-hover, #bbbcc4);--button-foreground-color: var(--tp-button-foreground-color, #2f3137);--folder-background-color: var(--tp-folder-background-color, rgba(200,202,208,0.1));--folder-background-color-active: var(--tp-folder-background-color-active, rgba(200,202,208,0.25));--folder-background-color-focus: var(--tp-folder-background-color-focus, rgba(200,202,208,0.2));--folder-background-color-hover: var(--tp-folder-background-color-hover, rgba(200,202,208,0.15));--folder-foreground-color: var(--tp-folder-foreground-color, #c8cad0);--input-background-color: var(--tp-input-background-color, rgba(200,202,208,0.15));--input-background-color-active: var(--tp-input-background-color-active, rgba(200,202,208,0.35));--input-background-color-focus: var(--tp-input-background-color-focus, rgba(200,202,208,0.25));--input-background-color-hover: var(--tp-input-background-color-hover, rgba(200,202,208,0.15));--input-foreground-color: var(--tp-input-foreground-color, #c8cad0);--input-guide-color: var(--tp-input-guide-color, rgba(47,49,55,0.5));--label-foreground-color: var(--tp-label-foreground-color, rgba(200,202,208,0.8));--monitor-background-color: var(--tp-monitor-background-color, rgba(24,24,27,0.5));--monitor-foreground-color: var(--tp-monitor-foreground-color, rgba(200,202,208,0.7));--separator-color: var(--tp-separator-color, rgba(24,24,27,0.3));background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);font-family:var(--font-family);font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px;border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_t{border-bottom-left-radius:0;border-bottom-right-radius:0}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:last-child .tp-fldv_c{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:last-child:not(.tp-fldv-expanded) .tp-fldv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:var(--separator-color);border-width:0;display:block;height:4px;margin:0;width:100%}\n", ""]);
+exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--folder-background-color);color:var(--folder-foreground-color);cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:var(--folder-background-color-hover)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:var(--folder-background-color-focus)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:var(--folder-background-color-active)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, var(--folder-foreground-color), var(--folder-foreground-color) 2px, transparent 2px, transparent 4px, var(--folder-foreground-color) 4px);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv.tp-v-first,.tp-rotv_c>.tp-fldv.tp-v-first{margin-top:-4px}.tp-fldv_c>.tp-fldv.tp-v-last,.tp-rotv_c>.tp-fldv.tp-v-last{margin-bottom:-4px}.tp-fldv_c>*:not(.tp-v-first),.tp-rotv_c>*:not(.tp-v-first){margin-top:4px}.tp-fldv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv,.tp-rotv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv,.tp-rotv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:var(--button-background-color-hover)}.tp-btnv_b:focus{background-color:var(--button-background-color-focus)}.tp-btnv_b:active{background-color:var(--button-background-color-active)}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_t{transition:border-radius 0.2s ease-in-out 0.2s}.tp-fldv.tp-fldv-expanded .tp-fldv_t{transition:border-radius 0s}.tp-fldv_c{border-left:var(--folder-background-color) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:var(--folder-background-color-hover)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:var(--folder-background-color-focus)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:var(--folder-background-color-active)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:var(--input-background-color);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:var(--input-foreground-color);border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:var(--input-background-color-hover)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:var(--input-background-color-focus)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:var(--input-background-color-active)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:var(--button-background-color-hover)}.tp-lstiv_s:focus{background-color:var(--button-background-color-focus)}.tp-lstiv_s:active{background-color:var(--button-background-color-active)}.tp-lstiv_m{border-color:var(--button-foreground-color) transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_l{color:var(--label-foreground-color);display:inline;line-height:20px;margin-right:8px}.tp-rgbtxtiv_w{display:flex}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;flex:1;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-rgbtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-rgbtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-rgbtxtiv_i:nth-child(1){border-bottom-right-radius:0;border-top-right-radius:0}.tp-rgbtxtiv_i:nth-child(2){border-radius:0}.tp-rgbtxtiv_i:nth-child(3){border-bottom-left-radius:0;border-top-left-radius:0}.tp-rgbtxtiv_i+.tp-rgbtxtiv_i{margin-left:1px}.tp-p2dpadiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:var(--input-background-color-hover)}.tp-p2dpadiv_p:focus{background-color:var(--input-background-color-focus)}.tp-p2dpadiv_p:active{background-color:var(--input-background-color-active)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:var(--input-guide-color)}.tp-p2dpadiv_l{stroke:var(--input-foreground-color);stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:var(--input-foreground-color)}.tp-p2dpadtxtiv{display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:var(--button-background-color-hover)}.tp-p2dpadtxtiv_b:focus{background-color:var(--button-background-color-focus)}.tp-p2dpadtxtiv_b:active{background-color:var(--button-background-color-active)}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:flex}.tp-p2dtxtiv_w{align-items:center;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-p2dtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-p2dtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:var(--input-background-color);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:var(--button-background-color);border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:var(--button-background-color-hover)}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:var(--button-background-color-focus)}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:var(--button-background-color-active)}.tp-txtiv{display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-txtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-txtiv_i:active{background-color:var(--input-background-color-active)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:var(--input-background-color-hover)}.tp-cswiv_sw:focus{background-color:var(--input-background-color-focus)}.tp-cswiv_sw:active{background-color:var(--input-background-color-active)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:var(--label-foreground-color);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{align-self:flex-start;flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:var(--monitor-foreground-color);stroke-linejoin:round}.tp-grpmv_t{color:var(--monitor-foreground-color);font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:var(--monitor-foreground-color);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%}.tp-rotv{--font-family: var(--tp-font-family, Roboto Mono,Source Code Pro,Menlo,Courier,monospace);--base-background-color: var(--tp-base-background-color, #2f3137);--base-shadow-color: var(--tp-base-shadow-color, rgba(0,0,0,0.2));--button-background-color: var(--tp-button-background-color, #adafb8);--button-background-color-active: var(--tp-button-background-color-active, #d6d7db);--button-background-color-focus: var(--tp-button-background-color-focus, #c8cad0);--button-background-color-hover: var(--tp-button-background-color-hover, #bbbcc4);--button-foreground-color: var(--tp-button-foreground-color, #2f3137);--folder-background-color: var(--tp-folder-background-color, rgba(200,202,208,0.1));--folder-background-color-active: var(--tp-folder-background-color-active, rgba(200,202,208,0.25));--folder-background-color-focus: var(--tp-folder-background-color-focus, rgba(200,202,208,0.2));--folder-background-color-hover: var(--tp-folder-background-color-hover, rgba(200,202,208,0.15));--folder-foreground-color: var(--tp-folder-foreground-color, #c8cad0);--input-background-color: var(--tp-input-background-color, rgba(200,202,208,0.15));--input-background-color-active: var(--tp-input-background-color-active, rgba(200,202,208,0.35));--input-background-color-focus: var(--tp-input-background-color-focus, rgba(200,202,208,0.25));--input-background-color-hover: var(--tp-input-background-color-hover, rgba(200,202,208,0.15));--input-foreground-color: var(--tp-input-foreground-color, #c8cad0);--input-guide-color: var(--tp-input-guide-color, rgba(47,49,55,0.5));--label-foreground-color: var(--tp-label-foreground-color, rgba(200,202,208,0.8));--monitor-background-color: var(--tp-monitor-background-color, rgba(24,24,27,0.5));--monitor-foreground-color: var(--tp-monitor-foreground-color, rgba(200,202,208,0.7));--separator-color: var(--tp-separator-color, rgba(24,24,27,0.3));background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);font-family:var(--font-family);font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px;border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_t{border-bottom-left-radius:0;border-bottom-right-radius:0}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:last-child .tp-fldv_c{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:last-child:not(.tp-fldv-expanded) .tp-fldv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:var(--separator-color);border-width:0;display:block;height:4px;margin:0;width:100%}.tp-v.tp-v-hidden{display:none}\n", ""]);
 
 // exports
 
