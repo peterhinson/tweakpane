@@ -508,6 +508,16 @@ exports.InputRoute = {
                     y: { min: 0, max: 100 },
                 });
             },
+            point2dInvertedY: function (container) {
+                var PARAMS = { value: { x: 50, y: 50 } };
+                var pane = new Tweakpane({
+                    container: container,
+                });
+                pane.addInput(PARAMS, 'value', {
+                    label: 'offset',
+                    y: { inverted: true },
+                });
+            },
         };
         Object.keys(markerToFnMap).forEach(function (marker) {
             var initFn = markerToFnMap[marker];

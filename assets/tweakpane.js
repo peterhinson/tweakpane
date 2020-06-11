@@ -411,7 +411,7 @@ var ButtonApi = /** @class */ (function () {
     };
     ButtonApi.prototype.on = function (eventName, handler) {
         var emitter = this.controller.button.emitter;
-        emitter.on(eventName, handler);
+        emitter.on(eventName, handler.bind(this));
         return this;
     };
     return ButtonApi;
@@ -462,26 +462,29 @@ exports.monitor = monitor;
  * @hidden
  */
 function folder(_a) {
-    var eventName = _a.eventName, folder = _a.folder, handler = _a.handler, uiControllerList = _a.uiControllerList;
+    var eventName = _a.eventName, folder = _a.folder, handler = _a.handler, uiContainer = _a.uiContainer;
     if (eventName === 'change') {
-        var emitter = uiControllerList.emitter;
+        var emitter = uiContainer.emitter;
         emitter.on('inputchange', function (ev) {
             // TODO: Find more type-safe way
             handler(ev.inputBinding.getValueToWrite(ev.value));
         });
     }
     if (eventName === 'update') {
-        var emitter = uiControllerList.emitter;
+        var emitter = uiContainer.emitter;
         emitter.on('monitorupdate', function (ev) {
             handler(ev.monitorBinding.target.read());
         });
     }
     if (eventName === 'fold') {
-        uiControllerList.emitter.on('fold', function (ev) {
+        uiContainer.emitter.on('itemfold', function (ev) {
             handler(ev.expanded);
         });
         folder === null || folder === void 0 ? void 0 : folder.emitter.on('change', function (ev) {
-            handler(ev.expanded);
+            if (ev.propertyName !== 'expanded') {
+                return;
+            }
+            handler(ev.sender.expanded);
         });
     }
 }
@@ -515,6 +518,7 @@ exports.FolderApi = void 0;
 var InputBindingControllerCreators = __webpack_require__(/*! ../controller/binding-creators/input */ "./src/main/js/controller/binding-creators/input.ts");
 var MonitorBindingControllerCreators = __webpack_require__(/*! ../controller/binding-creators/monitor */ "./src/main/js/controller/binding-creators/monitor.ts");
 var button_1 = __webpack_require__(/*! ../controller/button */ "./src/main/js/controller/button.ts");
+var folder_1 = __webpack_require__(/*! ../controller/folder */ "./src/main/js/controller/folder.ts");
 var separator_1 = __webpack_require__(/*! ../controller/separator */ "./src/main/js/controller/separator.ts");
 var target_1 = __webpack_require__(/*! ../model/target */ "./src/main/js/model/target.ts");
 var view_model_1 = __webpack_require__(/*! ../model/view-model */ "./src/main/js/model/view-model.ts");
@@ -556,18 +560,23 @@ var FolderApi = /** @class */ (function () {
     FolderApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key, params.presetKey), params);
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new input_binding_1.InputBindingApi(uc);
     };
     FolderApi.prototype.addMonitor = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = MonitorBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key), params);
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new monitor_binding_1.MonitorBindingApi(uc);
+    };
+    FolderApi.prototype.addFolder = function (params) {
+        var uc = new folder_1.FolderController(this.controller.document, __assign(__assign({}, params), { viewModel: new view_model_1.ViewModel() }));
+        this.controller.uiContainer.add(uc, params.index);
+        return new FolderApi(uc);
     };
     FolderApi.prototype.addButton = function (params) {
         var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { viewModel: new view_model_1.ViewModel() }));
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new button_2.ButtonApi(uc);
     };
     FolderApi.prototype.addSeparator = function (opt_params) {
@@ -575,15 +584,15 @@ var FolderApi = /** @class */ (function () {
         var uc = new separator_1.SeparatorController(this.controller.document, {
             viewModel: new view_model_1.ViewModel(),
         });
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new separator_2.SeparatorApi(uc);
     };
     FolderApi.prototype.on = function (eventName, handler) {
         EventHandlerAdapters.folder({
             eventName: eventName,
             folder: this.controller.folder,
-            handler: handler,
-            uiControllerList: this.controller.uiControllerList,
+            handler: handler.bind(this),
+            uiContainer: this.controller.uiContainer,
         });
         return this;
     };
@@ -635,7 +644,7 @@ var InputBindingApi = /** @class */ (function () {
         HandlerAdapters.input({
             binding: this.controller.binding,
             eventName: eventName,
-            handler: handler,
+            handler: handler.bind(this),
         });
         return this;
     };
@@ -682,13 +691,13 @@ var MonitorBindingApi = /** @class */ (function () {
         configurable: true
     });
     MonitorBindingApi.prototype.dispose = function () {
-        this.controller.controller.viewModel.dispose();
+        this.controller.viewModel.dispose();
     };
     MonitorBindingApi.prototype.on = function (eventName, handler) {
         EventHandlerAdapters.monitor({
             binding: this.controller.binding,
             eventName: eventName,
-            handler: handler,
+            handler: handler.bind(this),
         });
         return this;
     };
@@ -833,23 +842,23 @@ var RootApi = /** @class */ (function () {
     RootApi.prototype.addInput = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = InputBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key, params.presetKey), params);
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new input_binding_2.InputBindingApi(uc);
     };
     RootApi.prototype.addMonitor = function (object, key, opt_params) {
         var params = opt_params || {};
         var uc = MonitorBindingControllerCreators.create(this.controller.document, new target_1.Target(object, key), params);
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new monitor_binding_2.MonitorBindingApi(uc);
     };
     RootApi.prototype.addButton = function (params) {
         var uc = new button_1.ButtonController(this.controller.document, __assign(__assign({}, params), { viewModel: new view_model_1.ViewModel() }));
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new button_2.ButtonApi(uc);
     };
     RootApi.prototype.addFolder = function (params) {
         var uc = new folder_1.FolderController(this.controller.document, __assign(__assign({}, params), { viewModel: new view_model_1.ViewModel() }));
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new folder_2.FolderApi(uc);
     };
     RootApi.prototype.addSeparator = function (opt_params) {
@@ -857,7 +866,7 @@ var RootApi = /** @class */ (function () {
         var uc = new separator_1.SeparatorController(this.controller.document, {
             viewModel: new view_model_1.ViewModel(),
         });
-        this.controller.uiControllerList.add(uc, params.index);
+        this.controller.uiContainer.add(uc, params.index);
         return new separator_2.SeparatorApi(uc);
     };
     /**
@@ -865,7 +874,7 @@ var RootApi = /** @class */ (function () {
      * @param preset The preset object to import.
      */
     RootApi.prototype.importPreset = function (preset) {
-        var targets = UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.InputBindingController).map(function (ibc) {
+        var targets = UiUtil.findControllers(this.controller.uiContainer.items, input_binding_1.InputBindingController).map(function (ibc) {
             return ibc.binding.target;
         });
         Preset.importJson(targets, preset);
@@ -876,7 +885,7 @@ var RootApi = /** @class */ (function () {
      * @return The exported preset object.
      */
     RootApi.prototype.exportPreset = function () {
-        var targets = UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.InputBindingController).map(function (ibc) {
+        var targets = UiUtil.findControllers(this.controller.uiContainer.items, input_binding_1.InputBindingController).map(function (ibc) {
             return ibc.binding.target;
         });
         return Preset.exportJson(targets);
@@ -890,8 +899,8 @@ var RootApi = /** @class */ (function () {
         EventHandlerAdapters.folder({
             eventName: eventName,
             folder: this.controller.folder,
-            handler: handler,
-            uiControllerList: this.controller.uiControllerList,
+            handler: handler.bind(this),
+            uiContainer: this.controller.uiContainer,
         });
         return this;
     };
@@ -900,11 +909,11 @@ var RootApi = /** @class */ (function () {
      */
     RootApi.prototype.refresh = function () {
         // Force-read all input bindings
-        UiUtil.findControllers(this.controller.uiControllerList.items, input_binding_1.InputBindingController).forEach(function (ibc) {
+        UiUtil.findControllers(this.controller.uiContainer.items, input_binding_1.InputBindingController).forEach(function (ibc) {
             ibc.binding.read();
         });
         // Force-read all monitor bindings
-        UiUtil.findControllers(this.controller.uiControllerList.items, monitor_binding_1.MonitorBindingController).forEach(function (mbc) {
+        UiUtil.findControllers(this.controller.uiContainer.items, monitor_binding_1.MonitorBindingController).forEach(function (mbc) {
             mbc.binding.read();
         });
     };
@@ -1297,7 +1306,7 @@ var list_2 = __webpack_require__(/*! ../input/list */ "./src/main/js/controller/
 var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
 function createConstraint(params) {
     var constraints = [];
-    if (params.options) {
+    if ('options' in params && params.options !== undefined) {
         constraints.push(new list_1.ListConstraint({
             options: UiUtil.normalizeInputParamsOptions(params.options, BooleanConverter.fromMixed),
         }));
@@ -1338,7 +1347,6 @@ function create(document, target, params) {
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: createController(document, value),
-        viewModel: new view_model_1.ViewModel(),
         label: params.label || target.key,
     });
 }
@@ -1398,7 +1406,6 @@ function create(document, target, params) {
             value: value,
         }),
         controller: controller,
-        viewModel: controller.viewModel,
         label: params.label || target.key,
     });
 }
@@ -1442,7 +1449,6 @@ function createWithString(document, target, params) {
     }
     var converter = ColorConverter.fromMixed;
     var color = converter(initialValue);
-    var viewModel = new view_model_1.ViewModel();
     var value = new input_value_1.InputValue(color);
     var writer = ColorConverter.getStringifier(notation);
     return new input_binding_1.InputBindingController(document, {
@@ -1456,10 +1462,9 @@ function createWithString(document, target, params) {
             formatter: new color_1.ColorFormatter(writer),
             parser: StringColorParser.CompositeParser,
             value: value,
-            viewModel: viewModel,
+            viewModel: new view_model_1.ViewModel(),
         }),
         label: params.label || target.key,
-        viewModel: viewModel,
     });
 }
 exports.createWithString = createWithString;
@@ -1482,7 +1487,6 @@ function createWithNumber(document, target, params) {
         return null;
     }
     var value = new input_value_1.InputValue(color);
-    var viewModel = new view_model_1.ViewModel();
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
             reader: ColorConverter.fromMixed,
@@ -1494,10 +1498,9 @@ function createWithNumber(document, target, params) {
             formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
             parser: StringColorParser.CompositeParser,
             value: value,
-            viewModel: viewModel,
+            viewModel: new view_model_1.ViewModel(),
         }),
         label: params.label || target.key,
-        viewModel: viewModel,
     });
 }
 exports.createWithNumber = createWithNumber;
@@ -1510,7 +1513,6 @@ function createWithObject(document, target, params) {
         return null;
     }
     var color = color_2.Color.fromRgbObject(initialValue);
-    var viewModel = new view_model_1.ViewModel();
     var value = new input_value_1.InputValue(color);
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
@@ -1520,12 +1522,11 @@ function createWithObject(document, target, params) {
             writer: color_2.Color.toRgbObject,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
-            viewModel: viewModel,
+            viewModel: new view_model_1.ViewModel(),
             formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
             parser: StringColorParser.CompositeParser,
             value: value,
         }),
-        viewModel: viewModel,
         label: params.label || target.key,
     });
 }
@@ -1684,7 +1685,7 @@ function createConstraint(params) {
             min: params.min,
         }));
     }
-    if (params.options) {
+    if ('options' in params && params.options !== undefined) {
         constraints.push(new list_1.ListConstraint({
             options: UiUtil.normalizeInputParamsOptions(params.options, NumberConverter.fromMixed),
         }));
@@ -1737,7 +1738,6 @@ function create(document, target, params) {
         binding: binding,
         controller: controller,
         label: params.label || target.key,
-        viewModel: controller.viewModel,
     });
 }
 exports.create = create;
@@ -1795,7 +1795,6 @@ function createTextMonitor(document, target, params) {
         }),
         controller: controller,
         label: params.label || target.key,
-        viewModel: controller.viewModel,
     });
 }
 function createGraphMonitor(document, target, params) {
@@ -1817,7 +1816,6 @@ function createGraphMonitor(document, target, params) {
         }),
         controller: controller,
         label: params.label || target.key,
-        viewModel: new view_model_1.ViewModel(),
     });
 }
 function create(document, target, params) {
@@ -1888,12 +1886,13 @@ function createConstraint(params) {
         y: createDimensionConstraint('y' in params ? params.y : undefined),
     });
 }
-function createController(document, value) {
+function createController(document, value, invertsY) {
     var c = value.constraint;
     if (!(c instanceof point_2d_1.Point2dConstraint)) {
         throw pane_error_1.PaneError.shouldNeverHappen();
     }
     return new point_2d_pad_text_1.Point2dPadTextInputController(document, {
+        invertsY: invertsY,
         parser: string_number_1.StringNumberParser,
         value: value,
         viewModel: new view_model_1.ViewModel(),
@@ -1917,12 +1916,13 @@ function create(document, target, params) {
         value: value,
         writer: function (v) { return v.toObject(); },
     });
-    var controller = createController(document, value);
+    var yParams = 'y' in params ? params.y : undefined;
+    var invertsY = yParams ? !!yParams.inverted : false;
+    var controller = createController(document, value, invertsY);
     return new input_binding_1.InputBindingController(document, {
         binding: binding,
         controller: controller,
         label: params.label || target.key,
-        viewModel: controller.viewModel,
     });
 }
 exports.create = create;
@@ -1955,7 +1955,7 @@ var text_1 = __webpack_require__(/*! ../input/text */ "./src/main/js/controller/
 var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
 function createConstraint(params) {
     var constraints = [];
-    if (params.options) {
+    if ('options' in params && params.options !== undefined) {
         constraints.push(new list_1.ListConstraint({
             options: UiUtil.normalizeInputParamsOptions(params.options, StringConverter.fromMixed),
         }));
@@ -2000,7 +2000,6 @@ function create(document, target, params) {
         binding: binding,
         controller: controller,
         label: params.label || target.key,
-        viewModel: controller.viewModel,
     });
 }
 exports.create = create;
@@ -2061,7 +2060,6 @@ function create(document, target, params) {
         }),
         controller: controller,
         label: params.label || target.key,
-        viewModel: controller.viewModel,
     });
 }
 exports.create = create;
@@ -2117,11 +2115,11 @@ exports.ButtonController = ButtonController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAllItemsPositions = void 0;
-function updateAllItemsPositions(uiControllerList) {
-    var visibleItems = uiControllerList.items.filter(function (uc) { return !uc.viewModel.hidden; });
+function updateAllItemsPositions(uiContainer) {
+    var visibleItems = uiContainer.items.filter(function (uc) { return !uc.viewModel.hidden; });
     var firstVisibleItem = visibleItems[0];
     var lastVisibleItem = visibleItems[visibleItems.length - 1];
-    uiControllerList.items.forEach(function (uc) {
+    uiContainer.items.forEach(function (uc) {
         var ps = [];
         if (uc === firstVisibleItem) {
             ps.push('first');
@@ -2151,7 +2149,7 @@ exports.FolderController = void 0;
 var DomUtil = __webpack_require__(/*! ../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
-var ui_controller_list_1 = __webpack_require__(/*! ../model/ui-controller-list */ "./src/main/js/model/ui-controller-list.ts");
+var ui_container_1 = __webpack_require__(/*! ../model/ui-container */ "./src/main/js/model/ui-container.ts");
 var folder_2 = __webpack_require__(/*! ../view/folder */ "./src/main/js/view/folder.ts");
 var ContainerUtil = __webpack_require__(/*! ./container-util */ "./src/main/js/controller/container-util.ts");
 /**
@@ -2159,22 +2157,26 @@ var ContainerUtil = __webpack_require__(/*! ./container-util */ "./src/main/js/c
  */
 var FolderController = /** @class */ (function () {
     function FolderController(document, config) {
+        this.onContainerTransitionEnd_ = this.onContainerTransitionEnd_.bind(this);
+        this.onFolderBeforeChange_ = this.onFolderBeforeChange_.bind(this);
         this.onTitleClick_ = this.onTitleClick_.bind(this);
-        this.onUiControllerListAdd_ = this.onUiControllerListAdd_.bind(this);
-        this.onUiControllerListLayout_ = this.onUiControllerListLayout_.bind(this);
-        this.onUiControllerListRemove_ = this.onUiControllerListRemove_.bind(this);
+        this.onUiContainerAdd_ = this.onUiContainerAdd_.bind(this);
+        this.onUiContainerItemLayout_ = this.onUiContainerItemLayout_.bind(this);
+        this.onUiContainerRemove_ = this.onUiContainerRemove_.bind(this);
         this.viewModel = config.viewModel;
         this.folder = new folder_1.Folder(config.title, type_util_1.TypeUtil.getOrDefault(config.expanded, true));
-        this.ucList_ = new ui_controller_list_1.UiControllerList();
-        this.ucList_.emitter.on('add', this.onUiControllerListAdd_);
-        this.ucList_.emitter.on('layout', this.onUiControllerListLayout_);
-        this.ucList_.emitter.on('remove', this.onUiControllerListRemove_);
+        this.folder.emitter.on('beforechange', this.onFolderBeforeChange_);
+        this.ucList_ = new ui_container_1.UiContainer();
+        this.ucList_.emitter.on('add', this.onUiContainerAdd_);
+        this.ucList_.emitter.on('itemlayout', this.onUiContainerItemLayout_);
+        this.ucList_.emitter.on('remove', this.onUiContainerRemove_);
         this.doc_ = document;
         this.view = new folder_2.FolderView(this.doc_, {
             folder: this.folder,
             model: this.viewModel,
         });
         this.view.titleElement.addEventListener('click', this.onTitleClick_);
+        this.view.containerElement.addEventListener('transitionend', this.onContainerTransitionEnd_);
     }
     Object.defineProperty(FolderController.prototype, "document", {
         get: function () {
@@ -2183,7 +2185,7 @@ var FolderController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(FolderController.prototype, "uiControllerList", {
+    Object.defineProperty(FolderController.prototype, "uiContainer", {
         get: function () {
             return this.ucList_;
         },
@@ -2195,35 +2197,50 @@ var FolderController = /** @class */ (function () {
         var elem = this.view.containerElement;
         var height = 0;
         DomUtil.disableTransitionTemporarily(elem, function () {
-            // Expand folder
-            var expanded = _this.folder.expanded;
+            // Expand folder temporarily
             _this.folder.expandedHeight = null;
-            _this.folder.expanded = true;
+            _this.folder.temporaryExpanded = true;
             DomUtil.forceReflow(elem);
             // Compute height
             height = elem.clientHeight;
             // Restore expanded
-            _this.folder.expanded = expanded;
+            _this.folder.temporaryExpanded = null;
             DomUtil.forceReflow(elem);
         });
         return height;
     };
+    FolderController.prototype.onFolderBeforeChange_ = function (ev) {
+        if (ev.propertyName !== 'expanded') {
+            return;
+        }
+        if (type_util_1.TypeUtil.isEmpty(this.folder.expandedHeight)) {
+            this.folder.expandedHeight = this.computeExpandedHeight_();
+        }
+        this.folder.shouldFixHeight = true;
+        DomUtil.forceReflow(this.view.containerElement);
+    };
     FolderController.prototype.onTitleClick_ = function () {
         this.folder.expanded = !this.folder.expanded;
     };
-    FolderController.prototype.applyUiControllerListChange_ = function () {
-        ContainerUtil.updateAllItemsPositions(this.uiControllerList);
-        this.folder.expandedHeight = this.computeExpandedHeight_();
+    FolderController.prototype.applyUiContainerChange_ = function () {
+        ContainerUtil.updateAllItemsPositions(this.uiContainer);
     };
-    FolderController.prototype.onUiControllerListAdd_ = function (ev) {
+    FolderController.prototype.onUiContainerAdd_ = function (ev) {
         DomUtil.insertElementAt(this.view.containerElement, ev.uiController.view.element, ev.index);
-        this.applyUiControllerListChange_();
+        this.applyUiContainerChange_();
     };
-    FolderController.prototype.onUiControllerListRemove_ = function (_) {
-        this.applyUiControllerListChange_();
+    FolderController.prototype.onUiContainerRemove_ = function (_) {
+        this.applyUiContainerChange_();
     };
-    FolderController.prototype.onUiControllerListLayout_ = function (_) {
-        this.applyUiControllerListChange_();
+    FolderController.prototype.onUiContainerItemLayout_ = function (_) {
+        this.applyUiContainerChange_();
+    };
+    FolderController.prototype.onContainerTransitionEnd_ = function (ev) {
+        if (ev.propertyName !== 'height') {
+            return;
+        }
+        this.folder.shouldFixHeight = false;
+        this.folder.expandedHeight = null;
     };
     return FolderController;
 }());
@@ -2251,13 +2268,19 @@ var InputBindingController = /** @class */ (function () {
     function InputBindingController(document, config) {
         this.binding = config.binding;
         this.controller = config.controller;
-        this.viewModel = config.viewModel;
         this.view = new labeled_1.LabeledView(document, {
-            model: this.viewModel,
+            model: this.controller.viewModel,
             label: config.label,
             view: this.controller.view,
         });
     }
+    Object.defineProperty(InputBindingController.prototype, "viewModel", {
+        get: function () {
+            return this.controller.viewModel;
+        },
+        enumerable: false,
+        configurable: true
+    });
     return InputBindingController;
 }());
 exports.InputBindingController = InputBindingController;
@@ -2674,6 +2697,7 @@ var Point2dPadTextInputController = /** @class */ (function () {
         this.value = config.value;
         this.viewModel = config.viewModel;
         this.padIc_ = new point_2d_pad_1.Point2dPadInputController(document, {
+            invertsY: config.invertsY,
             value: this.value,
             viewModel: this.viewModel,
         });
@@ -2733,9 +2757,11 @@ var Point2dPadInputController = /** @class */ (function () {
         this.value = config.value;
         this.foldable = new foldable_1.Foldable();
         this.maxValue_ = UiUtil.getSuitableMaxValueForPoint2dPad(this.value.constraint, this.value.rawValue);
+        this.invertsY_ = config.invertsY;
         this.viewModel = config.viewModel;
         this.view = new point_2d_pad_1.Point2dPadInputView(document, {
             foldable: this.foldable,
+            invertsY: this.invertsY_,
             maxValue: this.maxValue_,
             model: this.viewModel,
             value: this.value,
@@ -2747,7 +2773,9 @@ var Point2dPadInputController = /** @class */ (function () {
     }
     Point2dPadInputController.prototype.handlePointerEvent_ = function (d) {
         var max = this.maxValue_;
-        this.value.rawValue = new point_2d_1.Point2d(number_util_1.NumberUtil.map(d.px, 0, 1, -max, +max), number_util_1.NumberUtil.map(d.py, 0, 1, -max, +max));
+        var px = number_util_1.NumberUtil.map(d.px, 0, 1, -max, +max);
+        var py = number_util_1.NumberUtil.map(this.invertsY_ ? 1 - d.py : d.py, 0, 1, -max, +max);
+        this.value.rawValue = new point_2d_1.Point2d(px, py);
         this.view.update();
     };
     Point2dPadInputController.prototype.onPointerDown_ = function (ev) {
@@ -3204,16 +3232,22 @@ var MonitorBindingController = /** @class */ (function () {
         var _this = this;
         this.binding = config.binding;
         this.controller = config.controller;
-        this.viewModel = config.viewModel;
         this.view = new labeled_1.LabeledView(document, {
             label: config.label,
             model: this.viewModel,
             view: this.controller.view,
         });
-        this.controller.viewModel.emitter.on('dispose', function () {
+        this.viewModel.emitter.on('dispose', function () {
             _this.binding.dispose();
         });
     }
+    Object.defineProperty(MonitorBindingController.prototype, "viewModel", {
+        get: function () {
+            return this.controller.viewModel;
+        },
+        enumerable: false,
+        configurable: true
+    });
     return MonitorBindingController;
 }());
 exports.MonitorBindingController = MonitorBindingController;
@@ -3349,7 +3383,7 @@ exports.RootController = void 0;
 var DomUtil = __webpack_require__(/*! ../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var folder_1 = __webpack_require__(/*! ../model/folder */ "./src/main/js/model/folder.ts");
-var ui_controller_list_1 = __webpack_require__(/*! ../model/ui-controller-list */ "./src/main/js/model/ui-controller-list.ts");
+var ui_container_1 = __webpack_require__(/*! ../model/ui-container */ "./src/main/js/model/ui-container.ts");
 var root_1 = __webpack_require__(/*! ../view/root */ "./src/main/js/view/root.ts");
 var ContainerUtil = __webpack_require__(/*! ./container-util */ "./src/main/js/controller/container-util.ts");
 function createFolder(config) {
@@ -3364,14 +3398,14 @@ function createFolder(config) {
 var RootController = /** @class */ (function () {
     function RootController(document, config) {
         this.onTitleClick_ = this.onTitleClick_.bind(this);
-        this.onUiControllerListAdd_ = this.onUiControllerListAdd_.bind(this);
-        this.onUiControllerListLayout_ = this.onUiControllerListLayout_.bind(this);
-        this.onUiControllerListRemove_ = this.onUiControllerListRemove_.bind(this);
+        this.onUiContainerAdd_ = this.onUiContainerAdd_.bind(this);
+        this.onUiContainerItemLayout_ = this.onUiContainerItemLayout_.bind(this);
+        this.onUiContainerRemove_ = this.onUiContainerRemove_.bind(this);
         this.folder = createFolder(config);
-        this.ucList_ = new ui_controller_list_1.UiControllerList();
-        this.ucList_.emitter.on('add', this.onUiControllerListAdd_);
-        this.ucList_.emitter.on('layout', this.onUiControllerListLayout_);
-        this.ucList_.emitter.on('remove', this.onUiControllerListRemove_);
+        this.ucList_ = new ui_container_1.UiContainer();
+        this.ucList_.emitter.on('add', this.onUiContainerAdd_);
+        this.ucList_.emitter.on('itemlayout', this.onUiContainerItemLayout_);
+        this.ucList_.emitter.on('remove', this.onUiContainerRemove_);
         this.doc_ = document;
         this.viewModel = config.viewModel;
         this.view = new root_1.RootView(this.doc_, {
@@ -3389,25 +3423,25 @@ var RootController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(RootController.prototype, "uiControllerList", {
+    Object.defineProperty(RootController.prototype, "uiContainer", {
         get: function () {
             return this.ucList_;
         },
         enumerable: false,
         configurable: true
     });
-    RootController.prototype.applyUiControllerListChange_ = function () {
-        ContainerUtil.updateAllItemsPositions(this.uiControllerList);
+    RootController.prototype.applyUiContainerChange_ = function () {
+        ContainerUtil.updateAllItemsPositions(this.uiContainer);
     };
-    RootController.prototype.onUiControllerListAdd_ = function (ev) {
+    RootController.prototype.onUiContainerAdd_ = function (ev) {
         DomUtil.insertElementAt(this.view.containerElement, ev.uiController.view.element, ev.index);
-        this.applyUiControllerListChange_();
+        this.applyUiContainerChange_();
     };
-    RootController.prototype.onUiControllerListRemove_ = function (_) {
-        this.applyUiControllerListChange_();
+    RootController.prototype.onUiContainerRemove_ = function (_) {
+        this.applyUiContainerChange_();
     };
-    RootController.prototype.onUiControllerListLayout_ = function (_) {
-        this.applyUiControllerListChange_();
+    RootController.prototype.onUiContainerItemLayout_ = function (_) {
+        this.applyUiContainerChange_();
     };
     RootController.prototype.onTitleClick_ = function () {
         if (this.folder) {
@@ -3497,7 +3531,7 @@ function findControllers(uiControllers, controllerClass) {
     return uiControllers.reduce(function (results, uc) {
         if (uc instanceof folder_1.FolderController) {
             // eslint-disable-next-line no-use-before-define
-            results.push.apply(results, findControllers(uc.uiControllerList.items, controllerClass));
+            results.push.apply(results, findControllers(uc.uiContainer.items, controllerClass));
         }
         if (uc instanceof controllerClass) {
             results.push(uc);
@@ -4833,6 +4867,8 @@ var Folder = /** @class */ (function () {
         this.emitter = new emitter_1.Emitter();
         this.expanded_ = expanded;
         this.expandedHeight_ = null;
+        this.temporaryExpanded_ = null;
+        this.shouldFixHeight_ = false;
         this.title = title;
     }
     Object.defineProperty(Folder.prototype, "expanded", {
@@ -4841,13 +4877,40 @@ var Folder = /** @class */ (function () {
         },
         set: function (expanded) {
             var changed = this.expanded_ !== expanded;
-            if (changed) {
-                this.expanded_ = expanded;
-                this.emitter.emit('change', {
-                    expanded: expanded,
-                    sender: this,
-                });
+            if (!changed) {
+                return;
             }
+            this.emitter.emit('beforechange', {
+                propertyName: 'expanded',
+                sender: this,
+            });
+            this.expanded_ = expanded;
+            this.emitter.emit('change', {
+                propertyName: 'expanded',
+                sender: this,
+            });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Folder.prototype, "temporaryExpanded", {
+        get: function () {
+            return this.temporaryExpanded_;
+        },
+        set: function (expanded) {
+            var changed = this.temporaryExpanded_ !== expanded;
+            if (!changed) {
+                return;
+            }
+            this.emitter.emit('beforechange', {
+                propertyName: 'temporaryExpanded',
+                sender: this,
+            });
+            this.temporaryExpanded_ = expanded;
+            this.emitter.emit('change', {
+                propertyName: 'temporaryExpanded',
+                sender: this,
+            });
         },
         enumerable: false,
         configurable: true
@@ -4858,13 +4921,40 @@ var Folder = /** @class */ (function () {
         },
         set: function (expandedHeight) {
             var changed = this.expandedHeight_ !== expandedHeight;
-            if (changed) {
-                this.expandedHeight_ = expandedHeight;
-                this.emitter.emit('change', {
-                    expanded: this.expanded_,
-                    sender: this,
-                });
+            if (!changed) {
+                return;
             }
+            this.emitter.emit('beforechange', {
+                propertyName: 'expandedHeight',
+                sender: this,
+            });
+            this.expandedHeight_ = expandedHeight;
+            this.emitter.emit('change', {
+                propertyName: 'expandedHeight',
+                sender: this,
+            });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Folder.prototype, "shouldFixHeight", {
+        get: function () {
+            return this.shouldFixHeight_;
+        },
+        set: function (shouldFixHeight) {
+            var changed = this.shouldFixHeight_ !== shouldFixHeight;
+            if (!changed) {
+                return;
+            }
+            this.emitter.emit('beforechange', {
+                propertyName: 'shouldFixHeight',
+                sender: this,
+            });
+            this.shouldFixHeight_ = shouldFixHeight;
+            this.emitter.emit('change', {
+                propertyName: 'shouldFixHeight',
+                sender: this,
+            });
         },
         enumerable: false,
         configurable: true
@@ -5165,17 +5255,17 @@ exports.Target = Target;
 
 /***/ }),
 
-/***/ "./src/main/js/model/ui-controller-list.ts":
-/*!*************************************************!*\
-  !*** ./src/main/js/model/ui-controller-list.ts ***!
-  \*************************************************/
+/***/ "./src/main/js/model/ui-container.ts":
+/*!*******************************************!*\
+  !*** ./src/main/js/model/ui-container.ts ***!
+  \*******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UiControllerList = void 0;
+exports.UiContainer = void 0;
 var folder_1 = __webpack_require__(/*! ../controller/folder */ "./src/main/js/controller/folder.ts");
 var input_binding_1 = __webpack_require__(/*! ../controller/input-binding */ "./src/main/js/controller/input-binding.ts");
 var monitor_binding_1 = __webpack_require__(/*! ../controller/monitor-binding */ "./src/main/js/controller/monitor-binding.ts");
@@ -5184,8 +5274,8 @@ var list_1 = __webpack_require__(/*! ./list */ "./src/main/js/model/list.ts");
 /**
  * @hidden
  */
-var UiControllerList = /** @class */ (function () {
-    function UiControllerList() {
+var UiContainer = /** @class */ (function () {
+    function UiContainer() {
         this.onItemFolderFold_ = this.onItemFolderFold_.bind(this);
         this.onListItemLayout_ = this.onListItemLayout_.bind(this);
         this.onSubitemLayout_ = this.onSubitemLayout_.bind(this);
@@ -5202,17 +5292,17 @@ var UiControllerList = /** @class */ (function () {
         this.ucList_.emitter.on('add', this.onListAdd_);
         this.ucList_.emitter.on('remove', this.onListRemove_);
     }
-    Object.defineProperty(UiControllerList.prototype, "items", {
+    Object.defineProperty(UiContainer.prototype, "items", {
         get: function () {
             return this.ucList_.items;
         },
         enumerable: false,
         configurable: true
     });
-    UiControllerList.prototype.add = function (uc, opt_index) {
+    UiContainer.prototype.add = function (uc, opt_index) {
         this.ucList_.add(uc, opt_index);
     };
-    UiControllerList.prototype.onListAdd_ = function (ev) {
+    UiContainer.prototype.onListAdd_ = function (ev) {
         var uc = ev.item;
         this.emitter.emit('add', {
             index: ev.index,
@@ -5233,26 +5323,26 @@ var UiControllerList = /** @class */ (function () {
         }
         else if (uc instanceof folder_1.FolderController) {
             uc.folder.emitter.on('change', this.onItemFolderFold_);
-            var emitter = uc.uiControllerList.emitter;
-            emitter.on('layout', this.onSubitemLayout_);
-            emitter.on('fold', this.onSubitemFolderFold_);
+            var emitter = uc.uiContainer.emitter;
+            emitter.on('itemfold', this.onSubitemFolderFold_);
+            emitter.on('itemlayout', this.onSubitemLayout_);
             emitter.on('inputchange', this.onSubitemInputChange_);
             emitter.on('monitorupdate', this.onSubitemMonitorUpdate_);
         }
     };
-    UiControllerList.prototype.onListRemove_ = function (_) {
+    UiContainer.prototype.onListRemove_ = function (_) {
         this.emitter.emit('remove', {
             sender: this,
         });
     };
-    UiControllerList.prototype.onListItemLayout_ = function (ev) {
+    UiContainer.prototype.onListItemLayout_ = function (ev) {
         if (ev.propertyName === 'hidden' || ev.propertyName === 'positions') {
-            this.emitter.emit('layout', {
+            this.emitter.emit('itemlayout', {
                 sender: this,
             });
         }
     };
-    UiControllerList.prototype.onListItemDispose_ = function (_) {
+    UiContainer.prototype.onListItemDispose_ = function (_) {
         var _this = this;
         var disposedUcs = this.ucList_.items.filter(function (uc) {
             return uc.viewModel.disposed;
@@ -5261,54 +5351,57 @@ var UiControllerList = /** @class */ (function () {
             _this.ucList_.remove(uc);
         });
     };
-    UiControllerList.prototype.onItemInputChange_ = function (ev) {
+    UiContainer.prototype.onItemInputChange_ = function (ev) {
         this.emitter.emit('inputchange', {
             inputBinding: ev.sender,
             sender: this,
             value: ev.rawValue,
         });
     };
-    UiControllerList.prototype.onItemMonitorUpdate_ = function (ev) {
+    UiContainer.prototype.onItemMonitorUpdate_ = function (ev) {
         this.emitter.emit('monitorupdate', {
             monitorBinding: ev.sender,
             sender: this,
             value: ev.rawValue,
         });
     };
-    UiControllerList.prototype.onItemFolderFold_ = function (ev) {
-        this.emitter.emit('fold', {
-            expanded: ev.expanded,
+    UiContainer.prototype.onItemFolderFold_ = function (ev) {
+        if (ev.propertyName !== 'expanded') {
+            return;
+        }
+        this.emitter.emit('itemfold', {
+            expanded: ev.sender.expanded,
             sender: this,
         });
     };
-    UiControllerList.prototype.onSubitemLayout_ = function (_) {
-        this.emitter.emit('layout', {
+    UiContainer.prototype.onSubitemLayout_ = function (_) {
+        this.emitter.emit('itemlayout', {
             sender: this,
         });
     };
-    UiControllerList.prototype.onSubitemInputChange_ = function (ev) {
+    UiContainer.prototype.onSubitemInputChange_ = function (ev) {
         this.emitter.emit('inputchange', {
             inputBinding: ev.inputBinding,
             sender: this,
             value: ev.value,
         });
     };
-    UiControllerList.prototype.onSubitemMonitorUpdate_ = function (ev) {
+    UiContainer.prototype.onSubitemMonitorUpdate_ = function (ev) {
         this.emitter.emit('monitorupdate', {
             monitorBinding: ev.monitorBinding,
             sender: this,
             value: ev.value,
         });
     };
-    UiControllerList.prototype.onSubitemFolderFold_ = function (ev) {
-        this.emitter.emit('fold', {
+    UiContainer.prototype.onSubitemFolderFold_ = function (ev) {
+        this.emitter.emit('itemfold', {
             expanded: ev.expanded,
             sender: this,
         });
     };
-    return UiControllerList;
+    return UiContainer;
 }());
-exports.UiControllerList = UiControllerList;
+exports.UiContainer = UiContainer;
 
 
 /***/ }),
@@ -5804,7 +5897,7 @@ var FolderView = /** @class */ (function (_super) {
         if (!containerElem) {
             throw pane_error_1.PaneError.alreadyDisposed();
         }
-        var expanded = this.folder_.expanded;
+        var expanded = type_util_1.TypeUtil.getOrDefault(this.folder_.temporaryExpanded, this.folder_.expanded);
         var expandedClass = className(undefined, 'expanded');
         if (expanded) {
             this.element.classList.add(expandedClass);
@@ -5812,13 +5905,15 @@ var FolderView = /** @class */ (function (_super) {
         else {
             this.element.classList.remove(expandedClass);
         }
-        var expandedHeight = this.folder_.expandedHeight;
-        if (!type_util_1.TypeUtil.isEmpty(expandedHeight)) {
-            var containerHeight = expanded ? expandedHeight : 0;
-            containerElem.style.height = containerHeight + "px";
+        if (!expanded) {
+            containerElem.style.height = "0px";
         }
         else {
-            containerElem.style.height = expanded ? 'auto' : '0px';
+            var expandedHeight = this.folder_.expandedHeight;
+            containerElem.style.height =
+                this.folder_.shouldFixHeight && !type_util_1.TypeUtil.isEmpty(expandedHeight)
+                    ? expandedHeight + "px"
+                    : 'auto';
         }
     };
     FolderView.prototype.onFolderChange_ = function () {
@@ -6475,6 +6570,7 @@ var Point2dPadInputView = /** @class */ (function (_super) {
         _this.onValueChange_ = _this.onValueChange_.bind(_this);
         _this.foldable = config.foldable;
         _this.foldable.emitter.on('change', _this.onFoldableChange_);
+        _this.invertsY_ = config.invertsY;
         _this.maxValue_ = config.maxValue;
         _this.element.classList.add(className());
         var padElem = document.createElement('div');
@@ -6544,10 +6640,11 @@ var Point2dPadInputView = /** @class */ (function (_super) {
         var max = this.maxValue_;
         var px = number_util_1.NumberUtil.map(x, -max, +max, 0, 100);
         var py = number_util_1.NumberUtil.map(y, -max, +max, 0, 100);
+        var ipy = this.invertsY_ ? 100 - py : py;
         lineElem.setAttributeNS(null, 'x2', px + "%");
-        lineElem.setAttributeNS(null, 'y2', py + "%");
+        lineElem.setAttributeNS(null, 'y2', ipy + "%");
         markerElem.setAttributeNS(null, 'cx', px + "%");
-        markerElem.setAttributeNS(null, 'cy', py + "%");
+        markerElem.setAttributeNS(null, 'cy', ipy + "%");
     };
     Point2dPadInputView.prototype.onValueChange_ = function () {
         this.update();
@@ -7694,7 +7791,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--folder-background-color);color:var(--folder-foreground-color);cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:var(--folder-background-color-hover)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:var(--folder-background-color-focus)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:var(--folder-background-color-active)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, var(--folder-foreground-color), var(--folder-foreground-color) 2px, transparent 2px, transparent 4px, var(--folder-foreground-color) 4px);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded .tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv.tp-v-first,.tp-rotv_c>.tp-fldv.tp-v-first{margin-top:-4px}.tp-fldv_c>.tp-fldv.tp-v-last,.tp-rotv_c>.tp-fldv.tp-v-last{margin-bottom:-4px}.tp-fldv_c>*:not(.tp-v-first),.tp-rotv_c>*:not(.tp-v-first){margin-top:4px}.tp-fldv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv,.tp-rotv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv,.tp-rotv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:var(--button-background-color-hover)}.tp-btnv_b:focus{background-color:var(--button-background-color-focus)}.tp-btnv_b:active{background-color:var(--button-background-color-active)}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_t{transition:border-radius 0.2s ease-in-out 0.2s}.tp-fldv.tp-fldv-expanded .tp-fldv_t{transition:border-radius 0s}.tp-fldv_c{border-left:var(--folder-background-color) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:var(--folder-background-color-hover)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:var(--folder-background-color-focus)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:var(--folder-background-color-active)}.tp-fldv.tp-fldv-expanded .tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:var(--input-background-color);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:var(--input-foreground-color);border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:var(--input-background-color-hover)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:var(--input-background-color-focus)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:var(--input-background-color-active)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:var(--button-background-color-hover)}.tp-lstiv_s:focus{background-color:var(--button-background-color-focus)}.tp-lstiv_s:active{background-color:var(--button-background-color-active)}.tp-lstiv_m{border-color:var(--button-foreground-color) transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_l{color:var(--label-foreground-color);display:inline;line-height:20px;margin-right:8px}.tp-rgbtxtiv_w{display:flex}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;flex:1;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-rgbtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-rgbtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-rgbtxtiv_i:nth-child(1){border-bottom-right-radius:0;border-top-right-radius:0}.tp-rgbtxtiv_i:nth-child(2){border-radius:0}.tp-rgbtxtiv_i:nth-child(3){border-bottom-left-radius:0;border-top-left-radius:0}.tp-rgbtxtiv_i+.tp-rgbtxtiv_i{margin-left:1px}.tp-p2dpadiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:var(--input-background-color-hover)}.tp-p2dpadiv_p:focus{background-color:var(--input-background-color-focus)}.tp-p2dpadiv_p:active{background-color:var(--input-background-color-active)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:var(--input-guide-color)}.tp-p2dpadiv_l{stroke:var(--input-foreground-color);stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:var(--input-foreground-color)}.tp-p2dpadtxtiv{display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:var(--button-background-color-hover)}.tp-p2dpadtxtiv_b:focus{background-color:var(--button-background-color-focus)}.tp-p2dpadtxtiv_b:active{background-color:var(--button-background-color-active)}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:flex}.tp-p2dtxtiv_w{align-items:center;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-p2dtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-p2dtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:var(--input-background-color);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:var(--button-background-color);border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:var(--button-background-color-hover)}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:var(--button-background-color-focus)}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:var(--button-background-color-active)}.tp-txtiv{display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-txtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-txtiv_i:active{background-color:var(--input-background-color-active)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:var(--input-background-color-hover)}.tp-cswiv_sw:focus{background-color:var(--input-background-color-focus)}.tp-cswiv_sw:active{background-color:var(--input-background-color-active)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:var(--label-foreground-color);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{align-self:flex-start;flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:var(--monitor-foreground-color);stroke-linejoin:round}.tp-grpmv_t{color:var(--monitor-foreground-color);font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:var(--monitor-foreground-color);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%}.tp-rotv{--font-family: var(--tp-font-family, Roboto Mono,Source Code Pro,Menlo,Courier,monospace);--base-background-color: var(--tp-base-background-color, #2f3137);--base-shadow-color: var(--tp-base-shadow-color, rgba(0,0,0,0.2));--button-background-color: var(--tp-button-background-color, #adafb8);--button-background-color-active: var(--tp-button-background-color-active, #d6d7db);--button-background-color-focus: var(--tp-button-background-color-focus, #c8cad0);--button-background-color-hover: var(--tp-button-background-color-hover, #bbbcc4);--button-foreground-color: var(--tp-button-foreground-color, #2f3137);--folder-background-color: var(--tp-folder-background-color, rgba(200,202,208,0.1));--folder-background-color-active: var(--tp-folder-background-color-active, rgba(200,202,208,0.25));--folder-background-color-focus: var(--tp-folder-background-color-focus, rgba(200,202,208,0.2));--folder-background-color-hover: var(--tp-folder-background-color-hover, rgba(200,202,208,0.15));--folder-foreground-color: var(--tp-folder-foreground-color, #c8cad0);--input-background-color: var(--tp-input-background-color, rgba(200,202,208,0.15));--input-background-color-active: var(--tp-input-background-color-active, rgba(200,202,208,0.35));--input-background-color-focus: var(--tp-input-background-color-focus, rgba(200,202,208,0.25));--input-background-color-hover: var(--tp-input-background-color-hover, rgba(200,202,208,0.15));--input-foreground-color: var(--tp-input-foreground-color, #c8cad0);--input-guide-color: var(--tp-input-guide-color, rgba(47,49,55,0.5));--label-foreground-color: var(--tp-label-foreground-color, rgba(200,202,208,0.8));--monitor-background-color: var(--tp-monitor-background-color, rgba(24,24,27,0.5));--monitor-foreground-color: var(--tp-monitor-foreground-color, rgba(200,202,208,0.7));--separator-color: var(--tp-separator-color, rgba(24,24,27,0.3));background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);font-family:var(--font-family);font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px;border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_t{border-bottom-left-radius:0;border-bottom-right-radius:0}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:last-child .tp-fldv_c{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:last-child:not(.tp-fldv-expanded) .tp-fldv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:first-child .tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:var(--separator-color);border-width:0;display:block;height:4px;margin:0;width:100%}.tp-v.tp-v-hidden{display:none}\n", ""]);
+exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--folder-background-color);color:var(--folder-foreground-color);cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:var(--folder-background-color-hover)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:var(--folder-background-color-focus)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:var(--folder-background-color-active)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, var(--folder-foreground-color), var(--folder-foreground-color) 2px, transparent 2px, transparent 4px, var(--folder-foreground-color) 4px);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded>.tp-fldv_t>.tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv.tp-v-first,.tp-rotv_c>.tp-fldv.tp-v-first{margin-top:-4px}.tp-fldv_c>.tp-fldv.tp-v-last,.tp-rotv_c>.tp-fldv.tp-v-last{margin-bottom:-4px}.tp-fldv_c>*:not(.tp-v-first),.tp-rotv_c>*:not(.tp-v-first){margin-top:4px}.tp-fldv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv,.tp-rotv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv,.tp-rotv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:var(--button-background-color-hover)}.tp-btnv_b:focus{background-color:var(--button-background-color-focus)}.tp-btnv_b:active{background-color:var(--button-background-color-active)}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_t{transition:border-radius 0.2s ease-in-out 0.2s}.tp-fldv.tp-fldv-expanded .tp-fldv_t{transition:border-radius 0s}.tp-fldv_c{border-left:var(--folder-background-color) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:var(--folder-background-color-hover)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:var(--folder-background-color-focus)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:var(--folder-background-color-active)}.tp-fldv.tp-fldv-expanded>.tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-fldv_c>.tp-fldv{margin-left:4px}.tp-fldv_c>.tp-fldv>.tp-fldv_t{border-top-left-radius:2px;border-bottom-left-radius:2px}.tp-fldv_c>.tp-fldv.tp-fldv-expanded>.tp-fldv_t{border-bottom-left-radius:0}.tp-fldv_c .tp-fldv>.tp-fldv_c{border-bottom-left-radius:2px}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:var(--input-background-color);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:var(--input-foreground-color);border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:var(--input-background-color-hover)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:var(--input-background-color-focus)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:var(--input-background-color-active)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:var(--button-background-color-hover)}.tp-lstiv_s:focus{background-color:var(--button-background-color-focus)}.tp-lstiv_s:active{background-color:var(--button-background-color-active)}.tp-lstiv_m{border-color:var(--button-foreground-color) transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_l{color:var(--label-foreground-color);display:inline;line-height:20px;margin-right:8px}.tp-rgbtxtiv_w{display:flex}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;flex:1;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-rgbtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-rgbtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-rgbtxtiv_i:nth-child(1){border-bottom-right-radius:0;border-top-right-radius:0}.tp-rgbtxtiv_i:nth-child(2){border-radius:0}.tp-rgbtxtiv_i:nth-child(3){border-bottom-left-radius:0;border-top-left-radius:0}.tp-rgbtxtiv_i+.tp-rgbtxtiv_i{margin-left:1px}.tp-p2dpadiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:var(--input-background-color-hover)}.tp-p2dpadiv_p:focus{background-color:var(--input-background-color-focus)}.tp-p2dpadiv_p:active{background-color:var(--input-background-color-active)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:var(--input-guide-color)}.tp-p2dpadiv_l{stroke:var(--input-foreground-color);stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:var(--input-foreground-color)}.tp-p2dpadtxtiv{display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:var(--button-background-color-hover)}.tp-p2dpadtxtiv_b:focus{background-color:var(--button-background-color-focus)}.tp-p2dpadtxtiv_b:active{background-color:var(--button-background-color-active)}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:flex}.tp-p2dtxtiv_w{align-items:center;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-p2dtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-p2dtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:var(--input-background-color);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:var(--button-background-color);border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:var(--button-background-color-hover)}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:var(--button-background-color-focus)}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:var(--button-background-color-active)}.tp-txtiv{display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-txtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-txtiv_i:active{background-color:var(--input-background-color-active)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:var(--input-background-color-hover)}.tp-cswiv_sw:focus{background-color:var(--input-background-color-focus)}.tp-cswiv_sw:active{background-color:var(--input-background-color-active)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:var(--label-foreground-color);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{align-self:flex-start;flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:var(--monitor-foreground-color);stroke-linejoin:round}.tp-grpmv_t{color:var(--monitor-foreground-color);font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:var(--monitor-foreground-color);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%}.tp-rotv{--font-family: var(--tp-font-family, Roboto Mono,Source Code Pro,Menlo,Courier,monospace);--base-background-color: var(--tp-base-background-color, #2f3137);--base-shadow-color: var(--tp-base-shadow-color, rgba(0,0,0,0.2));--button-background-color: var(--tp-button-background-color, #adafb8);--button-background-color-active: var(--tp-button-background-color-active, #d6d7db);--button-background-color-focus: var(--tp-button-background-color-focus, #c8cad0);--button-background-color-hover: var(--tp-button-background-color-hover, #bbbcc4);--button-foreground-color: var(--tp-button-foreground-color, #2f3137);--folder-background-color: var(--tp-folder-background-color, rgba(200,202,208,0.1));--folder-background-color-active: var(--tp-folder-background-color-active, rgba(200,202,208,0.25));--folder-background-color-focus: var(--tp-folder-background-color-focus, rgba(200,202,208,0.2));--folder-background-color-hover: var(--tp-folder-background-color-hover, rgba(200,202,208,0.15));--folder-foreground-color: var(--tp-folder-foreground-color, #c8cad0);--input-background-color: var(--tp-input-background-color, rgba(200,202,208,0.15));--input-background-color-active: var(--tp-input-background-color-active, rgba(200,202,208,0.35));--input-background-color-focus: var(--tp-input-background-color-focus, rgba(200,202,208,0.25));--input-background-color-hover: var(--tp-input-background-color-hover, rgba(200,202,208,0.15));--input-foreground-color: var(--tp-input-foreground-color, #c8cad0);--input-guide-color: var(--tp-input-guide-color, rgba(47,49,55,0.5));--label-foreground-color: var(--tp-label-foreground-color, rgba(200,202,208,0.8));--monitor-background-color: var(--tp-monitor-background-color, rgba(24,24,27,0.5));--monitor-foreground-color: var(--tp-monitor-foreground-color, rgba(200,202,208,0.7));--separator-color: var(--tp-separator-color, rgba(24,24,27,0.3));background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);font-family:var(--font-family);font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px;border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_t{border-bottom-left-radius:0;border-bottom-right-radius:0}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:last-child>.tp-fldv_c{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:last-child:not(.tp-fldv-expanded)>.tp-fldv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:first-child>.tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:var(--separator-color);border-width:0;display:block;height:4px;margin:0;width:100%}.tp-v.tp-v-hidden{display:none}\n", ""]);
 
 // exports
 
