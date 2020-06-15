@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Point2dObject | tweakpane</title>
+	<title>RgbaColorObject | tweakpane</title>
 	<meta name="description" content="Documentation for tweakpane">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="point2dobject.html">Point2dObject</a>
+					<a href="rgbacolorobject.html">RgbaColorObject</a>
 				</li>
 			</ul>
-			<h1>Interface Point2dObject</h1>
+			<h1>Interface RgbaColorObject</h1>
 		</div>
 	</div>
 </header>
@@ -68,7 +68,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Point2dObject</span>
+						<span class="target">RgbaColorObject</span>
 					</li>
 				</ul>
 			</section>
@@ -79,8 +79,10 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="point2dobject.html#x" class="tsd-kind-icon">x</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="point2dobject.html#y" class="tsd-kind-icon">y</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="rgbacolorobject.html#a" class="tsd-kind-icon">a</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="rgbacolorobject.html#b" class="tsd-kind-icon">b</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="rgbacolorobject.html#g" class="tsd-kind-icon">g</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="rgbacolorobject.html#r" class="tsd-kind-icon">r</a></li>
 							</ul>
 						</section>
 					</div>
@@ -89,22 +91,42 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="x" class="tsd-anchor"></a>
-					<h3>x</h3>
-					<div class="tsd-signature tsd-kind-icon">x<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="a" class="tsd-anchor"></a>
+					<h3>a</h3>
+					<div class="tsd-signature tsd-kind-icon">a<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/e978f10/src/main/js/model/point-2d.ts#L2">model/point-2d.ts:2</a></li>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/e978f10/src/main/js/model/color.ts#L17">model/color.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="y" class="tsd-anchor"></a>
-					<h3>y</h3>
-					<div class="tsd-signature tsd-kind-icon">y<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="b" class="tsd-anchor"></a>
+					<h3>b</h3>
+					<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/e978f10/src/main/js/model/point-2d.ts#L3">model/point-2d.ts:3</a></li>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/e978f10/src/main/js/model/color.ts#L16">model/color.ts:16</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="g" class="tsd-anchor"></a>
+					<h3>g</h3>
+					<div class="tsd-signature tsd-kind-icon">g<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/e978f10/src/main/js/model/color.ts#L15">model/color.ts:15</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="r" class="tsd-anchor"></a>
+					<h3>r</h3>
+					<div class="tsd-signature tsd-kind-icon">r<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cocopon/tweakpane/blob/e978f10/src/main/js/model/color.ts#L14">model/color.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -123,13 +145,19 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-is-external">
-						<a href="point2dobject.html" class="tsd-kind-icon">Point2d<wbr>Object</a>
+						<a href="rgbacolorobject.html" class="tsd-kind-icon">Rgba<wbr>Color<wbr>Object</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="point2dobject.html#x" class="tsd-kind-icon">x</a>
+								<a href="rgbacolorobject.html#a" class="tsd-kind-icon">a</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="point2dobject.html#y" class="tsd-kind-icon">y</a>
+								<a href="rgbacolorobject.html#b" class="tsd-kind-icon">b</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="rgbacolorobject.html#g" class="tsd-kind-icon">g</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="rgbacolorobject.html#r" class="tsd-kind-icon">r</a>
 							</li>
 						</ul>
 					</li>

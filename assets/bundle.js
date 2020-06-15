@@ -460,10 +460,14 @@ exports.InputRoute = {
                 });
             },
             objectColor: function (container) {
-                var PARAMS = { tint: { r: 255, g: 127, b: 0 } };
+                var PARAMS = {
+                    background: { r: 255, g: 127, b: 0 },
+                    tint: { r: 255, g: 255, b: 0, a: 0.5 },
+                };
                 var pane = new Tweakpane({
                     container: container,
                 });
+                pane.addInput(PARAMS, 'background');
                 pane.addInput(PARAMS, 'tint');
             },
             stringColor: function (container) {
@@ -479,13 +483,17 @@ exports.InputRoute = {
             },
             numberColor: function (container) {
                 var PARAMS = {
-                    tint: 0x0088ff,
+                    background: 0x0088ff,
+                    tint: 0x00ff0044,
                 };
                 var pane = new Tweakpane({
                     container: container,
                 });
-                pane.addInput(PARAMS, 'tint', {
+                pane.addInput(PARAMS, 'background', {
                     input: 'color',
+                });
+                pane.addInput(PARAMS, 'tint', {
+                    input: 'color.rgba',
                 });
             },
             point2d: function (container) {

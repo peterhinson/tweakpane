@@ -1431,7 +1431,7 @@ var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/fo
 var color_2 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
 var view_model_1 = __webpack_require__(/*! ../../model/view-model */ "./src/main/js/model/view-model.ts");
-var number_color_1 = __webpack_require__(/*! ../../parser/number-color */ "./src/main/js/parser/number-color.ts");
+var NumberColorParser = __webpack_require__(/*! ../../parser/number-color */ "./src/main/js/parser/number-color.ts");
 var StringColorParser = __webpack_require__(/*! ../../parser/string-color */ "./src/main/js/parser/string-color.ts");
 var input_binding_1 = __webpack_require__(/*! ../input-binding */ "./src/main/js/controller/input-binding.ts");
 var color_swatch_text_1 = __webpack_require__(/*! ../input/color-swatch-text */ "./src/main/js/controller/input/color-swatch-text.ts");
@@ -1447,7 +1447,7 @@ function createWithString(document, target, params) {
     if (!notation) {
         return null;
     }
-    var converter = ColorConverter.fromMixed;
+    var converter = ColorConverter.fromString;
     var color = converter(initialValue);
     var value = new input_value_1.InputValue(color);
     var writer = ColorConverter.getStringifier(notation);
@@ -1461,6 +1461,7 @@ function createWithString(document, target, params) {
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
             formatter: new color_1.ColorFormatter(writer),
             parser: StringColorParser.CompositeParser,
+            supportsAlpha: StringColorParser.hasAlphaComponent(notation),
             value: value,
             viewModel: new view_model_1.ViewModel(),
         }),
@@ -1479,24 +1480,40 @@ function createWithNumber(document, target, params) {
     if (!('input' in params)) {
         return null;
     }
-    if (params.input !== 'color' && params.input !== 'color.rgb') {
+    if (params.input !== 'color' &&
+        params.input !== 'color.rgb' &&
+        params.input !== 'color.rgba') {
         return null;
     }
-    var color = number_color_1.NumberColorParser(initialValue);
+    var supportsAlpha = params.input === 'color.rgba';
+    var parser = supportsAlpha
+        ? NumberColorParser.RgbaParser
+        : NumberColorParser.RgbParser;
+    var color = parser(initialValue);
     if (!color) {
         return null;
     }
+    var formatter = supportsAlpha
+        ? new color_1.ColorFormatter(ColorConverter.toHexRgbaString)
+        : new color_1.ColorFormatter(ColorConverter.toHexRgbString);
+    var reader = supportsAlpha
+        ? ColorConverter.fromNumberToRgba
+        : ColorConverter.fromNumberToRgb;
+    var writer = supportsAlpha
+        ? ColorConverter.toRgbaNumber
+        : ColorConverter.toRgbNumber;
     var value = new input_value_1.InputValue(color);
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
-            reader: ColorConverter.fromMixed,
+            reader: reader,
             target: target,
             value: value,
-            writer: ColorConverter.toNumber,
+            writer: writer,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
-            formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
+            formatter: formatter,
             parser: StringColorParser.CompositeParser,
+            supportsAlpha: supportsAlpha,
             value: value,
             viewModel: new view_model_1.ViewModel(),
         }),
@@ -1509,22 +1526,27 @@ exports.createWithNumber = createWithNumber;
  */
 function createWithObject(document, target, params) {
     var initialValue = target.read();
-    if (!color_2.Color.isRgbColorObject(initialValue)) {
+    if (!color_2.Color.isColorObject(initialValue)) {
         return null;
     }
-    var color = color_2.Color.fromRgbObject(initialValue);
+    var color = color_2.Color.fromObject(initialValue);
+    var supportsAlpha = color_2.Color.isRgbaColorObject(initialValue);
+    var formatter = supportsAlpha
+        ? new color_1.ColorFormatter(ColorConverter.toHexRgbaString)
+        : new color_1.ColorFormatter(ColorConverter.toHexRgbString);
     var value = new input_value_1.InputValue(color);
     return new input_binding_1.InputBindingController(document, {
         binding: new input_1.InputBinding({
-            reader: ColorConverter.fromMixed,
+            reader: ColorConverter.fromObject,
             target: target,
             value: value,
-            writer: color_2.Color.toRgbObject,
+            writer: color_2.Color.toRgbaObject,
         }),
         controller: new color_swatch_text_1.ColorSwatchTextInputController(document, {
             viewModel: new view_model_1.ViewModel(),
-            formatter: new color_1.ColorFormatter(ColorConverter.toHexRgbString),
+            formatter: formatter,
             parser: StringColorParser.CompositeParser,
+            supportsAlpha: supportsAlpha,
             value: value,
         }),
         label: params.label || target.key,
@@ -2288,6 +2310,62 @@ exports.InputBindingController = InputBindingController;
 
 /***/ }),
 
+/***/ "./src/main/js/controller/input/a-palette.ts":
+/*!***************************************************!*\
+  !*** ./src/main/js/controller/input/a-palette.ts ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.APaletteInputController = void 0;
+var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
+var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
+var a_palette_1 = __webpack_require__(/*! ../../view/input/a-palette */ "./src/main/js/view/input/a-palette.ts");
+/**
+ * @hidden
+ */
+var APaletteInputController = /** @class */ (function () {
+    function APaletteInputController(document, config) {
+        this.onPointerDown_ = this.onPointerDown_.bind(this);
+        this.onPointerMove_ = this.onPointerMove_.bind(this);
+        this.onPointerUp_ = this.onPointerUp_.bind(this);
+        this.value = config.value;
+        this.viewModel = config.viewModel;
+        this.view = new a_palette_1.APaletteInputView(document, {
+            model: this.viewModel,
+            value: this.value,
+        });
+        this.ptHandler_ = new pointer_handler_1.PointerHandler(document, this.view.canvasElement);
+        this.ptHandler_.emitter.on('down', this.onPointerDown_);
+        this.ptHandler_.emitter.on('move', this.onPointerMove_);
+        this.ptHandler_.emitter.on('up', this.onPointerUp_);
+    }
+    APaletteInputController.prototype.handlePointerEvent_ = function (d) {
+        var alpha = 1 - d.py;
+        var c = this.value.rawValue;
+        var _a = c.getComponents('hsv'), h = _a[0], s = _a[1], v = _a[2];
+        this.value.rawValue = new color_1.Color([h, s, v, alpha], 'hsv');
+        this.view.update();
+    };
+    APaletteInputController.prototype.onPointerDown_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
+    };
+    APaletteInputController.prototype.onPointerMove_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
+    };
+    APaletteInputController.prototype.onPointerUp_ = function (ev) {
+        this.handlePointerEvent_(ev.data);
+    };
+    return APaletteInputController;
+}());
+exports.APaletteInputController = APaletteInputController;
+
+
+/***/ }),
+
 /***/ "./src/main/js/controller/input/checkbox.ts":
 /*!**************************************************!*\
   !*** ./src/main/js/controller/input/checkbox.ts ***!
@@ -2327,6 +2405,97 @@ exports.CheckboxInputController = CheckboxInputController;
 
 /***/ }),
 
+/***/ "./src/main/js/controller/input/color-component-texts.ts":
+/*!***************************************************************!*\
+  !*** ./src/main/js/controller/input/color-component-texts.ts ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorComponentTextsInputController = void 0;
+var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
+var color_component_texts_1 = __webpack_require__(/*! ../../view/input/color-component-texts */ "./src/main/js/view/input/color-component-texts.ts");
+var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
+function getBaseStep(componentIndex) {
+    return componentIndex === 3 ? 0.1 : 1;
+}
+/**
+ * @hidden
+ */
+var ColorComponentTextsInputController = /** @class */ (function () {
+    function ColorComponentTextsInputController(document, config) {
+        var _this = this;
+        this.onInputChange_ = this.onInputChange_.bind(this);
+        this.onInputKeyDown_ = this.onInputKeyDown_.bind(this);
+        this.parser_ = config.parser;
+        this.value = config.value;
+        this.viewModel = config.viewModel;
+        this.view = new color_component_texts_1.ColorComponentTextsInputView(document, {
+            model: this.viewModel,
+            supportsAlpha: config.supportsAlpha,
+            value: this.value,
+        });
+        this.view.inputElements.forEach(function (inputElem) {
+            inputElem.addEventListener('change', _this.onInputChange_);
+            inputElem.addEventListener('keydown', _this.onInputKeyDown_);
+        });
+    }
+    ColorComponentTextsInputController.prototype.findIndexOfInputElem_ = function (inputElem) {
+        var inputElems = this.view.inputElements;
+        for (var i = 0; i < inputElems.length; i++) {
+            if (inputElems[i] === inputElem) {
+                return i;
+            }
+        }
+        return null;
+    };
+    ColorComponentTextsInputController.prototype.updateComponent_ = function (index, newValue) {
+        var comps = this.value.rawValue.getComponents('rgb');
+        var newComps = comps.map(function (comp, i) {
+            return i === index ? newValue : comp;
+        });
+        this.value.rawValue = new color_1.Color(newComps, 'rgb');
+        this.view.update();
+    };
+    ColorComponentTextsInputController.prototype.onInputChange_ = function (e) {
+        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
+        var parsedValue = this.parser_(inputElem.value);
+        if (type_util_1.TypeUtil.isEmpty(parsedValue)) {
+            return;
+        }
+        var compIndex = this.findIndexOfInputElem_(inputElem);
+        if (type_util_1.TypeUtil.isEmpty(compIndex)) {
+            return;
+        }
+        this.updateComponent_(compIndex, parsedValue);
+    };
+    ColorComponentTextsInputController.prototype.onInputKeyDown_ = function (e) {
+        var compIndex = this.findIndexOfInputElem_(e.currentTarget);
+        var step = UiUtil.getStepForKey(getBaseStep(compIndex), e);
+        if (step === 0) {
+            return;
+        }
+        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
+        var parsedValue = this.parser_(inputElem.value);
+        if (type_util_1.TypeUtil.isEmpty(parsedValue)) {
+            return;
+        }
+        if (type_util_1.TypeUtil.isEmpty(compIndex)) {
+            return;
+        }
+        this.updateComponent_(compIndex, parsedValue + step);
+    };
+    return ColorComponentTextsInputController;
+}());
+exports.ColorComponentTextsInputController = ColorComponentTextsInputController;
+
+
+/***/ }),
+
 /***/ "./src/main/js/controller/input/color-picker.ts":
 /*!******************************************************!*\
   !*** ./src/main/js/controller/input/color-picker.ts ***!
@@ -2338,13 +2507,13 @@ exports.CheckboxInputController = CheckboxInputController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColorPickerInputController = void 0;
-var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
 var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/model/foldable.ts");
 var string_number_1 = __webpack_require__(/*! ../../parser/string-number */ "./src/main/js/parser/string-number.ts");
 var color_picker_1 = __webpack_require__(/*! ../../view/input/color-picker */ "./src/main/js/view/input/color-picker.ts");
+var a_palette_1 = __webpack_require__(/*! ./a-palette */ "./src/main/js/controller/input/a-palette.ts");
+var color_component_texts_1 = __webpack_require__(/*! ./color-component-texts */ "./src/main/js/controller/input/color-component-texts.ts");
 var h_palette_1 = __webpack_require__(/*! ./h-palette */ "./src/main/js/controller/input/h-palette.ts");
-var rgb_text_1 = __webpack_require__(/*! ./rgb-text */ "./src/main/js/controller/input/rgb-text.ts");
 var sv_palette_1 = __webpack_require__(/*! ./sv-palette */ "./src/main/js/controller/input/sv-palette.ts");
 /**
  * @hidden
@@ -2352,6 +2521,7 @@ var sv_palette_1 = __webpack_require__(/*! ./sv-palette */ "./src/main/js/contro
 var ColorPickerInputController = /** @class */ (function () {
     function ColorPickerInputController(document, config) {
         var _this = this;
+        var _a;
         this.onInputBlur_ = this.onInputBlur_.bind(this);
         this.value = config.value;
         this.foldable = new foldable_1.Foldable();
@@ -2364,17 +2534,24 @@ var ColorPickerInputController = /** @class */ (function () {
             value: this.value,
             viewModel: this.viewModel,
         });
-        this.rgbTextIc_ = new rgb_text_1.RgbTextInputController(document, {
-            formatter: new number_1.NumberFormatter(0),
+        this.aPaletteIc_ = config.supportsAlpha
+            ? new a_palette_1.APaletteInputController(document, {
+                value: this.value,
+                viewModel: this.viewModel,
+            })
+            : null;
+        this.compTextsIc_ = new color_component_texts_1.ColorComponentTextsInputController(document, {
             parser: string_number_1.StringNumberParser,
+            supportsAlpha: config.supportsAlpha,
             value: this.value,
             viewModel: this.viewModel,
         });
         this.view = new color_picker_1.ColorPickerInputView(document, {
+            aPaletteInputView: ((_a = this.aPaletteIc_) === null || _a === void 0 ? void 0 : _a.view) || null,
             foldable: this.foldable,
             hPaletteInputView: this.hPaletteIc_.view,
             model: this.viewModel,
-            rgbTextView: this.rgbTextIc_.view,
+            componentTextsView: this.compTextsIc_.view,
             svPaletteInputView: this.svPaletteIc_.view,
             value: this.value,
         });
@@ -2418,6 +2595,7 @@ var ColorSwatchTextInputController = /** @class */ (function () {
         this.value = config.value;
         this.viewModel = config.viewModel;
         this.swatchIc_ = new color_swatch_1.ColorSwatchInputController(document, {
+            supportsAlpha: config.supportsAlpha,
             value: this.value,
             viewModel: this.viewModel,
         });
@@ -2464,6 +2642,7 @@ var ColorSwatchInputController = /** @class */ (function () {
         this.value = config.value;
         this.viewModel = config.viewModel;
         this.pickerIc_ = new color_picker_1.ColorPickerInputController(document, {
+            supportsAlpha: config.supportsAlpha,
             value: this.value,
             viewModel: this.viewModel,
         });
@@ -2529,8 +2708,8 @@ var HPaletteInputController = /** @class */ (function () {
     HPaletteInputController.prototype.handlePointerEvent_ = function (d) {
         var hue = number_util_1.NumberUtil.map(d.py, 0, 1, 0, 360);
         var c = this.value.rawValue;
-        var _a = c.getComponents('hsv'), s = _a[1], v = _a[2];
-        this.value.rawValue = new color_1.Color([hue, s, v], 'hsv');
+        var _a = c.getComponents('hsv'), s = _a[1], v = _a[2], a = _a[3];
+        this.value.rawValue = new color_1.Color([hue, s, v, a], 'hsv');
         this.view.update();
     };
     HPaletteInputController.prototype.onPointerDown_ = function (ev) {
@@ -2887,95 +3066,6 @@ exports.Point2dTextInputController = Point2dTextInputController;
 
 /***/ }),
 
-/***/ "./src/main/js/controller/input/rgb-text.ts":
-/*!**************************************************!*\
-  !*** ./src/main/js/controller/input/rgb-text.ts ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RgbTextInputController = void 0;
-var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
-var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
-var rgb_text_1 = __webpack_require__(/*! ../../view/input/rgb-text */ "./src/main/js/view/input/rgb-text.ts");
-var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-util.ts");
-var STEP = 1;
-/**
- * @hidden
- */
-var RgbTextInputController = /** @class */ (function () {
-    function RgbTextInputController(document, config) {
-        var _this = this;
-        this.onInputChange_ = this.onInputChange_.bind(this);
-        this.onInputKeyDown_ = this.onInputKeyDown_.bind(this);
-        this.parser_ = config.parser;
-        this.value = config.value;
-        this.viewModel = config.viewModel;
-        this.view = new rgb_text_1.RgbTextInputView(document, {
-            formatter: config.formatter,
-            model: this.viewModel,
-            value: this.value,
-        });
-        this.view.inputElements.forEach(function (inputElem) {
-            inputElem.addEventListener('change', _this.onInputChange_);
-            inputElem.addEventListener('keydown', _this.onInputKeyDown_);
-        });
-    }
-    RgbTextInputController.prototype.findIndexOfInputElem_ = function (inputElem) {
-        var inputElems = this.view.inputElements;
-        for (var i = 0; i < inputElems.length; i++) {
-            if (inputElems[i] === inputElem) {
-                return i;
-            }
-        }
-        return null;
-    };
-    RgbTextInputController.prototype.updateComponent_ = function (index, newValue) {
-        var comps = this.value.rawValue.getComponents('rgb');
-        var newComps = comps.map(function (comp, i) {
-            return i === index ? newValue : comp;
-        });
-        this.value.rawValue = new color_1.Color([newComps[0], newComps[1], newComps[2]], 'rgb');
-        this.view.update();
-    };
-    RgbTextInputController.prototype.onInputChange_ = function (e) {
-        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
-        var parsedValue = this.parser_(inputElem.value);
-        if (type_util_1.TypeUtil.isEmpty(parsedValue)) {
-            return;
-        }
-        var compIndex = this.findIndexOfInputElem_(inputElem);
-        if (type_util_1.TypeUtil.isEmpty(compIndex)) {
-            return;
-        }
-        this.updateComponent_(compIndex, parsedValue);
-    };
-    RgbTextInputController.prototype.onInputKeyDown_ = function (e) {
-        var step = UiUtil.getStepForKey(STEP, e);
-        if (step === 0) {
-            return;
-        }
-        var inputElem = type_util_1.TypeUtil.forceCast(e.currentTarget);
-        var parsedValue = this.parser_(inputElem.value);
-        if (type_util_1.TypeUtil.isEmpty(parsedValue)) {
-            return;
-        }
-        var compIndex = this.findIndexOfInputElem_(inputElem);
-        if (type_util_1.TypeUtil.isEmpty(compIndex)) {
-            return;
-        }
-        this.updateComponent_(compIndex, parsedValue + step);
-    };
-    return RgbTextInputController;
-}());
-exports.RgbTextInputController = RgbTextInputController;
-
-
-/***/ }),
-
 /***/ "./src/main/js/controller/input/slider-text.ts":
 /*!*****************************************************!*\
   !*** ./src/main/js/controller/input/slider-text.ts ***!
@@ -3147,8 +3237,8 @@ var SvPaletteInputController = /** @class */ (function () {
     SvPaletteInputController.prototype.handlePointerEvent_ = function (d) {
         var saturation = number_util_1.NumberUtil.map(d.px, 0, 1, 0, 100);
         var value = number_util_1.NumberUtil.map(d.py, 0, 1, 100, 0);
-        var h = this.value.rawValue.getComponents('hsv')[0];
-        this.value.rawValue = new color_1.Color([h, saturation, value], 'hsv');
+        var _a = this.value.rawValue.getComponents('hsv'), h = _a[0], a = _a[3];
+        this.value.rawValue = new color_1.Color([h, saturation, value, a], 'hsv');
         this.view.update();
     };
     SvPaletteInputController.prototype.onPointerDown_ = function (ev) {
@@ -3654,44 +3744,75 @@ exports.toString = toString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toNumber = exports.getStringifier = exports.toFunctionalRgbString = exports.toHexRgbString = exports.fromMixed = void 0;
+exports.toRgbaNumber = exports.toRgbNumber = exports.getStringifier = exports.toFunctionalRgbaString = exports.toFunctionalRgbString = exports.toHexRgbaString = exports.toHexRgbString = exports.fromNumberToRgba = exports.fromNumberToRgb = exports.fromObject = exports.fromString = void 0;
 var number_1 = __webpack_require__(/*! ../formatter/number */ "./src/main/js/formatter/number.ts");
+var ColorModel = __webpack_require__(/*! ../misc/color-model */ "./src/main/js/misc/color-model.ts");
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
-var number_color_1 = __webpack_require__(/*! ../parser/number-color */ "./src/main/js/parser/number-color.ts");
+var NumberColorParser = __webpack_require__(/*! ../parser/number-color */ "./src/main/js/parser/number-color.ts");
 var StringColorParser = __webpack_require__(/*! ../parser/string-color */ "./src/main/js/parser/string-color.ts");
+function createEmptyColor() {
+    return new color_1.Color([0, 0, 0], 'rgb');
+}
 /**
  * @hidden
  */
-function fromMixed(value) {
+function fromString(value) {
     if (typeof value === 'string') {
         var cv = StringColorParser.CompositeParser(value);
         if (cv) {
             return cv;
         }
     }
+    return createEmptyColor();
+}
+exports.fromString = fromString;
+/**
+ * @hidden
+ */
+function fromObject(value) {
+    if (color_1.Color.isColorObject(value)) {
+        return color_1.Color.fromObject(value);
+    }
+    return createEmptyColor();
+}
+exports.fromObject = fromObject;
+/**
+ * @hidden
+ */
+function fromNumberToRgb(value) {
     if (typeof value === 'number') {
-        var cv = number_color_1.NumberColorParser(value);
+        var cv = NumberColorParser.RgbParser(value);
         if (cv) {
             return cv;
         }
     }
-    if (color_1.Color.isRgbColorObject(value)) {
-        return color_1.Color.fromRgbObject(value);
-    }
-    return new color_1.Color([0, 0, 0], 'rgb');
+    return createEmptyColor();
 }
-exports.fromMixed = fromMixed;
+exports.fromNumberToRgb = fromNumberToRgb;
+/**
+ * @hidden
+ */
+function fromNumberToRgba(value) {
+    if (typeof value === 'number') {
+        var cv = NumberColorParser.RgbaParser(value);
+        if (cv) {
+            return cv;
+        }
+    }
+    return createEmptyColor();
+}
+exports.fromNumberToRgba = fromNumberToRgba;
+function zerofill(comp) {
+    var hex = number_util_1.NumberUtil.constrain(Math.floor(comp), 0, 255).toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+}
 /**
  * @hidden
  */
 function toHexRgbString(value) {
-    var hexes = value
-        .getComponents('rgb')
-        .map(function (comp) {
-        var hex = number_util_1.NumberUtil.constrain(Math.floor(comp), 0, 255).toString(16);
-        return hex.length === 1 ? "0" + hex : hex;
-    })
+    var hexes = ColorModel.withoutAlpha(value.getComponents('rgb'))
+        .map(zerofill)
         .join('');
     return "#" + hexes;
 }
@@ -3699,17 +3820,41 @@ exports.toHexRgbString = toHexRgbString;
 /**
  * @hidden
  */
+function toHexRgbaString(value) {
+    var rgbaComps = value.getComponents('rgb');
+    var hexes = [rgbaComps[0], rgbaComps[1], rgbaComps[2], rgbaComps[3] * 255]
+        .map(zerofill)
+        .join('');
+    return "#" + hexes;
+}
+exports.toHexRgbaString = toHexRgbaString;
+/**
+ * @hidden
+ */
 function toFunctionalRgbString(value) {
     var formatter = new number_1.NumberFormatter(0);
-    var comps = value
-        .getComponents('rgb')
-        .map(function (comp) { return formatter.format(comp); });
+    var comps = ColorModel.withoutAlpha(value.getComponents('rgb')).map(function (comp) { return formatter.format(comp); });
     return "rgb(" + comps.join(', ') + ")";
 }
 exports.toFunctionalRgbString = toFunctionalRgbString;
+/**
+ * @hidden
+ */
+function toFunctionalRgbaString(value) {
+    var alphaFormatter = new number_1.NumberFormatter(2);
+    var nonAlphaFormatter = new number_1.NumberFormatter(0);
+    var comps = value.getComponents('rgb').map(function (comp, index) {
+        var formatter = index === 3 ? alphaFormatter : nonAlphaFormatter;
+        return formatter.format(comp);
+    });
+    return "rgba(" + comps.join(', ') + ")";
+}
+exports.toFunctionalRgbaString = toFunctionalRgbaString;
 var NOTATION_TO_STRINGIFIER_MAP = {
     'func.rgb': toFunctionalRgbString,
+    'func.rgba': toFunctionalRgbaString,
     'hex.rgb': toHexRgbString,
+    'hex.rgba': toHexRgbaString,
 };
 function getStringifier(notation) {
     return NOTATION_TO_STRINGIFIER_MAP[notation];
@@ -3718,12 +3863,22 @@ exports.getStringifier = getStringifier;
 /**
  * @hidden
  */
-function toNumber(value) {
-    return value.getComponents('rgb').reduce(function (result, comp) {
+function toRgbNumber(value) {
+    return ColorModel.withoutAlpha(value.getComponents('rgb')).reduce(function (result, comp) {
         return (result << 8) | (Math.floor(comp) & 0xff);
     }, 0);
 }
-exports.toNumber = toNumber;
+exports.toRgbNumber = toRgbNumber;
+/**
+ * @hidden
+ */
+function toRgbaNumber(value) {
+    return value.getComponents('rgb').reduce(function (result, comp, index) {
+        var hex = Math.floor(index === 3 ? comp * 255 : comp) & 0xff;
+        return (result << 8) | hex;
+    }, 0);
+}
+exports.toRgbaNumber = toRgbaNumber;
 
 
 /***/ }),
@@ -3861,6 +4016,7 @@ exports.BooleanFormatter = BooleanFormatter;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColorFormatter = void 0;
 var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
+var type_util_1 = __webpack_require__(/*! ../misc/type-util */ "./src/main/js/misc/type-util.ts");
 /**
  * @hidden
  */
@@ -3868,21 +4024,31 @@ var ColorFormatter = /** @class */ (function () {
     function ColorFormatter(stringifier) {
         this.stringifier_ = stringifier;
     }
-    ColorFormatter.rgb = function (r, g, b) {
-        var compsText = [
+    ColorFormatter.rgb = function (r, g, b, a) {
+        var comps = [
             number_util_1.NumberUtil.constrain(Math.floor(r), 0, 255),
             number_util_1.NumberUtil.constrain(Math.floor(g), 0, 255),
             number_util_1.NumberUtil.constrain(Math.floor(b), 0, 255),
-        ].join(', ');
-        return "rgb(" + compsText + ")";
+        ];
+        if (!type_util_1.TypeUtil.isEmpty(a)) {
+            comps.push(number_util_1.NumberUtil.constrain(a, 0, 1));
+        }
+        var funcName = type_util_1.TypeUtil.isEmpty(a) ? 'rgb' : 'rgba';
+        var compsText = comps.join(', ');
+        return funcName + "(" + compsText + ")";
     };
-    ColorFormatter.hsl = function (h, s, l) {
-        var compsText = [
+    ColorFormatter.hsl = function (h, s, l, a) {
+        var comps = [
             ((Math.floor(h) % 360) + 360) % 360,
             number_util_1.NumberUtil.constrain(Math.floor(s), 0, 100) + "%",
             number_util_1.NumberUtil.constrain(Math.floor(l), 0, 100) + "%",
-        ].join(', ');
-        return "hsl(" + compsText + ")";
+        ];
+        if (!type_util_1.TypeUtil.isEmpty(a)) {
+            comps.push(number_util_1.NumberUtil.constrain(a, 0, 1));
+        }
+        var funcName = type_util_1.TypeUtil.isEmpty(a) ? 'hsl' : 'hsla';
+        var compsText = comps.join(', ');
+        return funcName + "(" + compsText + ")";
     };
     ColorFormatter.prototype.format = function (value) {
         return this.stringifier_(value);
@@ -4054,7 +4220,7 @@ exports.ClassName = ClassName;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hsvToRgb = exports.rgbToHsv = exports.hslToRgb = exports.rgbToHsl = void 0;
+exports.withAlpha = exports.withoutAlpha = exports.opaque = exports.hsvToRgb = exports.rgbToHsv = exports.hslToRgb = exports.rgbToHsl = void 0;
 var number_util_1 = __webpack_require__(/*! ./number-util */ "./src/main/js/misc/number-util.ts");
 function rgbToHsl(r, g, b) {
     var rp = number_util_1.NumberUtil.constrain(r / 255, 0, 1);
@@ -4167,6 +4333,18 @@ function hsvToRgb(h, s, v) {
     return [(rp + m) * 255, (gp + m) * 255, (bp + m) * 255];
 }
 exports.hsvToRgb = hsvToRgb;
+function opaque(comps) {
+    return [comps[0], comps[1], comps[2], 1];
+}
+exports.opaque = opaque;
+function withoutAlpha(comps) {
+    return [comps[0], comps[1], comps[2]];
+}
+exports.withoutAlpha = withoutAlpha;
+function withAlpha(comps, alpha) {
+    return [comps[0], comps[1], comps[2], alpha];
+}
+exports.withAlpha = withAlpha;
 
 
 /***/ }),
@@ -4692,6 +4870,7 @@ var CONSTRAINT_MAP = {
             number_util_1.NumberUtil.loop(comps[0], 360),
             number_util_1.NumberUtil.constrain(comps[1], 0, 100),
             number_util_1.NumberUtil.constrain(comps[2], 0, 100),
+            number_util_1.NumberUtil.constrain(type_util_1.TypeUtil.getOrDefault(comps[3], 1), 0, 1),
         ];
     },
     rgb: function (comps) {
@@ -4699,6 +4878,7 @@ var CONSTRAINT_MAP = {
             number_util_1.NumberUtil.constrain(comps[0], 0, 255),
             number_util_1.NumberUtil.constrain(comps[1], 0, 255),
             number_util_1.NumberUtil.constrain(comps[2], 0, 255),
+            number_util_1.NumberUtil.constrain(type_util_1.TypeUtil.getOrDefault(comps[3], 1), 0, 1),
         ];
     },
 };
@@ -4716,16 +4896,23 @@ var Color = /** @class */ (function () {
         this.mode_ = mode;
         this.comps_ = CONSTRAINT_MAP[mode](comps);
     }
-    Color.fromRgbObject = function (obj) {
-        return new Color([obj.r, obj.g, obj.b], 'rgb');
+    Color.fromObject = function (obj) {
+        var comps = 'a' in obj ? [obj.r, obj.g, obj.b, obj.a] : [obj.r, obj.g, obj.b];
+        return new Color(comps, 'rgb');
     };
-    Color.toRgbObject = function (color) {
-        return color.toRgbObject();
+    Color.toRgbaObject = function (color) {
+        return color.toRgbaObject();
     };
     Color.isRgbColorObject = function (obj) {
         return (isRgbColorComponent(obj, 'r') &&
             isRgbColorComponent(obj, 'g') &&
             isRgbColorComponent(obj, 'b'));
+    };
+    Color.isRgbaColorObject = function (obj) {
+        return this.isRgbColorObject(obj) && isRgbColorComponent(obj, 'a');
+    };
+    Color.isColorObject = function (obj) {
+        return this.isRgbColorObject(obj);
     };
     Object.defineProperty(Color.prototype, "mode", {
         get: function () {
@@ -4736,20 +4923,21 @@ var Color = /** @class */ (function () {
     });
     Color.prototype.getComponents = function (mode) {
         if (this.mode_ === 'hsv' && mode === 'rgb') {
-            return ColorModel.hsvToRgb.apply(ColorModel, this.comps_);
+            return ColorModel.withAlpha(ColorModel.hsvToRgb(this.comps_[0], this.comps_[1], this.comps_[2]), this.comps_[3]);
         }
         if (this.mode_ === 'rgb' && mode === 'hsv') {
-            return ColorModel.rgbToHsv.apply(ColorModel, this.comps_);
+            return ColorModel.withAlpha(ColorModel.rgbToHsv(this.comps_[0], this.comps_[1], this.comps_[2]), this.comps_[3]);
         }
         return this.comps_;
     };
-    Color.prototype.toRgbObject = function () {
+    Color.prototype.toRgbaObject = function () {
         var rgbComps = this.getComponents('rgb');
         // tslint:disable:object-literal-sort-keys
         return {
             r: rgbComps[0],
             g: rgbComps[1],
             b: rgbComps[2],
+            a: rgbComps[3],
         };
         // tslint:enable:object-literal-sort-keys
     };
@@ -5545,13 +5733,25 @@ exports.AnyPoint2dParser = function (obj) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NumberColorParser = void 0;
+exports.RgbaParser = exports.RgbParser = void 0;
+var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
 /**
  * @hidden
  */
-exports.NumberColorParser = function (num) {
+exports.RgbParser = function (num) {
     return new color_1.Color([(num >> 16) & 0xff, (num >> 8) & 0xff, num & 0xff], 'rgb');
+};
+/**
+ * @hidden
+ */
+exports.RgbaParser = function (num) {
+    return new color_1.Color([
+        (num >> 24) & 0xff,
+        (num >> 16) & 0xff,
+        (num >> 8) & 0xff,
+        number_util_1.NumberUtil.map(num & 0xff, 0, 255, 0, 1),
+    ], 'rgb');
 };
 
 
@@ -5567,7 +5767,8 @@ exports.NumberColorParser = function (num) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotation = exports.CompositeParser = void 0;
+exports.hasAlphaComponent = exports.CompositeParser = exports.getNotation = void 0;
+var number_util_1 = __webpack_require__(/*! ../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var color_1 = __webpack_require__(/*! ../model/color */ "./src/main/js/model/color.ts");
 function parseCssNumberOrPercentage(text, maxValue) {
     var m = text.match(/^(.+)%$/);
@@ -5592,6 +5793,25 @@ var NOTATION_TO_PARSER_MAP = {
         }
         return new color_1.Color(comps, 'rgb');
     },
+    'func.rgba': function (text) {
+        var m = text.match(/^rgba\(\s*([0-9A-Fa-f.]+%?)\s*,\s*([0-9A-Fa-f.]+%?)\s*,\s*([0-9A-Fa-f.]+%?)\s*,\s*([0-9A-Fa-f.]+%?)\s*\)$/);
+        if (!m) {
+            return null;
+        }
+        var comps = [
+            parseCssNumberOrPercentage(m[1], 255),
+            parseCssNumberOrPercentage(m[2], 255),
+            parseCssNumberOrPercentage(m[3], 255),
+            parseCssNumberOrPercentage(m[4], 1),
+        ];
+        if (isNaN(comps[0]) ||
+            isNaN(comps[1]) ||
+            isNaN(comps[2]) ||
+            isNaN(comps[3])) {
+            return null;
+        }
+        return new color_1.Color(comps, 'rgb');
+    },
     'hex.rgb': function (text) {
         var mRrggbb = text.match(/^#?([0-9A-Fa-f])([0-9A-Fa-f])([0-9A-Fa-f])$/);
         if (mRrggbb) {
@@ -5607,17 +5827,31 @@ var NOTATION_TO_PARSER_MAP = {
         }
         return null;
     },
+    'hex.rgba': function (text) {
+        var mRrggbb = text.match(/^#?([0-9A-Fa-f])([0-9A-Fa-f])([0-9A-Fa-f])([0-9A-Fa-f])$/);
+        if (mRrggbb) {
+            return new color_1.Color([
+                parseInt(mRrggbb[1] + mRrggbb[1], 16),
+                parseInt(mRrggbb[2] + mRrggbb[2], 16),
+                parseInt(mRrggbb[3] + mRrggbb[3], 16),
+                number_util_1.NumberUtil.map(parseInt(mRrggbb[4] + mRrggbb[4], 16), 0, 255, 0, 1),
+            ], 'rgb');
+        }
+        var mRgb = text.match(/^#?([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})$/);
+        if (mRgb) {
+            return new color_1.Color([
+                parseInt(mRgb[1], 16),
+                parseInt(mRgb[2], 16),
+                parseInt(mRgb[3], 16),
+                number_util_1.NumberUtil.map(parseInt(mRgb[4], 16), 0, 255, 0, 1),
+            ], 'rgb');
+        }
+        return null;
+    },
 };
 /**
  * @hidden
  */
-exports.CompositeParser = function (text) {
-    var notations = Object.keys(NOTATION_TO_PARSER_MAP);
-    return notations.reduce(function (result, notation) {
-        var subparser = NOTATION_TO_PARSER_MAP[notation];
-        return result ? result : subparser(text);
-    }, null);
-};
 function getNotation(text) {
     var notations = Object.keys(NOTATION_TO_PARSER_MAP);
     return notations.reduce(function (result, notation) {
@@ -5629,6 +5863,17 @@ function getNotation(text) {
     }, null);
 }
 exports.getNotation = getNotation;
+/**
+ * @hidden
+ */
+exports.CompositeParser = function (text) {
+    var notation = getNotation(text);
+    return notation ? NOTATION_TO_PARSER_MAP[notation](text) : null;
+};
+function hasAlphaComponent(notation) {
+    return notation === 'func.rgba' || notation === 'hex.rgba';
+}
+exports.hasAlphaComponent = hasAlphaComponent;
 
 
 /***/ }),
@@ -5926,6 +6171,112 @@ exports.FolderView = FolderView;
 
 /***/ }),
 
+/***/ "./src/main/js/view/input/a-palette.ts":
+/*!*********************************************!*\
+  !*** ./src/main/js/view/input/a-palette.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.APaletteInputView = void 0;
+var color_1 = __webpack_require__(/*! ../../formatter/color */ "./src/main/js/formatter/color.ts");
+var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var ColorModel = __webpack_require__(/*! ../../misc/color-model */ "./src/main/js/misc/color-model.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
+var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
+var className = class_name_1.ClassName('apl', 'input');
+/**
+ * @hidden
+ */
+var APaletteInputView = /** @class */ (function (_super) {
+    __extends(APaletteInputView, _super);
+    function APaletteInputView(document, config) {
+        var _this = _super.call(this, document, config) || this;
+        _this.onValueChange_ = _this.onValueChange_.bind(_this);
+        _this.value = config.value;
+        _this.value.emitter.on('change', _this.onValueChange_);
+        _this.element.classList.add(className());
+        var canvasElem = document.createElement('canvas');
+        canvasElem.classList.add(className('c'));
+        canvasElem.tabIndex = -1;
+        _this.element.appendChild(canvasElem);
+        _this.canvasElem_ = canvasElem;
+        var markerElem = document.createElement('div');
+        markerElem.classList.add(className('m'));
+        _this.element.appendChild(markerElem);
+        _this.markerElem_ = markerElem;
+        _this.update();
+        config.model.emitter.on('dispose', function () {
+            _this.canvasElem_ = DisposingUtil.disposeElement(_this.canvasElem_);
+            _this.markerElem_ = DisposingUtil.disposeElement(_this.markerElem_);
+        });
+        return _this;
+    }
+    Object.defineProperty(APaletteInputView.prototype, "canvasElement", {
+        get: function () {
+            if (!this.canvasElem_) {
+                throw pane_error_1.PaneError.alreadyDisposed();
+            }
+            return this.canvasElem_;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    APaletteInputView.prototype.update = function () {
+        if (!this.markerElem_) {
+            throw pane_error_1.PaneError.alreadyDisposed();
+        }
+        var ctx = DomUtil.getCanvasContext(this.canvasElement);
+        if (!ctx) {
+            return;
+        }
+        var width = this.canvasElement.width;
+        var height = this.canvasElement.height;
+        ctx.clearRect(0, 0, width, height);
+        var c = this.value.rawValue;
+        var hsvComps = c.getComponents('hsv');
+        var cellCount = 64;
+        var ch = Math.ceil(height / cellCount);
+        for (var iy = 0; iy < cellCount; iy++) {
+            var alpha = number_util_1.NumberUtil.map(iy, 0, cellCount - 1, 1, 0);
+            var rgbComps = ColorModel.hsvToRgb(hsvComps[0], hsvComps[1], hsvComps[2]);
+            ctx.fillStyle = color_1.ColorFormatter.rgb(rgbComps[0], rgbComps[1], rgbComps[2], alpha);
+            var y = Math.floor(number_util_1.NumberUtil.map(iy, 0, cellCount - 1, 0, height - ch));
+            var ny = Math.floor(number_util_1.NumberUtil.map(iy + 1, 0, cellCount - 1, 0, height - ch));
+            ctx.fillRect(0, y, width, ny - y);
+        }
+        var top = number_util_1.NumberUtil.map(hsvComps[3], 0, 1, 100, 0);
+        this.markerElem_.style.top = top + "%";
+    };
+    APaletteInputView.prototype.onValueChange_ = function () {
+        this.update();
+    };
+    return APaletteInputView;
+}(view_1.View));
+exports.APaletteInputView = APaletteInputView;
+
+
+/***/ }),
+
 /***/ "./src/main/js/view/input/checkbox.ts":
 /*!********************************************!*\
   !*** ./src/main/js/view/input/checkbox.ts ***!
@@ -6009,6 +6360,115 @@ exports.CheckboxInputView = CheckboxInputView;
 
 /***/ }),
 
+/***/ "./src/main/js/view/input/color-component-texts.ts":
+/*!*********************************************************!*\
+  !*** ./src/main/js/view/input/color-component-texts.ts ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ColorComponentTextsInputView = void 0;
+var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
+var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
+var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
+var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
+var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
+var className = class_name_1.ClassName('cctxts', 'input');
+var alphaFormatter = new number_1.NumberFormatter(2);
+var nonAlphaFormatter = new number_1.NumberFormatter(0);
+/**
+ * @hidden
+ */
+var ColorComponentTextsInputView = /** @class */ (function (_super) {
+    __extends(ColorComponentTextsInputView, _super);
+    function ColorComponentTextsInputView(document, config) {
+        var _this = _super.call(this, document, config) || this;
+        _this.onValueChange_ = _this.onValueChange_.bind(_this);
+        _this.element.classList.add(className());
+        var labelElem = document.createElement('div');
+        labelElem.classList.add(className('l'));
+        labelElem.textContent = config.supportsAlpha ? 'RGBA' : 'RGB';
+        _this.element.appendChild(labelElem);
+        var wrapperElem = document.createElement('div');
+        wrapperElem.classList.add(className('w'));
+        _this.element.appendChild(wrapperElem);
+        var indexes = config.supportsAlpha ? [0, 1, 2, 3] : [0, 1, 2];
+        var inputElems = indexes.map(function () {
+            var inputElem = document.createElement('input');
+            inputElem.classList.add(className('i'));
+            inputElem.type = 'text';
+            return inputElem;
+        });
+        inputElems.forEach(function (elem) {
+            wrapperElem.appendChild(elem);
+        });
+        _this.inputElems_ = config.supportsAlpha
+            ? [inputElems[0], inputElems[1], inputElems[2], inputElems[3]]
+            : [inputElems[0], inputElems[1], inputElems[2]];
+        config.value.emitter.on('change', _this.onValueChange_);
+        _this.value = config.value;
+        _this.update();
+        config.model.emitter.on('dispose', function () {
+            if (_this.inputElems_) {
+                _this.inputElems_.forEach(function (elem) {
+                    DisposingUtil.disposeElement(elem);
+                });
+                _this.inputElems_ = null;
+            }
+        });
+        return _this;
+    }
+    Object.defineProperty(ColorComponentTextsInputView.prototype, "inputElements", {
+        get: function () {
+            if (!this.inputElems_) {
+                throw pane_error_1.PaneError.alreadyDisposed();
+            }
+            return this.inputElems_;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    ColorComponentTextsInputView.prototype.update = function () {
+        var inputElems = this.inputElems_;
+        if (!inputElems) {
+            throw pane_error_1.PaneError.alreadyDisposed();
+        }
+        var comps = this.value.rawValue.getComponents('rgb');
+        comps.forEach(function (comp, index) {
+            var inputElem = inputElems[index];
+            if (!inputElem) {
+                return;
+            }
+            var formatter = index === 3 ? alphaFormatter : nonAlphaFormatter;
+            inputElem.value = formatter.format(comp);
+        });
+    };
+    ColorComponentTextsInputView.prototype.onValueChange_ = function () {
+        this.update();
+    };
+    return ColorComponentTextsInputView;
+}(view_1.View));
+exports.ColorComponentTextsInputView = ColorComponentTextsInputView;
+
+
+/***/ }),
+
 /***/ "./src/main/js/view/input/color-picker.ts":
 /*!************************************************!*\
   !*** ./src/main/js/view/input/color-picker.ts ***!
@@ -6062,18 +6522,25 @@ var ColorPickerInputView = /** @class */ (function (_super) {
         _this.hPaletteView_ = config.hPaletteInputView;
         hElem.appendChild(_this.hPaletteView_.element);
         hsvElem.appendChild(hElem);
+        _this.aPaletteView_ = config.aPaletteInputView;
+        if (_this.aPaletteView_) {
+            var aElem = document.createElement('div');
+            aElem.classList.add(className('a'));
+            aElem.appendChild(_this.aPaletteView_.element);
+            hsvElem.appendChild(aElem);
+        }
         _this.element.appendChild(hsvElem);
         var rgbElem = document.createElement('div');
         rgbElem.classList.add(className('rgb'));
-        _this.rgbTextView_ = config.rgbTextView;
-        rgbElem.appendChild(_this.rgbTextView_.element);
+        _this.compTextsView_ = config.componentTextsView;
+        rgbElem.appendChild(_this.compTextsView_.element);
         _this.element.appendChild(rgbElem);
         _this.update();
         return _this;
     }
     Object.defineProperty(ColorPickerInputView.prototype, "allFocusableElements", {
         get: function () {
-            return [].concat(this.hPaletteView_.canvasElement, this.rgbTextView_.inputElements, this.svPaletteView_.canvasElement);
+            return [].concat(this.hPaletteView_.canvasElement, this.compTextsView_.inputElements, this.svPaletteView_.canvasElement);
         },
         enumerable: false,
         configurable: true
@@ -6243,7 +6710,7 @@ var ColorSwatchInputView = /** @class */ (function (_super) {
             throw pane_error_1.PaneError.alreadyDisposed();
         }
         var value = this.value.rawValue;
-        this.swatchElem_.style.backgroundColor = ColorConverter.toHexRgbString(value);
+        this.swatchElem_.style.backgroundColor = ColorConverter.toHexRgbaString(value);
     };
     ColorSwatchInputView.prototype.onValueChange_ = function () {
         this.update();
@@ -6757,107 +7224,6 @@ exports.Point2dTextInputView = Point2dTextInputView;
 
 /***/ }),
 
-/***/ "./src/main/js/view/input/rgb-text.ts":
-/*!********************************************!*\
-  !*** ./src/main/js/view/input/rgb-text.ts ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RgbTextInputView = void 0;
-var class_name_1 = __webpack_require__(/*! ../../misc/class-name */ "./src/main/js/misc/class-name.ts");
-var DisposingUtil = __webpack_require__(/*! ../../misc/disposing-util */ "./src/main/js/misc/disposing-util.ts");
-var pane_error_1 = __webpack_require__(/*! ../../misc/pane-error */ "./src/main/js/misc/pane-error.ts");
-var view_1 = __webpack_require__(/*! ../view */ "./src/main/js/view/view.ts");
-var className = class_name_1.ClassName('rgbtxt', 'input');
-/**
- * @hidden
- */
-var RgbTextInputView = /** @class */ (function (_super) {
-    __extends(RgbTextInputView, _super);
-    function RgbTextInputView(document, config) {
-        var _this = _super.call(this, document, config) || this;
-        _this.onValueChange_ = _this.onValueChange_.bind(_this);
-        _this.formatter_ = config.formatter;
-        _this.element.classList.add(className());
-        var labelElem = document.createElement('div');
-        labelElem.classList.add(className('l'));
-        labelElem.textContent = 'RGB';
-        _this.element.appendChild(labelElem);
-        var wrapperElem = document.createElement('div');
-        wrapperElem.classList.add(className('w'));
-        _this.element.appendChild(wrapperElem);
-        var inputElems = [0, 1, 2].map(function () {
-            var inputElem = document.createElement('input');
-            inputElem.classList.add(className('i'));
-            inputElem.type = 'text';
-            return inputElem;
-        });
-        inputElems.forEach(function (elem) {
-            wrapperElem.appendChild(elem);
-        });
-        _this.inputElems_ = [inputElems[0], inputElems[1], inputElems[2]];
-        config.value.emitter.on('change', _this.onValueChange_);
-        _this.value = config.value;
-        _this.update();
-        config.model.emitter.on('dispose', function () {
-            if (_this.inputElems_) {
-                _this.inputElems_.forEach(function (elem) {
-                    DisposingUtil.disposeElement(elem);
-                });
-                _this.inputElems_ = null;
-            }
-        });
-        return _this;
-    }
-    Object.defineProperty(RgbTextInputView.prototype, "inputElements", {
-        get: function () {
-            if (!this.inputElems_) {
-                throw pane_error_1.PaneError.alreadyDisposed();
-            }
-            return this.inputElems_;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    RgbTextInputView.prototype.update = function () {
-        var _this = this;
-        var inputElems = this.inputElems_;
-        if (!inputElems) {
-            throw pane_error_1.PaneError.alreadyDisposed();
-        }
-        var rgbComps = this.value.rawValue.getComponents('rgb');
-        rgbComps.forEach(function (comp, index) {
-            var inputElem = inputElems[index];
-            inputElem.value = _this.formatter_.format(comp);
-        });
-    };
-    RgbTextInputView.prototype.onValueChange_ = function () {
-        this.update();
-    };
-    return RgbTextInputView;
-}(view_1.View));
-exports.RgbTextInputView = RgbTextInputView;
-
-
-/***/ }),
-
 /***/ "./src/main/js/view/input/slider-text.ts":
 /*!***********************************************!*\
   !*** ./src/main/js/view/input/slider-text.ts ***!
@@ -7005,7 +7371,7 @@ var SliderInputView = /** @class */ (function (_super) {
         if (!this.innerElem_) {
             throw pane_error_1.PaneError.alreadyDisposed();
         }
-        var p = number_util_1.NumberUtil.map(this.value.rawValue, this.minValue_, this.maxValue_, 0, 100);
+        var p = number_util_1.NumberUtil.constrain(number_util_1.NumberUtil.map(this.value.rawValue, this.minValue_, this.maxValue_, 0, 100), 0, 100);
         this.innerElem_.style.width = p + "%";
     };
     SliderInputView.prototype.onValueChange_ = function () {
@@ -7791,7 +8157,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--folder-background-color);color:var(--folder-foreground-color);cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:var(--folder-background-color-hover)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:var(--folder-background-color-focus)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:var(--folder-background-color-active)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, var(--folder-foreground-color), var(--folder-foreground-color) 2px, transparent 2px, transparent 4px, var(--folder-foreground-color) 4px);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded>.tp-fldv_t>.tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv.tp-v-first,.tp-rotv_c>.tp-fldv.tp-v-first{margin-top:-4px}.tp-fldv_c>.tp-fldv.tp-v-last,.tp-rotv_c>.tp-fldv.tp-v-last{margin-bottom:-4px}.tp-fldv_c>*:not(.tp-v-first),.tp-rotv_c>*:not(.tp-v-first){margin-top:4px}.tp-fldv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv,.tp-rotv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv,.tp-rotv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv{margin-top:0}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:var(--button-background-color-hover)}.tp-btnv_b:focus{background-color:var(--button-background-color-focus)}.tp-btnv_b:active{background-color:var(--button-background-color-active)}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_t{transition:border-radius 0.2s ease-in-out 0.2s}.tp-fldv.tp-fldv-expanded .tp-fldv_t{transition:border-radius 0s}.tp-fldv_c{border-left:var(--folder-background-color) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:var(--folder-background-color-hover)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:var(--folder-background-color-focus)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:var(--folder-background-color-active)}.tp-fldv.tp-fldv-expanded>.tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-fldv_c>.tp-fldv{margin-left:4px}.tp-fldv_c>.tp-fldv>.tp-fldv_t{border-top-left-radius:2px;border-bottom-left-radius:2px}.tp-fldv_c>.tp-fldv.tp-fldv-expanded>.tp-fldv_t{border-bottom-left-radius:0}.tp-fldv_c .tp-fldv>.tp-fldv_c{border-bottom-left-radius:2px}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:var(--input-background-color);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:var(--input-foreground-color);border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:var(--input-background-color-hover)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:var(--input-background-color-focus)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:var(--input-background-color-active)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-clpiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;left:50%;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-svpiv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-lstiv{display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:var(--button-background-color-hover)}.tp-lstiv_s:focus{background-color:var(--button-background-color-focus)}.tp-lstiv_s:active{background-color:var(--button-background-color-active)}.tp-lstiv_m{border-color:var(--button-foreground-color) transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-rgbtxtiv{display:flex}.tp-rgbtxtiv_l{color:var(--label-foreground-color);display:inline;line-height:20px;margin-right:8px}.tp-rgbtxtiv_w{display:flex}.tp-rgbtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;flex:1;padding:0 4px;width:100%}.tp-rgbtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-rgbtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-rgbtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-rgbtxtiv_i:nth-child(1){border-bottom-right-radius:0;border-top-right-radius:0}.tp-rgbtxtiv_i:nth-child(2){border-radius:0}.tp-rgbtxtiv_i:nth-child(3){border-bottom-left-radius:0;border-top-left-radius:0}.tp-rgbtxtiv_i+.tp-rgbtxtiv_i{margin-left:1px}.tp-p2dpadiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:var(--input-background-color-hover)}.tp-p2dpadiv_p:focus{background-color:var(--input-background-color-focus)}.tp-p2dpadiv_p:active{background-color:var(--input-background-color-active)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:var(--input-guide-color)}.tp-p2dpadiv_l{stroke:var(--input-foreground-color);stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:var(--input-foreground-color)}.tp-p2dpadtxtiv{display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:var(--button-background-color-hover)}.tp-p2dpadtxtiv_b:focus{background-color:var(--button-background-color-focus)}.tp-p2dpadtxtiv_b:active{background-color:var(--button-background-color-active)}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:flex}.tp-p2dtxtiv_w{align-items:center;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-p2dtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-p2dtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:var(--input-background-color);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:var(--button-background-color);border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:var(--button-background-color-hover)}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:var(--button-background-color-focus)}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:var(--button-background-color-active)}.tp-txtiv{display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-txtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-txtiv_i:active{background-color:var(--input-background-color-active)}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:var(--input-background-color-hover)}.tp-cswiv_sw:focus{background-color:var(--input-background-color-focus)}.tp-cswiv_sw:active{background-color:var(--input-background-color-active)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:var(--label-foreground-color);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{align-self:flex-start;flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:var(--monitor-foreground-color);stroke-linejoin:round}.tp-grpmv_t{color:var(--monitor-foreground-color);font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:var(--monitor-foreground-color);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%}.tp-rotv{--font-family: var(--tp-font-family, Roboto Mono,Source Code Pro,Menlo,Courier,monospace);--base-background-color: var(--tp-base-background-color, #2f3137);--base-shadow-color: var(--tp-base-shadow-color, rgba(0,0,0,0.2));--button-background-color: var(--tp-button-background-color, #adafb8);--button-background-color-active: var(--tp-button-background-color-active, #d6d7db);--button-background-color-focus: var(--tp-button-background-color-focus, #c8cad0);--button-background-color-hover: var(--tp-button-background-color-hover, #bbbcc4);--button-foreground-color: var(--tp-button-foreground-color, #2f3137);--folder-background-color: var(--tp-folder-background-color, rgba(200,202,208,0.1));--folder-background-color-active: var(--tp-folder-background-color-active, rgba(200,202,208,0.25));--folder-background-color-focus: var(--tp-folder-background-color-focus, rgba(200,202,208,0.2));--folder-background-color-hover: var(--tp-folder-background-color-hover, rgba(200,202,208,0.15));--folder-foreground-color: var(--tp-folder-foreground-color, #c8cad0);--input-background-color: var(--tp-input-background-color, rgba(200,202,208,0.15));--input-background-color-active: var(--tp-input-background-color-active, rgba(200,202,208,0.35));--input-background-color-focus: var(--tp-input-background-color-focus, rgba(200,202,208,0.25));--input-background-color-hover: var(--tp-input-background-color-hover, rgba(200,202,208,0.15));--input-foreground-color: var(--tp-input-foreground-color, #c8cad0);--input-guide-color: var(--tp-input-guide-color, rgba(47,49,55,0.5));--label-foreground-color: var(--tp-label-foreground-color, rgba(200,202,208,0.8));--monitor-background-color: var(--tp-monitor-background-color, rgba(24,24,27,0.5));--monitor-foreground-color: var(--tp-monitor-foreground-color, rgba(200,202,208,0.7));--separator-color: var(--tp-separator-color, rgba(24,24,27,0.3));background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);font-family:var(--font-family);font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px;border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_t{border-bottom-left-radius:0;border-bottom-right-radius:0}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:last-child>.tp-fldv_c{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:last-child:not(.tp-fldv-expanded)>.tp-fldv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:first-child>.tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:var(--separator-color);border-width:0;display:block;height:4px;margin:0;width:100%}.tp-v.tp-v-hidden{display:none}\n", ""]);
+exports.push([module.i, ".tp-fldv_t,.tp-rotv_t{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--folder-background-color);color:var(--folder-foreground-color);cursor:pointer;display:block;height:24px;line-height:24px;overflow:hidden;padding-left:30px;position:relative;text-align:left;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-fldv_t:hover,.tp-rotv_t:hover{background-color:var(--folder-background-color-hover)}.tp-fldv_t:focus,.tp-rotv_t:focus{background-color:var(--folder-background-color-focus)}.tp-fldv_t:active,.tp-rotv_t:active{background-color:var(--folder-background-color-active)}.tp-fldv_m,.tp-rotv_m{background:linear-gradient(to left, var(--folder-foreground-color), var(--folder-foreground-color) 2px, transparent 2px, transparent 4px, var(--folder-foreground-color) 4px);border-radius:2px;bottom:0;content:'';display:block;height:6px;left:12px;margin:auto;position:absolute;top:0;transform:rotate(90deg);transition:transform 0.2s ease-in-out;width:6px}.tp-fldv.tp-fldv-expanded>.tp-fldv_t>.tp-fldv_m,.tp-rotv.tp-rotv-expanded .tp-rotv_m{transform:none}.tp-fldv_c>.tp-fldv.tp-v-first,.tp-rotv_c>.tp-fldv.tp-v-first{margin-top:-4px}.tp-fldv_c>.tp-fldv.tp-v-last,.tp-rotv_c>.tp-fldv.tp-v-last{margin-bottom:-4px}.tp-fldv_c>*:not(.tp-v-first),.tp-rotv_c>*:not(.tp-v-first){margin-top:4px}.tp-fldv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv,.tp-rotv_c>.tp-fldv:not(.tp-v-hidden)+.tp-fldv{margin-top:0}.tp-fldv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv,.tp-rotv_c>.tp-sptv:not(.tp-v-hidden)+.tp-sptv{margin-top:0}.tp-hpliv_m,.tp-svpiv_m,.tp-apliv_m{border-radius:100%;border:rgba(255,255,255,0.75) solid 1px;box-shadow:0 1px 2px rgba(0,0,0,0.1);height:4px;margin-left:-3px;margin-top:-3px;pointer-events:none;position:absolute;width:4px}.tp-btnv{padding:0 4px}.tp-btnv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}.tp-btnv_b:hover{background-color:var(--button-background-color-hover)}.tp-btnv_b:focus{background-color:var(--button-background-color-focus)}.tp-btnv_b:active{background-color:var(--button-background-color-active)}.tp-dfwv{position:absolute;top:8px;right:8px;width:256px}.tp-fldv_t{transition:border-radius 0.2s ease-in-out 0.2s}.tp-fldv.tp-fldv-expanded .tp-fldv_t{transition:border-radius 0s}.tp-fldv_c{border-left:var(--folder-background-color) solid 4px;box-sizing:border-box;height:0;opacity:0;overflow:hidden;padding-bottom:0;padding-top:0;position:relative;transition:height 0.2s ease-in-out, opacity 0.2s linear, padding 0.2s ease-in-out}.tp-fldv_t:hover+.tp-fldv_c{border-left-color:var(--folder-background-color-hover)}.tp-fldv_t:focus+.tp-fldv_c{border-left-color:var(--folder-background-color-focus)}.tp-fldv_t:active+.tp-fldv_c{border-left-color:var(--folder-background-color-active)}.tp-fldv.tp-fldv-expanded>.tp-fldv_c{opacity:1;overflow:visible;padding-bottom:4px;padding-top:4px;transform:none;transition:height 0.2s ease-in-out, opacity 0.2s linear 0.2s, padding 0.2s ease-in-out}.tp-fldv_c>.tp-fldv{margin-left:4px}.tp-fldv_c>.tp-fldv>.tp-fldv_t{border-top-left-radius:2px;border-bottom-left-radius:2px}.tp-fldv_c>.tp-fldv.tp-fldv-expanded>.tp-fldv_t{border-bottom-left-radius:0}.tp-fldv_c .tp-fldv>.tp-fldv_c{border-bottom-left-radius:2px}.tp-ckbiv_l{display:block;position:relative}.tp-ckbiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background:red;left:0;opacity:0;position:absolute;top:0}.tp-ckbiv_m{background-color:var(--input-background-color);border-radius:2px;cursor:pointer;display:block;height:20px;position:relative;width:20px}.tp-ckbiv_m::before{background-color:var(--input-foreground-color);border-radius:2px;bottom:4px;content:'';display:block;left:4px;opacity:0;position:absolute;right:4px;top:4px}.tp-ckbiv_i:hover+.tp-ckbiv_m{background-color:var(--input-background-color-hover)}.tp-ckbiv_i:focus+.tp-ckbiv_m{background-color:var(--input-background-color-focus)}.tp-ckbiv_i:active+.tp-ckbiv_m{background-color:var(--input-background-color-active)}.tp-ckbiv_i:checked+.tp-ckbiv_m::before{opacity:1}.tp-cctxtsiv{display:flex}.tp-cctxtsiv_l{color:var(--label-foreground-color);display:inline;line-height:20px;margin-left:2px;margin-right:4px}.tp-cctxtsiv_w{display:flex}.tp-cctxtsiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;border-radius:0;flex:1;padding:0 4px;width:100%}.tp-cctxtsiv_i:hover{background-color:var(--input-background-color-hover)}.tp-cctxtsiv_i:focus{background-color:var(--input-background-color-focus)}.tp-cctxtsiv_i:active{background-color:var(--input-background-color-active)}.tp-cctxtsiv_i:first-child{border-bottom-left-radius:2px;border-top-left-radius:2px}.tp-cctxtsiv_i:last-child{border-bottom-right-radius:2px;border-top-right-radius:2px}.tp-cctxtsiv_i:nth-child(4){flex:1.3}.tp-cctxtsiv_i+.tp-cctxtsiv_i{margin-left:1px}.tp-clpiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px;position:relative;visibility:hidden;z-index:1000}.tp-clpiv.tp-clpiv-expanded{display:block;visibility:visible}.tp-clpiv_hsv{display:flex}.tp-clpiv_h,.tp-clpiv_a{margin-left:4px}.tp-clpiv_rgb{display:flex;margin-top:4px}.tp-hpliv{border-radius:2px;overflow:hidden;position:relative}.tp-hpliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-hpliv_m{left:50%}.tp-svpiv{border-radius:2px;overflow:hidden;position:relative}.tp-svpiv_c{cursor:crosshair;display:block;height:80px;width:100%}.tp-apliv{background-image:linear-gradient(to top right, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%),linear-gradient(to top right, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%);background-size:10px 10px;background-position:0 0,5px 5px;background-color:#fff;border-radius:2px;overflow:hidden;position:relative}.tp-apliv_c{cursor:crosshair;display:block;height:80px;width:20px}.tp-apliv_m{left:50%}.tp-lstiv{display:block;padding:0;position:relative}.tp-lstiv_s{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;height:20px;line-height:20px;padding:0 4px;width:100%}.tp-lstiv_s:hover{background-color:var(--button-background-color-hover)}.tp-lstiv_s:focus{background-color:var(--button-background-color-focus)}.tp-lstiv_s:active{background-color:var(--button-background-color-active)}.tp-lstiv_m{border-color:var(--button-foreground-color) transparent transparent;border-style:solid;border-width:3px;bottom:0;box-sizing:border-box;height:6px;margin:auto;pointer-events:none;position:absolute;right:6px;top:3px;width:6px}.tp-p2dpadiv{background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);display:none;padding:4px 4px 4px 28px;position:relative;visibility:hidden;z-index:1000}.tp-p2dpadiv.tp-p2dpadiv-expanded{display:block;visibility:visible}.tp-p2dpadiv_p{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;cursor:crosshair;height:0;overflow:hidden;padding-bottom:100%;position:relative}.tp-p2dpadiv_p:hover{background-color:var(--input-background-color-hover)}.tp-p2dpadiv_p:focus{background-color:var(--input-background-color-focus)}.tp-p2dpadiv_p:active{background-color:var(--input-background-color-active)}.tp-p2dpadiv_g{display:block;height:100%;left:0;pointer-events:none;position:absolute;top:0;width:100%}.tp-p2dpadiv_ax{stroke:var(--input-guide-color)}.tp-p2dpadiv_l{stroke:var(--input-foreground-color);stroke-linecap:round;stroke-dasharray:1px 3px}.tp-p2dpadiv_m{fill:var(--input-foreground-color)}.tp-p2dpadtxtiv{display:flex;position:relative}.tp-p2dpadtxtiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--button-background-color);border-radius:2px;color:var(--button-foreground-color);cursor:pointer;display:block;font-weight:bold;height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;height:20px;position:relative;width:20px}.tp-p2dpadtxtiv_b:hover{background-color:var(--button-background-color-hover)}.tp-p2dpadtxtiv_b:focus{background-color:var(--button-background-color-focus)}.tp-p2dpadtxtiv_b:active{background-color:var(--button-background-color-active)}.tp-p2dpadtxtiv_b svg{display:block;height:16px;left:50%;margin-left:-8px;margin-top:-8px;position:absolute;top:50%;width:16px}.tp-p2dpadtxtiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-p2dpadtxtiv_t{margin-left:4px}.tp-p2dtxtiv{display:flex}.tp-p2dtxtiv_w{align-items:center;display:flex}.tp-p2dtxtiv_w:nth-child(1){margin-right:1px}.tp-p2dtxtiv_w:nth-child(2){margin-left:1px}.tp-p2dtxtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px;width:100%}.tp-p2dtxtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-p2dtxtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-p2dtxtiv_i:active{background-color:var(--input-background-color-active)}.tp-p2dtxtiv_w:nth-child(1) .tp-p2dtxtiv_i{border-top-right-radius:0;border-bottom-right-radius:0}.tp-p2dtxtiv_w:nth-child(2) .tp-p2dtxtiv_i{border-top-left-radius:0;border-bottom-left-radius:0}.tp-sldiv{display:block;padding:0}.tp-sldiv_o{box-sizing:border-box;cursor:pointer;height:20px;margin:0 6px;position:relative}.tp-sldiv_o::before{background-color:var(--input-background-color);border-radius:1px;bottom:0;content:'';display:block;height:2px;left:0;margin:auto;position:absolute;right:0;top:0}.tp-sldiv_i{height:100%;left:0;position:absolute;top:0}.tp-sldiv_i::before{background-color:var(--button-background-color);border-radius:2px;bottom:0;content:'';display:block;height:12px;margin:auto;position:absolute;right:-6px;top:0;width:12px}.tp-sldiv_o:hover .tp-sldiv_i::before{background-color:var(--button-background-color-hover)}.tp-sldiv_o:focus .tp-sldiv_i::before{background-color:var(--button-background-color-focus)}.tp-sldiv_o:active .tp-sldiv_i::before{background-color:var(--button-background-color-active)}.tp-txtiv{display:block;padding:0}.tp-txtiv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%;padding:0 4px}.tp-txtiv_i:hover{background-color:var(--input-background-color-hover)}.tp-txtiv_i:focus{background-color:var(--input-background-color-focus)}.tp-txtiv_i:active{background-color:var(--input-background-color-active)}.tp-cswiv{background-image:linear-gradient(to top right, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%),linear-gradient(to top right, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%);background-size:10px 10px;background-position:0 0,5px 5px;background-color:#fff;border-radius:2px}.tp-cswiv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--input-background-color);border-radius:2px;box-sizing:border-box;color:var(--input-foreground-color);font-family:inherit;height:20px;line-height:20px;width:100%}.tp-cswiv_sw:hover{background-color:var(--input-background-color-hover)}.tp-cswiv_sw:focus{background-color:var(--input-background-color-focus)}.tp-cswiv_sw:active{background-color:var(--input-background-color-active)}.tp-cswiv_b{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;cursor:pointer;display:block;height:20px;left:0;margin:0;outline:none;padding:0;position:absolute;top:0;width:20px}.tp-cswiv_b:focus::after{border:rgba(255,255,255,0.75) solid 2px;border-radius:2px;bottom:0;content:'';display:block;left:0;position:absolute;right:0;top:0}.tp-cswiv_p{left:-4px;position:absolute;right:-4px;top:20px}.tp-cswtxtiv{display:flex;position:relative}.tp-cswtxtiv_s{flex-grow:0;flex-shrink:0;width:20px}.tp-cswtxtiv_t{flex:1;margin-left:4px}.tp-sldtxtiv{display:flex}.tp-sldtxtiv_s{flex:2}.tp-sldtxtiv_t{flex:1;margin-left:4px}.tp-lblv{align-items:center;display:flex;padding-left:4px;padding-right:4px}.tp-lblv_l{color:var(--label-foreground-color);flex:1;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto;padding-left:4px;padding-right:16px}.tp-lblv_v{align-self:flex-start;flex-grow:0;flex-shrink:0;width:160px}.tp-grpmv{display:block;padding:0;position:relative}.tp-grpmv_g{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px}.tp-grpmv_g polyline{fill:none;stroke:var(--monitor-foreground-color);stroke-linejoin:round}.tp-grpmv_t{color:var(--monitor-foreground-color);font-size:0.9em;left:0;pointer-events:none;position:absolute;text-indent:4px;top:0;visibility:hidden}.tp-grpmv_t.tp-grpmv_t-valid{visibility:visible}.tp-grpmv_t::before{background-color:var(--monitor-foreground-color);border-radius:100%;content:'';display:block;height:4px;left:-2px;position:absolute;top:-2px;width:4px}.tp-sglmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;padding:0 4px}.tp-mllmv_i{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%;display:block;height:60px;line-height:20px;padding:0 4px;resize:none;white-space:pre}.tp-cswmv_sw{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border-width:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0;outline:none;padding:0;background-color:var(--monitor-background-color);border-radius:2px;box-sizing:border-box;color:var(--monitor-foreground-color);height:20px;width:100%}.tp-rotv{--font-family: var(--tp-font-family, Roboto Mono,Source Code Pro,Menlo,Courier,monospace);--base-background-color: var(--tp-base-background-color, #2f3137);--base-shadow-color: var(--tp-base-shadow-color, rgba(0,0,0,0.2));--button-background-color: var(--tp-button-background-color, #adafb8);--button-background-color-active: var(--tp-button-background-color-active, #d6d7db);--button-background-color-focus: var(--tp-button-background-color-focus, #c8cad0);--button-background-color-hover: var(--tp-button-background-color-hover, #bbbcc4);--button-foreground-color: var(--tp-button-foreground-color, #2f3137);--folder-background-color: var(--tp-folder-background-color, rgba(200,202,208,0.1));--folder-background-color-active: var(--tp-folder-background-color-active, rgba(200,202,208,0.25));--folder-background-color-focus: var(--tp-folder-background-color-focus, rgba(200,202,208,0.2));--folder-background-color-hover: var(--tp-folder-background-color-hover, rgba(200,202,208,0.15));--folder-foreground-color: var(--tp-folder-foreground-color, #c8cad0);--input-background-color: var(--tp-input-background-color, rgba(200,202,208,0.15));--input-background-color-active: var(--tp-input-background-color-active, rgba(200,202,208,0.35));--input-background-color-focus: var(--tp-input-background-color-focus, rgba(200,202,208,0.25));--input-background-color-hover: var(--tp-input-background-color-hover, rgba(200,202,208,0.15));--input-foreground-color: var(--tp-input-foreground-color, #c8cad0);--input-guide-color: var(--tp-input-guide-color, rgba(47,49,55,0.5));--label-foreground-color: var(--tp-label-foreground-color, rgba(200,202,208,0.8));--monitor-background-color: var(--tp-monitor-background-color, rgba(24,24,27,0.5));--monitor-foreground-color: var(--tp-monitor-foreground-color, rgba(200,202,208,0.7));--separator-color: var(--tp-separator-color, rgba(24,24,27,0.3));background-color:var(--base-background-color);border-radius:6px;box-shadow:0 2px 4px var(--base-shadow-color);font-family:var(--font-family);font-size:11px;font-weight:500;text-align:left}.tp-rotv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px;border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_t{border-bottom-left-radius:0;border-bottom-right-radius:0}.tp-rotv_m{transition:none}.tp-rotv_c{box-sizing:border-box;height:0;overflow:hidden;padding-bottom:0;padding-top:0}.tp-rotv_c>.tp-fldv:last-child>.tp-fldv_c{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:last-child:not(.tp-fldv-expanded)>.tp-fldv_t{border-bottom-left-radius:6px;border-bottom-right-radius:6px}.tp-rotv_c>.tp-fldv:first-child>.tp-fldv_t{border-top-left-radius:6px;border-top-right-radius:6px}.tp-rotv.tp-rotv-expanded .tp-rotv_c{height:auto;overflow:visible;padding-bottom:4px;padding-top:4px}.tp-sptv_r{background-color:var(--separator-color);border-width:0;display:block;height:4px;margin:0;width:100%}.tp-v.tp-v-hidden{display:none}\n", ""]);
 
 // exports
 

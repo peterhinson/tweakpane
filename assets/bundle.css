@@ -60,6 +60,9 @@ pre {
 strong {
   color: #2f3137; }
 
+:root .tp-dfwv {
+  top: 72px; }
+
 .common-button {
   -webkit-appearance: none;
      -moz-appearance: none;
