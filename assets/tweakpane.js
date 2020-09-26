@@ -2530,7 +2530,7 @@ exports.ColorComponentTextsInputController = ColorComponentTextsInputController;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColorPickerInputController = void 0;
 var number_1 = __webpack_require__(/*! ../../formatter/number */ "./src/main/js/formatter/number.ts");
-var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
+var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var color_1 = __webpack_require__(/*! ../../model/color */ "./src/main/js/model/color.ts");
 var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/model/foldable.ts");
 var input_value_1 = __webpack_require__(/*! ../../model/input-value */ "./src/main/js/model/input-value.ts");
@@ -2548,6 +2548,7 @@ var sv_palette_1 = __webpack_require__(/*! ./sv-palette */ "./src/main/js/contro
 var ColorPickerInputController = /** @class */ (function () {
     function ColorPickerInputController(document, config) {
         var _this = this;
+        this.triggerElement = null;
         this.onFocusableElementBlur_ = this.onFocusableElementBlur_.bind(this);
         this.onKeyDown_ = this.onKeyDown_.bind(this);
         this.pickedColor = config.pickedColor;
@@ -2628,12 +2629,20 @@ var ColorPickerInputController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    ColorPickerInputController.prototype.onFocusableElementBlur_ = function (e) {
+    ColorPickerInputController.prototype.onFocusableElementBlur_ = function (ev) {
         var elem = this.view.element;
-        var nextTarget = type_util_1.TypeUtil.forceCast(e.relatedTarget);
-        if (!nextTarget || !elem.contains(nextTarget)) {
-            this.foldable.expanded = false;
+        var nextTarget = DomUtil.findNextTarget(ev);
+        if (nextTarget && elem.contains(nextTarget)) {
+            // Next target is in the picker
+            return;
         }
+        if (nextTarget &&
+            nextTarget === this.triggerElement &&
+            !DomUtil.supportsTouch(elem.ownerDocument)) {
+            // Next target is the trigger button
+            return;
+        }
+        this.foldable.expanded = false;
     };
     ColorPickerInputController.prototype.onKeyDown_ = function (ev) {
         if (ev.keyCode === 27) {
@@ -2728,6 +2737,7 @@ var ColorSwatchInputController = /** @class */ (function () {
         });
         this.view.buttonElement.addEventListener('blur', this.onButtonBlur_);
         this.view.buttonElement.addEventListener('click', this.onButtonClick_);
+        this.pickerIc_.triggerElement = this.view.buttonElement;
     }
     ColorSwatchInputController.prototype.onButtonBlur_ = function (e) {
         var elem = this.view.element;
@@ -2983,6 +2993,7 @@ var Point2dPadTextInputController = /** @class */ (function () {
         });
         this.view.padButtonElement.addEventListener('blur', this.onPadButtonBlur_);
         this.view.padButtonElement.addEventListener('click', this.onPadButtonClick_);
+        this.padIc_.triggerElement = this.view.padButtonElement;
     }
     Point2dPadTextInputController.prototype.onPadButtonBlur_ = function (e) {
         var elem = this.view.element;
@@ -3016,9 +3027,9 @@ exports.Point2dPadTextInputController = Point2dPadTextInputController;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Point2dPadInputController = void 0;
 var point_2d_1 = __webpack_require__(/*! ../../constraint/point-2d */ "./src/main/js/constraint/point-2d.ts");
+var DomUtil = __webpack_require__(/*! ../../misc/dom-util */ "./src/main/js/misc/dom-util.ts");
 var number_util_1 = __webpack_require__(/*! ../../misc/number-util */ "./src/main/js/misc/number-util.ts");
 var pointer_handler_1 = __webpack_require__(/*! ../../misc/pointer-handler */ "./src/main/js/misc/pointer-handler.ts");
-var type_util_1 = __webpack_require__(/*! ../../misc/type-util */ "./src/main/js/misc/type-util.ts");
 var foldable_1 = __webpack_require__(/*! ../../model/foldable */ "./src/main/js/model/foldable.ts");
 var point_2d_2 = __webpack_require__(/*! ../../model/point-2d */ "./src/main/js/model/point-2d.ts");
 var point_2d_pad_1 = __webpack_require__(/*! ../../view/input/point-2d-pad */ "./src/main/js/view/input/point-2d-pad.ts");
@@ -3029,6 +3040,7 @@ var UiUtil = __webpack_require__(/*! ../ui-util */ "./src/main/js/controller/ui-
 var Point2dPadInputController = /** @class */ (function () {
     function Point2dPadInputController(document, config) {
         var _this = this;
+        this.triggerElement = null;
         this.onFocusableElementBlur_ = this.onFocusableElementBlur_.bind(this);
         this.onKeyDown_ = this.onKeyDown_.bind(this);
         this.onPadKeyDown_ = this.onPadKeyDown_.bind(this);
@@ -3085,12 +3097,20 @@ var Point2dPadInputController = /** @class */ (function () {
             UiUtil.getStepForKey(this.yStep_, UiUtil.getVerticalStepKeys(ev)) *
                 (this.invertsY_ ? 1 : -1));
     };
-    Point2dPadInputController.prototype.onFocusableElementBlur_ = function (e) {
+    Point2dPadInputController.prototype.onFocusableElementBlur_ = function (ev) {
         var elem = this.view.element;
-        var nextTarget = type_util_1.TypeUtil.forceCast(e.relatedTarget);
-        if (!nextTarget || !elem.contains(nextTarget)) {
-            this.foldable.expanded = false;
+        var nextTarget = DomUtil.findNextTarget(ev);
+        if (nextTarget && elem.contains(nextTarget)) {
+            // Next target is in the picker
+            return;
         }
+        if (nextTarget &&
+            nextTarget === this.triggerElement &&
+            !DomUtil.supportsTouch(elem.ownerDocument)) {
+            // Next target is the trigger button
+            return;
+        }
+        this.foldable.expanded = false;
     };
     Point2dPadInputController.prototype.onKeyDown_ = function (ev) {
         if (ev.keyCode === 27) {
@@ -4659,7 +4679,7 @@ exports.disposeElement = disposeElement;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.indexOfChildElement = exports.removeElement = exports.insertElementAt = exports.createSvgIconElement = exports.getCanvasContext = exports.getWindowDocument = exports.supportsTouch = exports.disableTransitionTemporarily = exports.forceReflow = exports.SVG_NS = void 0;
+exports.findNextTarget = exports.indexOfChildElement = exports.removeElement = exports.insertElementAt = exports.createSvgIconElement = exports.getCanvasContext = exports.getWindowDocument = exports.supportsTouch = exports.disableTransitionTemporarily = exports.forceReflow = exports.SVG_NS = void 0;
 var type_util_1 = __webpack_require__(/*! ./type-util */ "./src/main/js/misc/type-util.ts");
 exports.SVG_NS = 'http://www.w3.org/2000/svg';
 function forceReflow(element) {
@@ -4724,6 +4744,20 @@ function indexOfChildElement(element) {
     return children.indexOf(element);
 }
 exports.indexOfChildElement = indexOfChildElement;
+function findNextTarget(ev) {
+    if (ev.relatedTarget) {
+        return type_util_1.TypeUtil.forceCast(ev.relatedTarget);
+    }
+    // Workaround for Firefox
+    if ('explicitOriginalTarget' in ev) {
+        return ev.explicitOriginalTarget;
+    }
+    // TODO: Workaround for Safari
+    // Safari doesn't set next target for some elements
+    // (e.g. button, input[type=checkbox], etc.)
+    return null;
+}
+exports.findNextTarget = findNextTarget;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js")))
 
@@ -6364,6 +6398,7 @@ var TweakpaneWithoutStyle = /** @class */ (function (_super) {
         var config = opt_config || {};
         var document = type_util_1.TypeUtil.getOrDefault(config.document, DomUtil.getWindowDocument());
         var rootController = new root_2.RootController(document, {
+            expanded: config.expanded,
             viewModel: new view_model_1.ViewModel(),
             title: config.title,
         });
